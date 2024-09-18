@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head'
-import { Button, Card, CardContent, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material'
 import styles from '@/styles/Home.module.css'
 
 export default function HomePage() {
@@ -20,9 +20,14 @@ export default function HomePage() {
             <CardContent>
               <Typography variant='h3' align='center'>Pet Adoption Fall 2024</Typography>
               <Typography variant='body1' color='text.secondary'>This is your template project for the Fall 2024 Baylor Software Engineering II class project! See the README for insturctions on how to set this project up and run it locally.</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                  <img src= 'https://side-out.org/wp-content/uploads/2021/07/5200.jpg' width={400} height={300}></img>
+                </Box>
             </CardContent>
+
           </Card>
-          <Stack direction="row">
+  
+          <Stack direction= "row">
             {/* There are multiple ways to apply styling to Material UI components. One way is using the `sx` prop: */}
             <Button variant='contained' onClick={onButtonPress} sx={{ width: 200 }}>I am a button</Button>
 
