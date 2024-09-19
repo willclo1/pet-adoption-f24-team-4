@@ -18,7 +18,7 @@ export default function HomePage() {
         <Stack sx={{ paddingTop: 4 }} alignItems='center' gap={2}>
           <Card sx={{ width: 600 }} elevation={4}>
             <CardContent>
-              <Typography variant='h3' align='center'>Pet Adoption Fall 2023</Typography>
+              <Typography variant='h3' align='center'>Pet Adoption Fall 2024</Typography>
               <Typography variant='body1' color='text.secondary'>This is your template project for the Fall 2024 Baylor Software Engineering II class project! See the README for insturctions on how to set this project up and run it locally.</Typography>
             </CardContent>
           </Card>
