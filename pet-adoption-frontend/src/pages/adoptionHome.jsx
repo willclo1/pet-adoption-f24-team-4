@@ -1,40 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import Head from 'next/head'
-import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material'
+import Head from 'next/head';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 
-export default function adoptionHome(){
-    const[data, setData] = useState('');
-    useEffect(() =>{ 
-        const fetchData = () =>{
-            fetch("http://localhost:8080/AdoptHome")
-            .then(function(respose){
-                if(!Response.ok){
+export default function AdoptionHome() {
+    const [data, setData] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/AdoptHome");
+                if (!response.ok) {
                     throw new Error("Bad network response");
                 }
-                return respose.text();
-            })
-            .then(function(result){
+                const result = await response.text();
                 setData(result);
-            })
-            .catch(function (error) {
+            } catch (error) {
                 console.error('Error fetching data:', error);
-            });
-
-
+            }
         };
 
         fetchData();
-        return <h1>{data}</h1>
+    }, []);
 
-    });
+    return (
+        <Box>
+            <Head>
+                <title>Adoption Home</title>
+            </Head>
+            <Typography variant="h3">{data}</Typography>
+            <Card>
+                <CardContent>
+                    <Typography>COME BACK SOON FOR A FINAL PRODUCT!!!</Typography>
+                </CardContent>
+            </Card>
+        </Box>
+    );
+}
 
-
-
-
-    }
-    
-    
-    
     
     
 
