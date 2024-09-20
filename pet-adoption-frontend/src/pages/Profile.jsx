@@ -9,11 +9,11 @@ return (
     <main>
         <h1>Olf's Profile: </h1>
 
-        <body>
+        <div>
             <p>
                 Loves black dogs
             </p>
-        </body>
+        </div>
 
         <Stack sx={{ paddingTop: 4 }} alignItems='center' gap={2}>
             <Card sx={{ width: 600 }} elevation={4}>
