@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 public class RecommendationEndpoint {
-    @GetMapping("/Recommendation")
+    @GetMapping("/recommendation")
     public String recommendationTitle() {
         return "RECOMMENDATION! - pulled from endpoint";
     }
