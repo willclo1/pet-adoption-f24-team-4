@@ -23,7 +23,15 @@ export default function LoginPage() {
 
     return (
         <Box>
-
+            <Head>
+                <title>Login Page</title>
+            </Head>
+            <Typography variant="h3">{data}</Typography>
+            <Card>
+                <CardContent>
+                    <Typography>Adding login abilities soon!</Typography>
+                </CardContent>
+            </Card>
         </Box>
     );
 }
