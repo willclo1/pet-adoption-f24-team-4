@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Box, Card, CardContent, Typography, Stack} from '@mui/material';
-import { blue } from '@mui/material/colors';
 
 
 export default function AdoptionHome() {
