@@ -11,7 +11,7 @@ public class ProfileEndpoint {
     @CrossOrigin(origins = "http://localhost:3000")  // Enable CORS for this endpoint
     @GetMapping("/ProfEndpoint")
     public String ProfileStatement() {
-        return "I really Loooooooove your mom!";
+        return "I Love puppies";
     }
 
 }
