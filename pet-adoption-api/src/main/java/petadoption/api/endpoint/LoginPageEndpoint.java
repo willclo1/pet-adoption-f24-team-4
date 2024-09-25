@@ -1,16 +1,24 @@
 package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import petadoption.api.user.User;
-import petadoption.api.user.UserService;
+
+import java.util.Collections;
+import java.util.Map;
 
 @Log4j2
 @RestController
 public class LoginPageEndpoint {
-    @GetMapping("/login")
-    public String login_title() {
-        return "Welcome to the login page";
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+        String username = credentials.get("username");
+        String password = credentials.get("password");
+
+        log.info("Received login attempt for user: {}", username);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Login data = " + username +" " + password));
     }
+
 }
+
+

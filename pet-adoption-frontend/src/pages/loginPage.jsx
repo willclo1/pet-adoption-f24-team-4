@@ -1,35 +1,63 @@
-import React, {useEffect, useState} from 'react';
-import Head from 'next/head';
-import {Box, Card, CardContent, Typography} from "@mui/material";
+import React, { useState } from 'react';
+import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 
 export default function LoginPage() {
-    const [data, setData] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("http://localhost:8080/login");
-                if(!response.ok){
-                    throw new Error("Bad network response");
-                }
-                const result = await response.text();
-            } catch (error) {
-                console.error("Error fetching data: ", error);
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent the default form submission
+        try {
+            const response = await fetch("http://localhost:8080/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }), // Send the credentials as JSON
+            });
+
+            if (!response.ok) {
+                throw new Error("Bad network response");
             }
-        };
-
-        fetchData();
-    }, []);
+            const result = await response.json();
+            setMessage(result.message); // Update state with the response message
+        } catch (error) {
+            console.error("Error logging in: ", error);
+            setMessage("Login failed. Please try again.");
+        }
+    };
 
     return (
         <Box>
-            <Head>
-                <title>Login Page</title>
-            </Head>
-            <Typography variant="h3">{data}</Typography>
+            <Typography variant="h3">Login</Typography>
             <Card>
                 <CardContent>
-                    <Typography>Adding login abilities soon!</Typography>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="Username"
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                        <TextField
+                            label="Password"
+                            variant="outlined"
+                            type="password"
+                            fullWidth
+                            margin="normal"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <Button type="submit" variant="contained" color="primary">
+                            Login
+                        </Button>
+                    </form>
+                    {message && <Typography>{message}</Typography>} {/* Display any messages */}
                 </CardContent>
             </Card>
         </Box>
