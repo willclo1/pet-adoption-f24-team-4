@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import Head from 'next/head'
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material'
 import styles from '@/styles/Home.module.css'
