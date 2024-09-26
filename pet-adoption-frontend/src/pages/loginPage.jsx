@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
-import {Box, Card, CardContent, Typography} from "@mui/material";
+import {Box, Card, CardContent, Typography, Stack} from "@mui/material";
 
 export default function LoginPage() {
     const [data, setData] = useState('');
@@ -13,6 +13,7 @@ export default function LoginPage() {
                     throw new Error("Bad network response");
                 }
                 const result = await response.text();
+                setData(result);
             } catch (error) {
                 console.error("Error fetching data: ", error);
             }
@@ -22,16 +23,22 @@ export default function LoginPage() {
     }, []);
 
     return (
-        <Box>
-            <Head>
-                <title>Login Page</title>
-            </Head>
-            <Typography variant="h3">{data}</Typography>
-            <Card>
-                <CardContent>
-                    <Typography>Adding login abilities soon!</Typography>
-                </CardContent>
-            </Card>
-        </Box>
+    <>
+        <Head>
+            <title>Login</title>
+        </Head>
+        <main>
+            <Stack sx={{paddingTop: 4, paddingLeft: 4}} alignItems='flex-start' gap={2}>
+                <Box>
+                    <Typography variant="h3">{data}</Typography>
+                    <Card>
+                        <CardContent>
+                            <Typography>Adding login abilities soon!</Typography>
+                        </CardContent>
+                    </Card>
+                </Box>
+            </Stack>
+        </main>
+    </>
     );
 }
