@@ -43,6 +43,17 @@ export default function RegisterPage() {
         >
             <Card sx={{ width: 400, boxShadow: 3 }}>
                 <CardContent>
+                     <Box
+                        component="img"
+                        src='Friends_Logo.png'
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            left: 16,
+                            width: 100,
+                            height: 'auto',
+                        }}
+                    />
                     <Typography variant="h4" align="center" gutterBottom>
                         Register
                     </Typography>
