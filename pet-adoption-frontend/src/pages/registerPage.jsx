@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import { useRouter } from 'next/router'; 
 
 export default function RegisterPage() {
     const [firstName, setFirst] = useState('');
@@ -7,6 +8,8 @@ export default function RegisterPage() {
     const [emailAddress, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+
+    const router = useRouter(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,6 +27,10 @@ export default function RegisterPage() {
             }
             const result = await response.json();
             setMessage(result.message);
+            if(response.status == 200){
+                const id = result.id;
+                router.push(`/customer-home?id=${id}`);
+            }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
