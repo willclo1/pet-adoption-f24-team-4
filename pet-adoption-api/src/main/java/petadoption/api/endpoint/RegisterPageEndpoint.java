@@ -1,8 +1,11 @@
 package petadoption.api.endpoint;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import petadoption.api.user.User;
+import petadoption.api.user.UserService;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,15 +13,21 @@ import java.util.Map;
 @Log4j2
 @RestController
 public class RegisterPageEndpoint {
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
-        String firstName  = credentials.get("firstName");
-        String lastName  = credentials.get("lastName");
-        String username = credentials.get("username");
-        String password = credentials.get("password");
 
-        log.info("Received Register attempt for user: {}", username);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Register data = " + username +" " +  lastName));
+    @Autowired
+    UserService userService;
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user) {
+        try {
+            user.setUserType("Owner");
+            User saveUser = userService.saveUser(user);
+            log.info("User Registered: " + saveUser.getEmailAddress());
+            return ResponseEntity.ok(saveUser);
+
+        } catch (Exception e){
+            log.error("Error registering User");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

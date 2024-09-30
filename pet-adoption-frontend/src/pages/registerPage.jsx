@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/mate
 export default function RegisterPage() {
     const [firstName, setFirst] = useState('');
     const [lastName, setLast] = useState('');
-    const [username, setUsername] = useState('');
+    const [emailAddress, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
 
@@ -16,7 +16,7 @@ export default function RegisterPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, username, password }),
+                body: JSON.stringify({firstName, lastName, emailAddress, password }),
             });
 
             if (!response.ok) {
@@ -77,11 +77,11 @@ export default function RegisterPage() {
                             required
                         />
                         <TextField
-                            label="Username"
+                            label="Email"
                             variant="outlined"
                             fullWidth
                             margin="normal"
-                            value={username}
+                            value={emailAddress}
                             onChange={(e) => setUsername(e.target.value)}
                             required
                         />
