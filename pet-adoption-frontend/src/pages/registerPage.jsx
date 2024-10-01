@@ -37,35 +37,41 @@ export default function RegisterPage() {
         }
     };
 
-    return (
+      return (
         <Box
             sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: '100vh',
-                backgroundColor: '#f5f5f5',
+                background: 'linear-gradient(135deg, #f0f4f7, #cfd9df)',
                 padding: 2,
             }}
         >
-            <Card sx={{ width: 400, boxShadow: 3 }}>
-                <CardContent>
-                     <Box
+            <Card sx={{ width: 400, boxShadow: 6, borderRadius: 4 }}>
+                <CardContent sx={{ position: 'relative', p: 4 }}>
+                    <Box
                         component="img"
-                        src='Friends_Logo.png'
+                        src="Friends_Logo.png"
+                        alt="Logo"
                         sx={{
-                            position: 'absolute',
-                            top: 16,
-                            left: 16,
-                            width: 100,
+                            display: 'block',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+                            width: 120,
                             height: 'auto',
+                            marginBottom: 2,
                         }}
                     />
-                    <Typography variant="h4" align="center" gutterBottom>
+                    <Typography
+                        variant="h4"
+                        align="center"
+                        sx={{ mt: 7, mb: 3, fontWeight: 500, color: '#333' }}
+                    >
                         Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
-                         <TextField
+                        <TextField
                             label="First Name"
                             variant="outlined"
                             fullWidth
@@ -73,6 +79,7 @@ export default function RegisterPage() {
                             value={firstName}
                             onChange={(e) => setFirst(e.target.value)}
                             required
+                            sx={{ borderRadius: 2 }}
                         />
                         <TextField
                             label="Last Name"
@@ -82,6 +89,7 @@ export default function RegisterPage() {
                             value={lastName}
                             onChange={(e) => setLast(e.target.value)}
                             required
+                            sx={{ borderRadius: 2 }}
                         />
                         <TextField
                             label="Email"
@@ -91,6 +99,7 @@ export default function RegisterPage() {
                             value={emailAddress}
                             onChange={(e) => setUsername(e.target.value)}
                             required
+                            sx={{ borderRadius: 2 }}
                         />
                         <TextField
                             label="Password"
@@ -101,16 +110,24 @@ export default function RegisterPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            sx={{ borderRadius: 2 }}
                         />
-                       
+
                         <Button
                             type="submit"
                             variant="contained"
-                            color="primary"
                             fullWidth
-                            sx={{ marginTop: 2 }}
+                            sx={{
+                                marginTop: 3,
+                                paddingY: 1.5,
+                                borderRadius: 3,
+                                backgroundColor: '#1976d2',
+                                '&:hover': {
+                                    backgroundColor: '#1565c0',
+                                },
+                            }}
                         >
-                            Login
+                            Register
                         </Button>
                     </form>
                     {message && (
