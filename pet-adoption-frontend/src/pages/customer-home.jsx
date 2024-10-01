@@ -87,19 +87,20 @@ export default function CustomerHomePage() {
 
   return (
     <main>
-      <AppBar position = "static">
+      <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
-          <Button  color="inherit">
-            Edit Preferences
-          </Button>
-          <Button  color="inherit">
-            Adopt a Pet
-          </Button>
-    
-          <Avatar alt="User Name" sx={{ marginLeft: 2 }} />
+          <Button color="inherit">Edit Preferences</Button>
+          <Button color="inherit">Adopt a Pet</Button>
+
+          <Avatar
+            alt="User Name"
+            src={profilePicture} // Use the uploaded profile picture here
+            sx={{ marginLeft: 2, width: 56, height: 56 }}
+            onClick={handleClick}
+          />
         </Toolbar>
       </AppBar>
       <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
@@ -108,10 +109,84 @@ export default function CustomerHomePage() {
           Check out the home page!
         </Typography>
       </Stack>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
+        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+      </Menu>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Edit Personal Information</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="First Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+          />
+          <TextField
+            margin="dense"
+            label="Last Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+          />
+          <TextField
+            margin="dense"
+            label="Address"
+            type="text"
+            fullWidth
+            variant="outlined"
+          />
+          <Stack marginTop={2}>
+            <Typography variant="body1">Profile Picture</Typography>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="profile-picture-upload"
+              type="file"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="profile-picture-upload">
+              <Button variant="contained" component="span">
+                Upload Profile Picture
+              </Button>
+            </label>
+            {tempProfilePicture && ( // Show the temporary profile picture preview
+              <Avatar
+                alt="Profile Picture Preview"
+                src={tempProfilePicture}
+                sx={{ width: 56, height: 56, marginTop: 1 }}
+              />
+            )}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar to notify user of success */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        message="Personal information updated successfully"
+      />
     </main>
-    // Hello
-    
   );
 }
+
 
 
