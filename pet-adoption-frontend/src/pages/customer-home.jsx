@@ -1,13 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar } from '@mui/material';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
-
 export default function CustomerHomePage() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
   const router = useRouter();
   const {id} = router.query;
   const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+    handleCloseMenu(); // Close the menu when opening the dialog
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setTempProfilePicture(null); // Reset the temporary picture when closing
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setTempProfilePicture(imageUrl); // Set the temporary image for preview
+    }
+  };
+
+  const handleSave = () => {
+    setProfilePicture(tempProfilePicture); // Save the temporary picture to the main profile picture
+    handleCloseDialog(); // Close the dialog after saving
+    setSnackbarOpen(true); // Open Snackbar
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false); // Close the Snackbar
+  };
+  
 
    useEffect(() => {
     const fetchUser = async () => {
