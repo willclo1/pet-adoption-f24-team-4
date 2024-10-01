@@ -29,7 +29,7 @@ Spring/Spring Boot is an open source framework and inversion of control containe
 1.	Transaction management – Spring allows for pluggable transaction managers to deal with transactions
 2.	Inversion of control container – Spring allows for dependency injection, which helps with the configuration and management of Java objects
 3.	Data access – Easy integration with Hibernate and JDBC
-4.	Model-View-Controller (MVC) – Spring provides a framework for extending and customizing web applications
+4.	Model-View-Services (MVC) – Spring provides a framework for extending and customizing web applications
 5.	Messaging – Spring is able to leverage existing technologies, such as Java Messaging Service (JMS) for sending messages
 
 Some of these technologies will be vital to your project, and Spring allows for easy integration with other useful technologies and frameworks.
