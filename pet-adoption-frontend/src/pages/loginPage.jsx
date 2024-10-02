@@ -1,44 +1,118 @@
-import React, {useEffect, useState} from 'react';
-import Head from 'next/head';
-import {Box, Card, CardContent, Typography, Stack} from "@mui/material";
+import React, { useState } from 'react';
+import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import { useRouter } from 'next/router'; // Import useRouter
+import PetsIcon from '@mui/icons-material/Pets';
+
 
 export default function LoginPage() {
-    const [data, setData] = useState('');
+    const [email, setEmail] = useState(''); // Replacing username with email
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const router = useRouter(); // Initialize the router
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("http://localhost:8080/login");
-                if(!response.ok){
-                    throw new Error("Bad network response");
-                }
-                const result = await response.text();
-                setData(result);
-            } catch (error) {
-                console.error("Error fetching data: ", error);
+    const handleForgotClick = () => {
+      };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("http://localhost:8080/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }), // Sending email instead of username
+            });
+
+            if (!response.ok) {
+                throw new Error("Bad network response");
             }
-        };
+            const result = await response.json();
+            setMessage(result.message);
 
-        fetchData();
-    }, []);
+            // Route to customer home page if login is successful
+            if (response.status === 200) {
+                router.push(`/customer-home?email=${email}`); // Use email in the query parameter
+            }
+        } catch (error) {
+            console.error("Error logging in: ", error);
+            setMessage("Login failed. Please try again.");
+        }
+    };
 
     return (
-    <>
-        <Head>
-            <title>Login</title>
-        </Head>
-        <main>
-            <Stack sx={{paddingTop: 4, paddingLeft: 4}} alignItems='flex-start' gap={2}>
-                <Box>
-                    <Typography variant="h3">{data}</Typography>
-                    <Card>
-                        <CardContent>
-                            <Typography>Adding login abilities soon!</Typography>
-                        </CardContent>
-                    </Card>
-                </Box>
-            </Stack>
-        </main>
-    </>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                backgroundColor: '#f5f5f5',
+                padding: 2,
+            }}
+        >
+            <Typography variant = "h1" sx={{ marginBottom: 8 }}>Whisker Works</Typography>
+
+            <Card sx={{ width: 400, boxShadow: 7, marginTop: 7 }}>
+                <CardContent>
+                    <Typography variant="h4" align="center" gutterBottom>
+                        Login
+                    </Typography>
+                    <Typography variant="h6" align="center" gutterBottom>Welcome</Typography>
+                    <form onSubmit={handleSubmit}>
+                        <TextField
+                            label="Email"
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            value={email} // Replacing username with email
+                            onChange={(e) => setEmail(e.target.value)} // Updating email instead of username
+                            required
+                        />
+                        <TextField
+                            label="Password"
+                            variant="outlined"
+                            type="password"
+                            fullWidth
+                            margin="normal"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+
+                            fullWidth
+                            sx={{ marginTop: 2 }}
+                            endIcon={<PetsIcon />}
+                        >
+                            Login
+                        </Button>
+                        <Button
+                        variant="text" // Text button style
+                        color="primary"
+                        fullWidth
+                        sx={{ marginTop: 2, textDecoration: 'underline' }} // Underline the text for emphasis
+                        onClick={() => handleForgotClick()} // You can define this function to handle the action
+                    >
+                        Forgot Username/Password?
+                    </Button>
+                    </form>
+                    {message && (
+                        <Typography
+                            variant="body2"
+                            color="error"
+                            align="center"
+                            sx={{ marginTop: 2 }}
+                        >
+                            {message}
+                        </Typography>
+                    )}
+                </CardContent>
+            </Card>
+        </Box>
     );
 }

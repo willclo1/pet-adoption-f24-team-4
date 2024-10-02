@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
 
+import java.util.Optional;
+
 @Log4j2
 @RestController
 public class UserEndpoint {
@@ -21,6 +23,20 @@ public class UserEndpoint {
         }
 
         return user;
+    }
+
+
+    @GetMapping("/users/email/{email}")
+    public User findUserByEmail(@PathVariable String email) {
+        Optional<User> userOptional = userService.findUserByEmail(email);
+
+        if (userOptional.isPresent()) {
+            log.info("User found with email: {}", email);
+            return userOptional.get();
+        } else {
+            log.warn("User not found with email: {}", email);
+            return null; // Or throw an exception if preferred
+        }
     }
 
     @PostMapping("/users")
