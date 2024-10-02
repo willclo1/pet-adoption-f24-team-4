@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
+
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -8,9 +9,9 @@ export default function CustomerHomePage() {
   const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
   const router = useRouter();
-  const {id} = router.query;
+  const { email } = router.query; // Use email from query parameters
   const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const handleClick = (event) => {
@@ -48,13 +49,12 @@ export default function CustomerHomePage() {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false); // Close the Snackbar
   };
-  
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchUser = async () => {
-      if (id) {
+      if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/${id}`);
+          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -70,7 +70,7 @@ export default function CustomerHomePage() {
     };
 
     fetchUser();
-  }, [id]);
+  }, [email]);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading message while fetching
@@ -84,7 +84,6 @@ export default function CustomerHomePage() {
     return <div>User not found.</div>; // Show a fallback if user data isn't available
   }
 
-
   return (
     <main>
       <AppBar position="static">
@@ -96,7 +95,7 @@ export default function CustomerHomePage() {
           <Button color="inherit">Adopt a Pet</Button>
 
           <Avatar
-            alt="User Name"
+            alt={user.firstName} // Use user's first name for accessibility
             src={profilePicture} // Use the uploaded profile picture here
             sx={{ marginLeft: 2, width: 56, height: 56 }}
             onClick={handleClick}
@@ -129,6 +128,7 @@ export default function CustomerHomePage() {
             type="text"
             fullWidth
             variant="outlined"
+            defaultValue={user.firstName} // Pre-fill with existing first name
           />
           <TextField
             margin="dense"
@@ -136,6 +136,7 @@ export default function CustomerHomePage() {
             type="text"
             fullWidth
             variant="outlined"
+            defaultValue={user.lastName} // Pre-fill with existing last name
           />
           <TextField
             margin="dense"
@@ -187,6 +188,3 @@ export default function CustomerHomePage() {
     </main>
   );
 }
-
-
-

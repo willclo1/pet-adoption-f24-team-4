@@ -28,8 +28,7 @@ export default function RegisterPage() {
             const result = await response.json();
             setMessage(result.message);
             if(response.status == 200){
-                const id = result.id;
-                router.push(`/customer-home?id=${id}`);
+                router.push(`/loginPage`);
             }
         } catch (error) {
             console.error("Error logging in: ", error);

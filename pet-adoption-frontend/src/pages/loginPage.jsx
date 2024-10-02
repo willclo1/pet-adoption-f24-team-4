@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import { useRouter } from 'next/router'; // Import useRouter
+import PetsIcon from '@mui/icons-material/Pets';
+
 
 export default function LoginPage() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState(''); // Replacing username with email
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const router = useRouter(); // Initialize the router
+
+    const handleForgotClick = () => {
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,7 +21,7 @@ export default function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }), // Sending email instead of username
             });
 
             if (!response.ok) {
@@ -22,6 +29,11 @@ export default function LoginPage() {
             }
             const result = await response.json();
             setMessage(result.message);
+
+            // Route to customer home page if login is successful
+            if (response.status === 200) {
+                router.push(`/customer-home?email=${email}`); // Use email in the query parameter
+            }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
@@ -32,6 +44,7 @@ export default function LoginPage() {
         <Box
             sx={{
                 display: 'flex',
+                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: '100vh',
@@ -39,19 +52,22 @@ export default function LoginPage() {
                 padding: 2,
             }}
         >
-            <Card sx={{ width: 400, boxShadow: 3 }}>
+            <Typography variant = "h1" sx={{ marginBottom: 8 }}>Whisker Works</Typography>
+        
+            <Card sx={{ width: 400, boxShadow: 7, marginTop: 7 }}>
                 <CardContent>
                     <Typography variant="h4" align="center" gutterBottom>
                         Login
                     </Typography>
+                    <Typography variant="h6" align="center" gutterBottom>Welcome</Typography>
                     <form onSubmit={handleSubmit}>
                         <TextField
-                            label="Username"
+                            label="Email"
                             variant="outlined"
                             fullWidth
                             margin="normal"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={email} // Replacing username with email
+                            onChange={(e) => setEmail(e.target.value)} // Updating email instead of username
                             required
                         />
                         <TextField
@@ -68,11 +84,22 @@ export default function LoginPage() {
                             type="submit"
                             variant="contained"
                             color="primary"
+
                             fullWidth
                             sx={{ marginTop: 2 }}
+                            endIcon={<PetsIcon />}
                         >
                             Login
                         </Button>
+                        <Button
+                        variant="text" // Text button style
+                        color="primary"
+                        fullWidth
+                        sx={{ marginTop: 2, textDecoration: 'underline' }} // Underline the text for emphasis
+                        onClick={() => handleForgotClick()} // You can define this function to handle the action
+                    >
+                        Forgot Username/Password?
+                    </Button>
                     </form>
                     {message && (
                         <Typography
