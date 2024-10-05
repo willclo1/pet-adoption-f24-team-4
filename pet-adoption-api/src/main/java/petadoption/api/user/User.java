@@ -30,6 +30,7 @@ public class User {
     @Column(name = "PASSWORD")
     String password;
 
+
     public Long getId() {
         return id;
     }
@@ -80,4 +81,5 @@ public class User {
 
     @Column(name = "USER_TYPE")
     String userType;
+
 }

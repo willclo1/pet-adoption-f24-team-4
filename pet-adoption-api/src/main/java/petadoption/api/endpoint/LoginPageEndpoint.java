@@ -35,8 +35,8 @@ public class LoginPageEndpoint {
             // Ideally, you should use a secure hash comparison (e.g., BCrypt)
             if (user.getPassword().equals(password)) {
                 // Successful login
-                log.info("User successfully logged in: {}", email);
-                return ResponseEntity.ok(Collections.singletonMap("message", "Login successful!"));
+                log.info("User successfully logged in: {}", user.getEmailAddress());
+                return ResponseEntity.ok(Map.of("message", "Login successful!", "userType", user.getUserType()));
             } else {
                 // Incorrect password
                 log.warn("Incorrect password for user: {}", email);

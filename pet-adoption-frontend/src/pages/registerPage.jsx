@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
+import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useRouter } from 'next/router'; 
 
 export default function RegisterPage() {
@@ -8,6 +8,7 @@ export default function RegisterPage() {
     const [emailAddress, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [userType, setUserType] = useState('User');
 
     const router = useRouter(); 
 
@@ -19,7 +20,7 @@ export default function RegisterPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, emailAddress, password }),
+                body: JSON.stringify({firstName, lastName, emailAddress, password, userType}),
             });
 
             if (!response.ok) {
@@ -111,7 +112,21 @@ export default function RegisterPage() {
                             required
                             sx={{ borderRadius: 2 }}
                         />
-
+                       <FormControl fullWidth margin="normal">
+                            <InputLabel id="account-type-label">Account Type</InputLabel>
+                            <Select
+                                labelId="account-type-label"
+                                id="account-type"
+                                value={userType}
+                                onChange={(e) => setUserType(e.target.value)}
+                                variant="outlined"
+                                label="Account Type"
+                                required
+                            >
+                                <MenuItem value="User">User</MenuItem>
+                                <MenuItem value="adoptionCenter">adoptionCenter</MenuItem>
+                            </Select>
+                        </FormControl>
                         <Button
                             type="submit"
                             variant="contained"

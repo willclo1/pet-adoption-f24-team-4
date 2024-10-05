@@ -19,7 +19,6 @@ public class RegisterPageEndpoint {
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
         try {
-            user.setUserType("Owner");
             User saveUser = userService.saveUser(user);
             log.info("User Registered: " + saveUser.getEmailAddress());
             return ResponseEntity.ok(saveUser);
