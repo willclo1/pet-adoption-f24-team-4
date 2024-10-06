@@ -2,6 +2,7 @@ package petadoption.api.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.adoptionCenter.AdoptionCenter;
 
 @Data
 @Entity
@@ -81,5 +82,9 @@ public class User {
 
     @Column(name = "USER_TYPE")
     String userType;
+
+    @ManyToOne
+    @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
+    private AdoptionCenter center;
 
 }

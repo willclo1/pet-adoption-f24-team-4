@@ -1,9 +1,10 @@
 package petadoption.api.adoptionCenter;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.user.User;
+
+import java.util.Set;
 
 @Data
 @Entity
@@ -11,16 +12,44 @@ import lombok.Data;
 public class AdoptionCenter {
     public static final String TABLE_NAME = "CENTER";
     @Id
-    private Long centerID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "adoptionID")
+    private Long adoptionID;
 
+    @Column(name = "Center_Name")
+    private String centerName;
 
+    @OneToMany(mappedBy = "center")
+    private Set<User> accounts; // or List<User> accounts;
 
-
-    public void setCenterID(Long centerID) {
-        this.centerID = centerID;
+    public AdoptionCenter(String centerName) {
+        this.centerName = centerName;
+    }
+    public AdoptionCenter() {
     }
 
-    public Long getCenterID() {
-        return centerID;
+
+    public Long getAdoptionID() {
+        return adoptionID;
+    }
+
+    public void setAdoptionID(Long adoptionID) {
+        this.adoptionID = adoptionID;
+    }
+
+    public String getCenterName() {
+        return centerName;
+    }
+
+    public void setCenterName(String centerName) {
+        this.centerName = centerName;
+    }
+
+    public Set<User> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<User> accounts) {
+        this.accounts = accounts;
     }
 }
