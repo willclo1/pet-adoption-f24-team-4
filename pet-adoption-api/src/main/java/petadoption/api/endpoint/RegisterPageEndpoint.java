@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.user.RegisterRequest;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
@@ -17,6 +18,8 @@ public class RegisterPageEndpoint {
 
     @Autowired
     UserService userService;
+    @Autowired
+    AdoptionCenterService adoptionCenterService;
     @PostMapping("/register")
     public ResponseEntity<RegisterRequest> register(@RequestBody RegisterRequest registerRequest) {
         try {
@@ -28,7 +31,6 @@ public class RegisterPageEndpoint {
             user.setUserType(registerRequest.getUserType());
             Long adoptionId = registerRequest.getAdoptionId();
             User saveUser = userService.saveUser(user, adoptionId);
-
             log.info("User Registered: " + saveUser.getEmailAddress());
 
             return ResponseEntity.ok(registerRequest);

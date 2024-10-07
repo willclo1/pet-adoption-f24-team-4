@@ -1,5 +1,7 @@
 package petadoption.api.adoptionCenter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.pet.Pet;
@@ -20,6 +22,7 @@ public class AdoptionCenter {
     @Column(name = "Center_Name")
     private String centerName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<User> accounts;
 
