@@ -39,8 +39,8 @@ public class UserEndpoint {
         }
     }
 
-    @PostMapping("/users")
-    public User saveUser(@RequestBody User user) {
-        return userService.saveUser(user);
-    }
+//    @PostMapping("/users")
+//    public User saveUser(@RequestBody User user) {
+//        return userService.saveUser();
+//    }
 }

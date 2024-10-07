@@ -87,4 +87,17 @@ public class User {
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
     private AdoptionCenter center;
 
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+        User other = (User) obj;
+        return id != null && id.equals(other.id);
+    }
+
 }

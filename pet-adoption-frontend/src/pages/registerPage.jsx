@@ -44,7 +44,8 @@ export default function RegisterPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, emailAddress, password, userType, selectedCenter}),
+                body: JSON.stringify({firstName, lastName, emailAddress, password, userType,
+                    adoptionId: selectedCenter}),
             });
 
             if (!response.ok) {

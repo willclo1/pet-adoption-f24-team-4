@@ -117,6 +117,7 @@ export default function CustomerHomePage() {
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
       </Menu>
+      
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Edit Personal Information</DialogTitle>

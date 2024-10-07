@@ -2,6 +2,7 @@ package petadoption.api.adoptionCenter;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.pet.Pet;
 import petadoption.api.user.User;
 
 import java.util.Set;
@@ -19,8 +20,11 @@ public class AdoptionCenter {
     @Column(name = "Center_Name")
     private String centerName;
 
-    @OneToMany(mappedBy = "center")
-    private Set<User> accounts; // or List<User> accounts;
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    private Set<User> accounts;
+
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    private Set<Pet> pets;
 
     public AdoptionCenter(String centerName) {
         this.centerName = centerName;
@@ -52,4 +56,19 @@ public class AdoptionCenter {
     public void setAccounts(Set<User> accounts) {
         this.accounts = accounts;
     }
+
+
+    @Override
+    public int hashCode() {
+        return adoptionID != null ? adoptionID.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof AdoptionCenter)) return false;
+        AdoptionCenter other = (AdoptionCenter) obj;
+        return adoptionID != null && adoptionID.equals(other.adoptionID);
+    }
+
 }
