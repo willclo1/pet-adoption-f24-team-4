@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
-import { useRouter } from 'next/router'; // Import useRouter
+import { useRouter } from 'next/router';
 import PetsIcon from '@mui/icons-material/Pets';
 
 
@@ -8,6 +8,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState(''); // Replacing username with email
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [userType, setUserType] = useState('');
     const router = useRouter(); // Initialize the router
 
     const handleForgotClick = () => {
@@ -21,7 +22,7 @@ export default function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }), // Sending email instead of username
+                body: JSON.stringify({ email, password,  userType}), // Sending email instead of username
             });
 
             if (!response.ok) {
@@ -32,7 +33,17 @@ export default function LoginPage() {
 
             // Route to customer home page if login is successful
             if (response.status === 200) {
-                router.push(`/customer-home?email=${email}`); // Use email in the query parameter
+                const userType = result.userType;
+                if(userType == "User"){
+                    router.push(`/customer-home?email=${email}`); 
+                }
+                else if(userType == "adoptionCenter"){
+                    router.push(`/adoptionHome?email=${email}`); 
+                }
+                else{
+            
+                    setMessage("Login failed. Please try again.");
+                }
             }
         } catch (error) {
             console.error("Error logging in: ", error);
