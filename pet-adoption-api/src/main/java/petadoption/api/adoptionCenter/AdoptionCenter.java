@@ -1,50 +1,79 @@
 package petadoption.api.adoptionCenter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import petadoption.api.pet.Pet;
+import petadoption.api.user.User;
+
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = AdoptionCenter.TABLE_NAME)
 public class AdoptionCenter {
     public static final String TABLE_NAME = "CENTER";
-
-    @Getter
-    @Setter
     @Id
-    @GeneratedValue(generator = TABLE_NAME + "_GENERATOR")
-    @SequenceGenerator(
-            name = TABLE_NAME + "_GENERATOR",
-            sequenceName = TABLE_NAME + "_SEQUENCE"
-    )
-    @Column(name = "CENTER_ID")
-    private Long centerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "adoptionID")
+    private Long adoptionID;
 
-    @Getter
-    @Setter
-    @Column(name = "USER_ID")
-    private Long userId;
+    @Column(name = "Center_Name")
+    private String centerName;
 
-    @Getter
-    @Setter
-    @Column(name = "BUILDING_NAME")
-    private String buildingName;
+    @JsonIgnore
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    private Set<User> accounts;
 
-    /* Probably needs to have verification for correct formatting in setter, example:
-     * "Y-12:00P-5:00P\n (Sunday)
-     * M-9:00A-12:00P\n
-     * T-9:00A-12:00P\n
-     * W-9:00A-12:00P\n
-     * R-9:00A-12:00P\n
-     * F-9:00A-12:00P\n
-     * S-12:00P-5:00P
-     * "
-     * formatting above occupies 112 chars
-     */
-    @Getter
-    @Setter
-    @Column(name = "HOURS")
-    private String hours;
+    @JsonIgnore
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    private Set<Pet> pets;
+
+    public AdoptionCenter(String centerName) {
+        this.centerName = centerName;
+    }
+    public AdoptionCenter() {
+    }
+
+
+    public Long getAdoptionID() {
+        return adoptionID;
+    }
+
+    public void setAdoptionID(Long adoptionID) {
+        this.adoptionID = adoptionID;
+    }
+
+    public String getCenterName() {
+        return centerName;
+    }
+
+    public void setCenterName(String centerName) {
+        this.centerName = centerName;
+    }
+
+    public Set<User> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<User> accounts) {
+        this.accounts = accounts;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return adoptionID != null ? adoptionID.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof AdoptionCenter)) return false;
+        AdoptionCenter other = (AdoptionCenter) obj;
+        return adoptionID != null && adoptionID.equals(other.adoptionID);
+    }
+
 }

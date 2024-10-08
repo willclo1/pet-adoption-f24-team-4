@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useRouter } from 'next/router'; 
 
@@ -9,9 +9,33 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [userType, setUserType] = useState('User');
+    const [selectedCenter, setSelectedCenter] = useState('');
+    const [adoptionCenters, setAdoptionCenters] = useState([]); 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     const router = useRouter(); 
 
+    useEffect(()=> {
+        const fetchAdoptionCenters = async() => {
+            try{
+                const respose = await fetch("http://localhost:8080/adoption-centers");
+                if(!respose.ok){
+                    throw new Error("Failed to fetch Adoption Centers")
+                }
+                const data = await respose.json();
+                setAdoptionCenters(data);
+            }
+            catch (error) {
+                console.error("Error fetching adoption centers:", error);
+                setMessage("Failed to load adoption centers.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAdoptionCenters();
+    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -20,7 +44,8 @@ export default function RegisterPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, emailAddress, password, userType}),
+                body: JSON.stringify({firstName, lastName, emailAddress, password, userType,
+                    adoptionId: selectedCenter}),
             });
 
             if (!response.ok) {
@@ -116,7 +141,7 @@ export default function RegisterPage() {
                             <InputLabel id="account-type-label">Account Type</InputLabel>
                             <Select
                                 labelId="account-type-label"
-                                id="account-type"
+                                id="userType"
                                 value={userType}
                                 onChange={(e) => setUserType(e.target.value)}
                                 variant="outlined"
@@ -127,6 +152,24 @@ export default function RegisterPage() {
                                 <MenuItem value="adoptionCenter">adoptionCenter</MenuItem>
                             </Select>
                         </FormControl>
+                        {userType === 'adoptionCenter' && (
+                            <FormControl fullWidth margin="normal" required>
+                                <InputLabel id="adoption-center-label">Adoption Center</InputLabel>
+                                <Select
+                                    labelId="adoption-center-label"
+                                    value={selectedCenter}
+                                    onChange={(e) => setSelectedCenter(e.target.value)}
+                                >
+                                    {loading && <MenuItem disabled>Loading...</MenuItem>}
+                                    {error && <MenuItem disabled>{error}</MenuItem>}
+                                    {!loading && !error && adoptionCenters.map((center) => (
+                                        <MenuItem key={center.adoptionID} value={center.adoptionID}>
+                                            {center.centerName}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        )}
                         <Button
                             type="submit"
                             variant="contained"

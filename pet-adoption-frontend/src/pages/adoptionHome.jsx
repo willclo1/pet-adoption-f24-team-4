@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
+import { dark } from '@mui/material/styles/createPalette';
 
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -13,6 +14,8 @@ export default function AdoptionHome() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -54,7 +57,7 @@ export default function AdoptionHome() {
     const fetchUser = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          const response = await fetch(`http://localhost:8080/users/email/${email}`); 
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -84,6 +87,14 @@ export default function AdoptionHome() {
     return <div>User not found.</div>; // Show a fallback if user data isn't available
   }
 
+   const handleAddPet = () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/addPet',
+      query: { adoptionID },
+    });
+  };
+
   return (
     <main>
       <AppBar position="static">
@@ -102,12 +113,25 @@ export default function AdoptionHome() {
           />
         </Toolbar>
       </AppBar>
-      <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
-        <Typography variant="h3">Welcome, {user.firstName}</Typography>
-        <Typography variant="body1" color="text.secondary">
-          Check out the home page!
+      {/* Add Pets Section */}
+      <Box
+        sx={{
+          width: 300,
+          padding: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+          backgroundColor: '#f5f5f5',
+          marginTop: 4,
+          marginLeft: 4, 
+        }}
+      >
+        <Typography variant="h4" sx={{ mb: 2, color: '#333' }}>
+          Add Pets
         </Typography>
-      </Stack>
+        <Button variant="contained" onClick={handleAddPet} sx={{ backgroundColor: '#1976d2' }}>
+          Add Pets
+        </Button>
+      </Box>
 
       <Menu
         anchorEl={anchorEl}

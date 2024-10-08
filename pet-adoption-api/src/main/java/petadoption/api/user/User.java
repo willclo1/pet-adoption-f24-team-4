@@ -1,7 +1,9 @@
 package petadoption.api.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.adoptionCenter.AdoptionCenter;
 
 @Data
 @Entity
@@ -79,7 +81,25 @@ public class User {
         this.userType = userType;
     }
 
+
     @Column(name = "USER_TYPE")
     String userType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
+    private AdoptionCenter center;
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+        User other = (User) obj;
+        return id != null && id.equals(other.id);
+    }
 
 }

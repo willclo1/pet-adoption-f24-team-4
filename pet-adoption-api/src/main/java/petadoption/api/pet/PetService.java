@@ -1,0 +1,41 @@
+package petadoption.api.pet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.adoptionCenter.AdoptionCenterRepository;
+import petadoption.api.adoptionCenter.AdoptionCenterService;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class PetService {
+    @Autowired
+    PetRepository repository;
+
+    @Autowired
+    private AdoptionCenterRepository adoptionCenterRepository;
+
+    public Optional<Pet> savePet(Long petID){
+        return repository.findById(petID);
+    }
+    public Pet savePet(Pet pet, Long adoptionID) {
+        if(adoptionID != null) {
+            Optional<AdoptionCenter> center = adoptionCenterRepository.findById(adoptionID);
+            if (center.isPresent()) {
+                pet.setCenter(center.get());
+            } else {
+                throw new RuntimeException("Adoption Center not found.");
+            }
+
+
+        }
+        return repository.save(pet);
+
+    }
+
+    public List<Pet> getAllPets() {
+        return repository.findAll();
+    }
+}

@@ -30,7 +30,6 @@ public class LoginPageEndpoint {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
             // Validate the password (assuming you're using plain text for now)
             // Ideally, you should use a secure hash comparison (e.g., BCrypt)
             if (user.getPassword().equals(password)) {
