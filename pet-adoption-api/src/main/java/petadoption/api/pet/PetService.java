@@ -38,4 +38,7 @@ public class PetService {
     public List<Pet> getAllPets() {
         return repository.findAll();
     }
+    public List<Pet> getAdoptionCenterPets(long adoptionID) {
+        return repository.findByCenter_Id(adoptionID);
+    }
 }

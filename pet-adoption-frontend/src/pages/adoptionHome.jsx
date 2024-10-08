@@ -95,6 +95,14 @@ export default function AdoptionHome() {
     });
   };
 
+    const handleModifyPet = () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/modifyPet',
+      query: { adoptionID },
+    });
+  };
+
   return (
     <main>
       <AppBar position="static">
@@ -103,7 +111,7 @@ export default function AdoptionHome() {
             Whisker Works
           </Typography>
           <Button color="inherit">Edit Preferences</Button>
-          <Button color="inherit">Adopt a Pet</Button>
+  
 
           <Avatar
             alt={user.firstName} // Use user's first name for accessibility
