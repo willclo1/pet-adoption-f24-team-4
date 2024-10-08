@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
-import { dark } from '@mui/material/styles/createPalette';
 
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -91,127 +90,147 @@ export default function AdoptionHome() {
     const adoptionID = user.center.adoptionID;
     router.push({
       pathname: '/addPet',
-      query: { adoptionID },
+      query: { adoptionID, email},
     });
   };
 
-  return (
-    <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Whisker Works
-          </Typography>
-          <Button color="inherit">Edit Preferences</Button>
-          <Button color="inherit">Adopt a Pet</Button>
-
-          <Avatar
-            alt={user.firstName} // Use user's first name for accessibility
-            src={profilePicture} // Use the uploaded profile picture here
-            sx={{ marginLeft: 2, width: 56, height: 56 }}
-            onClick={handleClick}
-          />
-        </Toolbar>
-      </AppBar>
-      {/* Add Pets Section */}
-      <Box
-        sx={{
-          width: 300,
-          padding: 4,
-          borderRadius: 2,
-          boxShadow: 3,
-          backgroundColor: '#f5f5f5',
-          marginTop: 4,
-          marginLeft: 4, 
-        }}
-      >
-        <Typography variant="h4" sx={{ mb: 2, color: '#333' }}>
-          Add Pets
+    const handleModifyPet = () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/modifyPet',
+      query: { adoptionID, email },
+    });
+  };
+return (
+  <main>
+    <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+          Whisker Works
         </Typography>
-        <Button variant="contained" onClick={handleAddPet} sx={{ backgroundColor: '#1976d2' }}>
-          Add Pets
-        </Button>
-      </Box>
+        <Button color="inherit">Edit Preferences</Button>
+        <Avatar
+          alt={user.firstName}
+          src={profilePicture}
+          sx={{ marginLeft: 2, width: 56, height: 56, cursor: 'pointer' }}
+          onClick={handleClick}
+        />
+      </Toolbar>
+    </AppBar>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-      >
-        <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-      </Menu>
+    <Box sx={{ paddingBottom: 8 }}>
+      <Stack spacing={3} direction="row" sx={{ marginTop: 4, marginLeft: 4 }}>
+        <Box
+          sx={{
+            width: 300,
+            padding: 4,
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: '#fff',
+          }}
+        >
+          <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+            Add Pets
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={handleAddPet}
+            sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
+          >
+            Add Pets
+          </Button>
+        </Box>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Personal Information</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="First Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.firstName} // Pre-fill with existing first name
+        <Box
+          sx={{
+            width: 300,
+            padding: 4,
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: '#fff',
+          }}
+        >
+          <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+            Modify Pets
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={handleModifyPet}
+            sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
+          >
+            Modify Pets
+          </Button>
+        </Box>
+      </Stack>
+    </Box>
+
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+      <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
+      <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+    </Menu>
+
+    <Dialog open={openDialog} onClose={handleCloseDialog}>
+      <DialogTitle>Edit Personal Information</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="First Name"
+          fullWidth
+          variant="outlined"
+          defaultValue={user.firstName}
+        />
+        <TextField
+          margin="dense"
+          label="Last Name"
+          fullWidth
+          variant="outlined"
+          defaultValue={user.lastName}
+        />
+        <TextField margin="dense" label="Address" fullWidth variant="outlined" />
+        <Stack marginTop={2}>
+          <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+            Profile Picture
+          </Typography>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="profile-picture-upload"
+            type="file"
+            onChange={handleFileChange}
           />
-          <TextField
-            margin="dense"
-            label="Last Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.lastName} // Pre-fill with existing last name
-          />
-          <TextField
-            margin="dense"
-            label="Address"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <Stack marginTop={2}>
-            <Typography variant="body1">Profile Picture</Typography>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="profile-picture-upload"
-              type="file"
-              onChange={handleFileChange}
+          <label htmlFor="profile-picture-upload">
+            <Button variant="contained" component="span" sx={{ marginTop: 1 }}>
+              Upload Profile Picture
+            </Button>
+          </label>
+          {tempProfilePicture && (
+            <Avatar
+              alt="Profile Picture Preview"
+              src={tempProfilePicture}
+              sx={{ width: 56, height: 56, marginTop: 2 }}
             />
-            <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">
-                Upload Profile Picture
-              </Button>
-            </label>
-            {tempProfilePicture && ( // Show the temporary profile picture preview
-              <Avatar
-                alt="Profile Picture Preview"
-                src={tempProfilePicture}
-                sx={{ width: 56, height: 56, marginTop: 1 }}
-              />
-            )}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+          )}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog} sx={{ color: '#1976d2' }}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave} sx={{ color: '#1976d2' }}>
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
 
-      {/* Snackbar to notify user of success */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        message="Personal information updated successfully"
-      />
-    </main>
-  );
-
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={4000}
+      onClose={handleCloseSnackbar}
+      message="Personal information updated successfully"
+    />
+  </main>
+);
 } 
     
 

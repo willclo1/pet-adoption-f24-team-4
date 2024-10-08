@@ -2,11 +2,21 @@ package petadoption.api.pet;
 
 public class PetRequest {
     private String firstName;
+
+    private int id;
     private String lastName;
     private String petType;
     private int weight;
     private String furType;
     private Long adoptionID;  // Use this to get the Adoption Center
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     // Getters and setters
     public String getFirstName() { return firstName; }

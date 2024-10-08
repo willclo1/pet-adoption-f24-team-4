@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Card, CardContent, TextField, Typography, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Box, Card, CardContent, TextField, Typography, Button, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function AddPet() {
   const [petType, setPetType] = useState('');
@@ -9,9 +10,10 @@ export default function AddPet() {
   const [lastName, setLast] = useState('');
   const[weight, setWeight] = useState('');
   const [furType, setFur] = useState('');
+  const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState('');
   const router = useRouter();
-  const { adoptionID } = router.query;
+  const { adoptionID, email } = router.query;
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -28,10 +30,12 @@ export default function AddPet() {
                 throw new Error("Bad network response");
             }
             const result = await response.json();
-            setMessage(result.message);
+            setMessage("Pet Added!");
+            setSuccess(true); 
         } catch (error) {
             console.error("Error Adding Pet: ", error);
             setMessage("Pet failed to be added. Please try again");
+            setSuccess(false); 
         }
 
     }
@@ -39,8 +43,11 @@ export default function AddPet() {
   const handlePetTypeChange = (event) => {
     setPetType(event.target.value);
   };
+   const handleBack = () => {
+    router.push(`/adoptionHome?email=${email}`);
+  };
 
-  return (
+ return (
     <Box
       sx={{
         display: 'flex',
@@ -48,7 +55,7 @@ export default function AddPet() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#f0f0f0', // Lighter background
+        backgroundColor: '#f0f0f0',
         padding: 2,
       }}
     >
@@ -60,15 +67,29 @@ export default function AddPet() {
         sx={{
           width: 420,
           boxShadow: 8,
-          borderRadius: 3, // Rounded corners
+          borderRadius: 3,
           backgroundColor: '#fff',
           padding: 4,
+          maxHeight: '90vh', // Ensure the card doesn't overflow the screen height
+          overflow: 'auto',   // Enable scrolling if needed
         }}
       >
         <CardContent>
           <Typography variant="h5" align="center" gutterBottom sx={{ color: '#1976d2' }}>
             Fill in Pet Details
           </Typography>
+
+            {/* Display success or error message */}
+          {message && (
+            <Alert 
+              severity={success ? "success" : "error"} 
+              sx={{ marginBottom: 2 }}
+            >
+              {message}
+            </Alert>
+          )}
+
+
           <form onSubmit={handleSubmit}>
             <TextField
               label="Pet's First Name"
@@ -111,7 +132,6 @@ export default function AddPet() {
               required
             />
 
-            {/* Dropdown for pet type */}
             <FormControl fullWidth margin="normal">
               <InputLabel id="pet-type-label">Pet Type</InputLabel>
               <Select
@@ -143,6 +163,21 @@ export default function AddPet() {
               Add Pet
             </Button>
           </form>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={{
+              marginTop: 2,
+              paddingY: 1.5,
+              color: '#1976d2',
+              fontWeight: 'bold',
+            }}
+            startIcon={<ArrowBackIcon />}
+            onClick={handleBack}
+          >
+            Back to Adoption Home
+          </Button>
         </CardContent>
       </Card>
     </Box>
