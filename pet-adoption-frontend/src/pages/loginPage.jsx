@@ -10,6 +10,7 @@ export default function LoginPage() {
     const [message, setMessage] = useState('');
     const [userType, setUserType] = useState('');
     const router = useRouter(); // Initialize the router
+    const [isSuccess, setIsSuccess] = useState(null);
 
     const handleForgotClick = () => {
       };
@@ -33,6 +34,7 @@ export default function LoginPage() {
 
             // Route to customer home page if login is successful
             if (response.status === 200) {
+                setIsSuccess(true);
                 const userType = result.userType;
                 if(userType == "User"){
                     router.push(`/customer-home?email=${email}`); 
@@ -42,12 +44,14 @@ export default function LoginPage() {
                 }
                 else{
             
-                    setMessage("Login failed. Please try again.");
+                    setMessage("Login failed. Please try again");
+                    setIsSuccess(false);
                 }
             }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
+            setIsSuccess(false);
         }
     };
 
@@ -115,9 +119,10 @@ export default function LoginPage() {
                     {message && (
                         <Typography
                             variant="body2"
-                            color="error"
                             align="center"
-                            sx={{ marginTop: 2 }}
+                            sx={{ marginTop: 2,
+                                color: isSuccess ? 'green' : 'red'
+                             }}
                         >
                             {message}
                         </Typography>
