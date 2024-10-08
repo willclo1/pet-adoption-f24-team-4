@@ -50,6 +50,10 @@ export default function CustomerHomePage() {
     setSnackbarOpen(false); // Close the Snackbar
   };
 
+  const navigateTo = (page) => {
+    router.push(page); // Navigate to the specified page
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       if (email) {
@@ -93,6 +97,7 @@ export default function CustomerHomePage() {
           </Typography>
           <Button color="inherit">Edit Preferences</Button>
           <Button color="inherit">Adopt a Pet</Button>
+          <Button color="inherit" onClick={() => navigateTo('recommendationEngine')}>Start Matching</Button>
 
           <Avatar
             alt={user.firstName} // Use user's first name for accessibility
