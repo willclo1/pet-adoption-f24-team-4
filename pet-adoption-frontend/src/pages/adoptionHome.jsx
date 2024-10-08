@@ -91,7 +91,7 @@ export default function AdoptionHome() {
     const adoptionID = user.center.adoptionID;
     router.push({
       pathname: '/addPet',
-      query: { adoptionID },
+      query: { adoptionID, email},
     });
   };
 
