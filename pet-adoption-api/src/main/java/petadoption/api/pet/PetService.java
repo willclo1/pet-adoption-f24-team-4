@@ -39,6 +39,6 @@ public class PetService {
         return repository.findAll();
     }
     public List<Pet> getAdoptionCenterPets(long adoptionID) {
-        return repository.findByCenter_Id(adoptionID);
+        return repository.findByCenter_adoptionID(adoptionID);
     }
 }
