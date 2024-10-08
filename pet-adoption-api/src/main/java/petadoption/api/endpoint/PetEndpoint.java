@@ -1,11 +1,10 @@
 package petadoption.api.endpoint;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.Pet;
@@ -63,5 +62,44 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
+    @PostMapping("/deletePet")
+    public ResponseEntity<String> deletePet(@RequestBody Pet pet) {
+        try {
+            petService.deletePet(pet.getId());
+            return ResponseEntity.ok("Pet deleted successfully.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet not found.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the pet.");
+        }
+    }
+    @PutMapping("/updatePet")
+    public ResponseEntity<Pet> updatePet(@RequestBody PetRequest petRequest){
+        try {
+            Optional<Pet> existingPetOpt = petService.getPetById(petRequest.getId());
+            if (!existingPetOpt.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+            Pet existingPet = existingPetOpt.get();
+
+            existingPet.setFirstName(petRequest.getFirstName());
+            existingPet.setLastName(petRequest.getLastName());
+            existingPet.setPetType(petRequest.getPetType());
+            existingPet.setWeight(petRequest.getWeight());
+            existingPet.setFurType(petRequest.getFurType());
+
+
+            petService.savePet(existingPet, existingPet.getCenter().getAdoptionID());
+
+            log.info("Pet updated successfully: " + existingPet.getFirstName() + " " + existingPet.getLastName());
+            return ResponseEntity.ok(existingPet);
+        }
+        catch (Exception e) {
+            log.error("Error updating pet: ", e);
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
 
 }
