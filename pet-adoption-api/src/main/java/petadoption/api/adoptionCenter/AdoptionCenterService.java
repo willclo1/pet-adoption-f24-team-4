@@ -13,6 +13,9 @@ import java.util.Optional;
 public class AdoptionCenterService {
     @Autowired
     AdoptionCenterRepository repository;
+    public AdoptionCenterService(AdoptionCenterRepository repository) {
+        this.repository = repository;
+    }
 
     public Optional<AdoptionCenter> getCenter(Long centerID){
         return repository.findById(centerID);

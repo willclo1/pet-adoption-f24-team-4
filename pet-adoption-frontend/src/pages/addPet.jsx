@@ -5,8 +5,36 @@ import PetsIcon from '@mui/icons-material/Pets';
 
 export default function AddPet() {
   const [petType, setPetType] = useState('');
+  const [firstName, setFirst] = useState('');
+  const [lastName, setLast] = useState('');
+  const[weight, setWeight] = useState('');
+  const [furType, setFur] = useState('');
+  const [message, setMessage] = useState('');
   const router = useRouter();
   const { adoptionID } = router.query;
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try{
+    const response = await fetch("http://localhost:8080/addPet", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                   body: JSON.stringify({firstName, lastName, petType, weight, furType,
+                    adoptionID}),
+            });
+             if (!response.ok) {
+                throw new Error("Bad network response");
+            }
+            const result = await response.json();
+            setMessage(result.message);
+        } catch (error) {
+            console.error("Error Adding Pet: ", error);
+            setMessage("Pet failed to be added. Please try again");
+        }
+
+    }
 
   const handlePetTypeChange = (event) => {
     setPetType(event.target.value);
@@ -41,12 +69,14 @@ export default function AddPet() {
           <Typography variant="h5" align="center" gutterBottom sx={{ color: '#1976d2' }}>
             Fill in Pet Details
           </Typography>
-          <form>
+          <form onSubmit={handleSubmit}>
             <TextField
               label="Pet's First Name"
               variant="outlined"
               fullWidth
               margin="normal"
+              value={firstName}
+              onChange={(e) => setFirst(e.target.value)}
               placeholder="Enter pet's first name"
               required
             />
@@ -55,6 +85,8 @@ export default function AddPet() {
               variant="outlined"
               fullWidth
               margin="normal"
+              value={lastName}
+              onChange={(e) => setLast(e.target.value)}
               placeholder="Enter pet's last name"
               required
             />
@@ -63,6 +95,8 @@ export default function AddPet() {
               variant="outlined"
               fullWidth
               margin="normal"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
               placeholder="Enter pet's weight"
               required
             />
@@ -71,6 +105,8 @@ export default function AddPet() {
               variant="outlined"
               fullWidth
               margin="normal"
+              value={furType}
+              onChange={(e) => setFur(e.target.value)}
               placeholder="Enter pet's fur color"
               required
             />

@@ -18,8 +18,6 @@ public class RegisterPageEndpoint {
 
     @Autowired
     UserService userService;
-    @Autowired
-    AdoptionCenterService adoptionCenterService;
     @PostMapping("/register")
     public ResponseEntity<RegisterRequest> register(@RequestBody RegisterRequest registerRequest) {
         try {

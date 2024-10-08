@@ -1,5 +1,6 @@
 package petadoption.api.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.adoptionCenter.AdoptionCenter;
@@ -80,10 +81,11 @@ public class User {
         this.userType = userType;
     }
 
+
     @Column(name = "USER_TYPE")
     String userType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
     private AdoptionCenter center;
 
