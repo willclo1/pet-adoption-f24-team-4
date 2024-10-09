@@ -35,7 +35,17 @@ public class PetService {
 
     }
 
+    public Optional<Pet> getPetById(long petId){
+        return repository.findById(petId);
+    }
+
     public List<Pet> getAllPets() {
         return repository.findAll();
+    }
+    public List<Pet> getAdoptionCenterPets(long adoptionID) {
+        return repository.findByCenter_adoptionID(adoptionID);
+    }
+    public void deletePet(long petID){
+        repository.deleteById(petID);
     }
 }

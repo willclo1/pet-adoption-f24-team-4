@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProfileEndpoint {
     @CrossOrigin(origins = "http://localhost:3000")  // Enable CORS for this endpoint
-    @GetMapping("/ProfEndpoint")
+    @GetMapping("/profile")
     public String ProfileStatement() {
         return "I Love puppies";
     }

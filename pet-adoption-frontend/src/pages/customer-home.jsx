@@ -27,11 +27,25 @@ export default function CustomerHomePage() {
     handleCloseMenu(); // Close the menu when opening the dialog
   };
 
+  const logoutAction = () => {
+    setUser(null);
+    router.push(`/loginPage`)
+    
+  };
+
+  const viewProfile = () => {
+    setUser(null);
+    router.push(`/Profile?email=${email}`)
+    
+  };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setTempProfilePicture(null); // Reset the temporary picture when closing
   };
 
+
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -56,6 +70,7 @@ export default function CustomerHomePage() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      
       if (email) {
         try {
           const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
@@ -64,6 +79,7 @@ export default function CustomerHomePage() {
           }
           const data = await response.json();
           setUser(data); // Set the user data
+          
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.'); // Update error state
@@ -121,6 +137,8 @@ export default function CustomerHomePage() {
       >
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+        <MenuItem onClick={logoutAction}>Logout</MenuItem>
+        <MenuItem onClick={viewProfile}>View Profile</MenuItem>
       </Menu>
       
 

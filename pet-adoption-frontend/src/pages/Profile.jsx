@@ -1,60 +1,72 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head'
-import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material'
-import styles from '@/styles/Home.module.css'
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 
-export default function Prof(){
-  const [message, setMessage] = useState('');
+export default function Profile() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const router = useRouter();
+  const { email } = router.query; // Use email from query parameters
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
-      // Fetch data from your Spring API
-     fetch('http://localhost:8080/ProfEndpoint')
-          .then(response => response.text())  // Assuming the server responds with plain text
-          .then(data => {
-              setMessage(data);  // Set the message state with the response data
-          })
-          .catch(error => {
-              console.error('Error fetching data: ', error);
-              setMessage('Failed to load data');  // Handle errors
-          });
-  }, []);  // The empty array ensures this effect runs only once after the initial render
+    const fetchUser = async () => {
+      
+      if (email) {
+        try {
+          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          setUser(data); // Set the user data
+          
+        } catch (error) {
+          console.error('Error fetching user:', error);
+          setError('User not found.'); // Update error state
+        } finally {
+          setLoading(false); // Loading is done
+        }
+      }
+    };
+
+    fetchUser();
+  }, [email]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading message while fetching
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!user) {
+    return <div>User not found.</div>;
+  }
 
   return (
-
     <main>
-      <div>
-          <h1>Olf's Profile</h1>
-          <h3>Olf's Message of the Day: </h3>
-          <p>{message}</p>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Profile Page
+          </Typography>
+          <Button color="inherit" onClick={() => router.push(`/customer-home?email=${email}`)} >Home</Button>
+        </Toolbar>
+      </AppBar>
+      <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
+        <Typography variant="h3">Welcome, {user.firstName}</Typography>
+        <Typography variant="body1" color="text.secondary">
+          This is your profile page!
+        </Typography>
+      </Stack>
 
-          <p> 
-            
-            <big> 
-            <b>Favorite Pet: </b>
-            
-            </big>
-            
-            Black Dogs
-            
-            </p>
-
-
-      </div>
-
-        <Stack sx={{ paddingTop: 4 }} alignItems='center' gap={2}>
-            <Card sx={{ width: 600 }} elevation={4}>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-                  <img src= 'https://i.pinimg.com/1200x/76/cb/25/76cb251888f228df534e434ce350d964.jpg' width={400} height={300}></img>
-                </Box>
-              </CardContent>
-
-            </Card>
-          </Stack>
+      {/* More components such as Dialog for editing, Snackbar for notifications can be added here similar to CustomerHomePage */}
     </main>
-
-
-
-) 
-
+  );
 }
