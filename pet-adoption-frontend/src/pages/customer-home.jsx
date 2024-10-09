@@ -27,6 +27,10 @@ export default function CustomerHomePage() {
     handleCloseMenu(); // Close the menu when opening the dialog
   };
 
+  const logoutAction = () => {
+      router.push(`/loginPage`)
+  };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setTempProfilePicture(null); // Reset the temporary picture when closing
@@ -116,6 +120,7 @@ export default function CustomerHomePage() {
       >
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+        <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>
       
 

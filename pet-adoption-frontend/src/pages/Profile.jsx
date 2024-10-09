@@ -8,7 +8,7 @@ export default function Prof(){
 
   useEffect(() => {
       // Fetch data from your Spring API
-     fetch('http://localhost:8080/ProfEndpoint')
+     fetch('http://localhost:8080/profile')
           .then(response => response.text())  // Assuming the server responds with plain text
           .then(data => {
               setMessage(data);  // Set the message state with the response data
