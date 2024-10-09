@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import petadoption.api.pet.Pet;
 import petadoption.api.user.User;
 
@@ -12,17 +15,32 @@ import java.util.Set;
 
 @Data
 @Entity
+@Log4j2
 @Table(name = AdoptionCenter.TABLE_NAME)
 public class AdoptionCenter {
     public static final String TABLE_NAME = "CENTER";
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adoptionID")
     private Long adoptionID;
 
+    @Setter
+    @Getter
     @Column(name = "Center_Name")
     private String centerName;
 
+    @Getter
+    @Column(name = "Building_Address")
+    private String buildingAddress;
+
+    @Getter
+    @Column(name = "Description")
+    private String description;
+
+    @Setter
+    @Getter
     @JsonIgnore
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<User> accounts;
@@ -37,31 +55,30 @@ public class AdoptionCenter {
     public AdoptionCenter() {
     }
 
-
-    public Long getAdoptionID() {
-        return adoptionID;
+    /* buildingAddress must follow format: address,city,state */
+    public void setBuildingAddress(String buildingAddress) {
+        //this.buildingAddress = buildingAddress;
+        String[] parser = buildingAddress.split(",");
+        if (parser.length == 3) {
+            this.buildingAddress = buildingAddress;
+        }
+        else {
+            log.error(
+                    "ERR: Improper formatting for AdoptionCenter.buildingAddress, " +
+                    "must be of the form: <street address>,<city>,<state>\n" +
+                    "given address: " + buildingAddress
+            );
+            this.buildingAddress = "";
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setAdoptionID(Long adoptionID) {
-        this.adoptionID = adoptionID;
+    public void setDescription(String description) {
+        if (description.length() > 150) {
+            log.error("ERR: Description length exceeds 150 characters");
+            this.description = description.substring(0, 150);
+        }
     }
-
-    public String getCenterName() {
-        return centerName;
-    }
-
-    public void setCenterName(String centerName) {
-        this.centerName = centerName;
-    }
-
-    public Set<User> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(Set<User> accounts) {
-        this.accounts = accounts;
-    }
-
 
     @Override
     public int hashCode() {
@@ -75,5 +92,4 @@ public class AdoptionCenter {
         AdoptionCenter other = (AdoptionCenter) obj;
         return adoptionID != null && adoptionID.equals(other.adoptionID);
     }
-
 }
