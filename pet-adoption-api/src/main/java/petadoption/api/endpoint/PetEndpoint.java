@@ -62,7 +62,7 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
-    @PostMapping("/deletePet")
+    @DeleteMapping("/deletePet")
     public ResponseEntity<String> deletePet(@RequestBody Pet pet) {
         try {
             petService.deletePet(pet.getId());

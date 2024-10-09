@@ -39,7 +39,7 @@ export default function modifyPet() {
         if (window.confirm("Are you sure you want to delete this pet?")) {
             try {
                 const response = await fetch(`http://localhost:8080/deletePet`, {
-                    method: 'POST',
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                     },
