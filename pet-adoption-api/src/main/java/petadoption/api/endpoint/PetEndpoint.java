@@ -54,9 +54,9 @@ public class PetEndpoint {
         }
     }
     @GetMapping("/pets/{adoptionID}")
-    public ResponseEntity<?> getAdoptionCenterPets() {
+    public ResponseEntity<?> getAdoptionCenterPets(@PathVariable Long adoptionID) {
         try {
-            List<Pet> pets = petService.getAllPets();
+            List<Pet> pets = petService.getAdoptionCenterPets(adoptionID);
             return ResponseEntity.ok(pets);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
