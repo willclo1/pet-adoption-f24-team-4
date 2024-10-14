@@ -1,8 +1,8 @@
 package petadoption.api.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 
 @Data
@@ -32,6 +32,25 @@ public class User {
     @Column(name = "PASSWORD")
     String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
+    Image profilePicture;
+
+    public Image getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(Image profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public AdoptionCenter getCenter() {
+        return center;
+    }
+
+    public void setCenter(AdoptionCenter center) {
+        this.center = center;
+    }
 
     public Long getId() {
         return id;

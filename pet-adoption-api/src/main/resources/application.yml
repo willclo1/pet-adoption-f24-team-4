@@ -6,7 +6,12 @@ spring:
     username: root
     password: password
     driverClassName: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
