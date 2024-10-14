@@ -24,7 +24,7 @@ export default function recommendationEnginePage() {
     }
   }, [router.isReady, router.query]);
 
-  //side bar drawer
+  //side bar
   const toggleDrawer = (anchor, open) => (event) => {
     if (event.type === 'keydown' && (event.keyCode === 'Tab' || event.keyCode === 'Shift')) {
       return;
@@ -41,7 +41,14 @@ export default function recommendationEnginePage() {
       <List>
         {['Home', 'Adopt', 'Meeting', 'Contact'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              const path = text === 'Home'? '/customer-home' : '/recommendation-engine'; //TODO: fix this to actually go back to user home based on email retrieval
+
+              router.push({
+                pathname: path,
+                query: { email: userEmail || ''},
+              })
+            }}>
               <ListItemIcon>
                 {text === 'Home' && <HouseIcon />}
                 {text === 'Adopt' && <PetsIcon />}
