@@ -9,111 +9,88 @@ import { useRouter } from 'next/router';
 
 export default function recommendationEnginePage() {
 
-  const [state, setState] = React.useState({
-    left: false
-  });
-    //const { email } = router.query; // Use email from query parameters
-    //const [user, setUser] = useState(null);
-    //const [loading, setLoading] = useState(true);
-    //const [error, setError] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //       if (email) {
-    //         try {
-    //           const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
-    //           if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //           }
-    //           const data = await response.json();
-    //           setUser(data); // Set the user data
-    //         } catch (error) {
-    //           console.error('Error fetching user:', error);
-    //           setError('User not found.'); // Update error state
-    //         } finally {
-    //           setLoading(false); // Loading is done
-    //         }
-    //       }
-    //     };
-    //     fetchUser();
-    // }, [email]);
-
-    // if (loading) {
-    //     return <div>Loading...</div>; // Show a loading message while fetching
-    // }
-  
-    // if (error) {
-    //   return <div>{error}</div>; // Show the error message if there's an error
-    // }
-  
-    // if (!user) {
-    //   return <div>User not found.</div>; // Show a fallback if user data isn't available
-    // }
-    const toggleDrawer = (anchor, open) => (event) => {
-      if (event.type === 'keydown' && (event.keyCode === 'Tab' || event.keyCode === 'Shift')) {
-        return;
+  const [state, setState] = React.useState({ left: false });
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState(null);
+    
+  //email functionality
+  useEffect(() => {
+    if(router.isReady) {
+      const { email } = router.query;
+      if(email) {
+        console.log('Tracking user email');
+        setUserEmail(email);
       }
-      setState({...state, [anchor]: open });
-    };
+    }
+  }, [router.isReady, router.query]);
 
-    const list = (anchor) => (
-      <Box
-      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250}}
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-      >
-        <List>
-          {['Adopt', 'Meeting', 'Contact'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {text === 'Adopt' && <PetsIcon />}
-                  {text === 'Meeting' && <GroupsIcon />}
-                  {text === 'Contact' && <ContactsIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    );
+  //side bar drawer
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.keyCode === 'Tab' || event.keyCode === 'Shift')) {
+      return;
+    }
+    setState({...state, [anchor]: open });
+  };
 
-    return (
-        <main>
-            <AppBar position="static">
-        <Toolbar>
-          {/* Menu items */}
-          {['Menu'].map((anchor) => (
-            <React.Fragment key={anchor}>
-              <Button 
-              color="inherit" 
-              onClick={toggleDrawer(anchor, true)} 
-              menuIcon={<MenuIcon/>}>
-                {anchor}
-              </Button>
-              <Drawer 
-              anchor={anchor} 
-              open={state[anchor]} 
-              onClose={toggleDrawer(anchor, false)}
-              sx={{ zIndex: (theme) => theme.zIndex.modal + 1}}>
-                {list(anchor)}
-              </Drawer>
-            </React.Fragment>
-          ))}
+  const list = (anchor) => (
+    <Box
+    sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250}}
+    onClick={toggleDrawer(anchor, false)}
+    onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {['Home', 'Adopt', 'Meeting', 'Contact'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {text === 'Home' && <HouseIcon />}
+                {text === 'Adopt' && <PetsIcon />}
+                {text === 'Meeting' && <GroupsIcon />}
+                {text === 'Contact' && <ContactsIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Whisker Works
-          </Typography>
+  return (
+      <main>
+          <AppBar position="static">
+      <Toolbar>
+        {/* Menu items */}
+        {['Menu'].map((anchor) => (
+          <React.Fragment key={anchor}>
+            <Button 
+            color="inherit" 
+            onClick={toggleDrawer(anchor, true)} 
+            menuIcon={<MenuIcon/>}>
+              {anchor}
+            </Button>
+            <Drawer 
+            anchor={anchor} 
+            open={state[anchor]} 
+            onClose={toggleDrawer(anchor, false)}
+            sx={{ zIndex: (theme) => theme.zIndex.modal + 1}}>
+              {list(anchor)}
+            </Drawer>
+          </React.Fragment>
+        ))}
 
-        </Toolbar>
-      </AppBar>
-      <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
-        <Typography variant="h3">Start Matching!</Typography>
-        <Typography variant="body1" color="text.secondary">
-          Adopt Now :D
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Whisker Works
         </Typography>
-      </Stack>
-        </main>
-    );
+
+      </Toolbar>
+    </AppBar>
+    <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
+      <Typography variant="h3">Start Matching!</Typography>
+      <Typography variant="body1" color="text.secondary">
+        Adopt Now :D
+      </Typography>
+    </Stack>
+      </main>
+  );
 }
