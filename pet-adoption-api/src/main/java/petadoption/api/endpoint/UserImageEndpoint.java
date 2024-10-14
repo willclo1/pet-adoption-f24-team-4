@@ -31,14 +31,12 @@ public class UserImageEndpoint {
     @PostMapping("/{email}")
     public ResponseEntity<?> uploadProfileImage(@PathVariable String email,
                                                 @RequestParam("image") MultipartFile file) throws IOException {
-        // Find the user by email
         Optional<User> userOptional = userService.findUserByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            // Check if the user already has a profile picture
             if (user.getProfilePicture() != null) {
-                // Get the old profile image ID
+
                 Long oldImageId = user.getProfilePicture().getId();
 
                 // Delete the old image
@@ -62,7 +60,7 @@ public class UserImageEndpoint {
     }
     @GetMapping("/{email}")
     public ResponseEntity<?> downloadProfileImage(@PathVariable String email) {
-        // Find the user by email and retrieve their profile image
+
         Optional<User> userOptional = userService.findUserByEmail(email);
         if (userOptional.isPresent() && userOptional.get().getProfilePicture() != null) {
             byte[] imageData = userOptional.get().getProfilePicture().getImageData();
