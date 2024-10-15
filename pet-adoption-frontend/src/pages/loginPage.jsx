@@ -16,7 +16,10 @@ export default function LoginPage() {
 
 
     const handleForgotClick = () => {
-      };
+    };
+    const handleRegisterClick = () => {
+        router.push('/registerPage');
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -112,14 +115,14 @@ export default function LoginPage() {
                         >
                             Login
                         </Button>
-                        <Button
+                    <Button
                         variant="text" // Text button style
                         color="primary"
                         fullWidth
                         sx={{ marginTop: 2, textDecoration: 'underline' }} // Underline the text for emphasis
-                        onClick={() => handleForgotClick()} // You can define this function to handle the action
+                        onClick={() => handleRegisterClick()}
                     >
-                        Forgot Username/Password?
+                        Haven't Registered?
                     </Button>
                     </form>
                     {message && (

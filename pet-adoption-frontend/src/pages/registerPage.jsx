@@ -16,6 +16,10 @@ export default function RegisterPage() {
 
     const router = useRouter(); 
 
+    const handleRegistered = () => {
+        router.push('/loginPage');
+    }
+
     useEffect(()=> {
         const fetchAdoptionCenters = async() => {
             try{
@@ -185,6 +189,15 @@ export default function RegisterPage() {
                             }}
                         >
                             Register
+                        </Button>
+                        <Button
+                            variant="text"
+                            color="primary"
+                            fullWidth
+                            sx={{ marginTop: 2, textDecoration: 'underline' }}
+                            onClick={() => handleRegistered()}
+                        >
+                            Already Registered?
                         </Button>
                     </form>
                     {message && (

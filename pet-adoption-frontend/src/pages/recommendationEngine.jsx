@@ -52,6 +52,7 @@ export default function recommendationEnginePage() {
       <List>
         {['Home', 'Adopt', 'Meeting', 'Contact'].map((text, index) => (
           <ListItem key={text} disablePadding>
+            {/* possibly need to fix this adding redirection to other pages */}
             <ListItemButton onClick={() => {
               const path = text === 'Home'? '/customer-home' : '/recommendation-engine'; //TODO: fix this to actually go back to user home based on email retrieval
 
