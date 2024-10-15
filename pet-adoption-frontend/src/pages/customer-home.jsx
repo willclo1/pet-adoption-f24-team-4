@@ -109,7 +109,7 @@ export default function CustomerHomePage() {
     setSnackbarOpen(false); // Close the Snackbar
   };
 
-  const routeChange = () => {
+  const handleStartMatching = () => {
     router.push(`/recommendationEngine?email=${email}`);
   };
 
@@ -133,7 +133,7 @@ export default function CustomerHomePage() {
             Whisker Works
           </Typography>
           <Button color="inherit">Edit Preferences</Button>
-          <Button color="inherit" onClick={routeChange}>Start Matching</Button>
+          <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
             alt={user.firstName} // Use user's first name for accessibility
