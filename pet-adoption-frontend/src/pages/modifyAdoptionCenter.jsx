@@ -1,39 +1,15 @@
 import React, { useEffect, useState } from 'react';
 // @mui/material
-import { DialogActions, 
-  TextField, 
-  DialogContent, Dialog, DialogTitle,
-  ListItemSecondaryAction, Button, Divider, Paper, Box, Typography, CircularProgress, List, ListItem, ListItemText, Grid } from '@mui/material';
+import { 
+  TextField, Button, Paper, Box, Typography,  Grid } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function ModifyAdoptionCenter() {
-  const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
-
-  // Query will actually return email of employee
-  // const { email } = router.query;
   const { adoptionID, email } = router.query;
   const [adoptionCenter, setAdoptionCenter] = useState(null);
-  //const [selectedAC, setSelectedAC] = useState(null);
-  //const [centerName, setCenterName] = useState('');
-  //const [buildingAddress, setBuildingAddress] = useState('');
-  //const [description, setDescription] = useState('');
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  //const [centerName, setCenterName] = useState('');
-  //const [buildingAddress, setBuildingAddress] = useState('');
-  //const [description, setDescription] = useState('');
-  // employee accounts?
-  // pets?
-
-
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleForgotClick = () => {};
 
   // Attempt to retrieve adoption center information
   useEffect(
