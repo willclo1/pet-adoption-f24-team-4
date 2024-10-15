@@ -90,10 +90,6 @@ export default function CustomerHomePage() {
     setSnackbarOpen(true); // Open Snackbar
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close the Snackbar
-  };
-
   useEffect(() => {
     const fetchUser = async () => {
       
