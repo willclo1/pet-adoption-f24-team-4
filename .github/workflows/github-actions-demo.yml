@@ -1,7 +1,10 @@
-name: Build & Deploy
+name: CI Build & Deploy
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -13,18 +16,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build Docker images
+      - name: List contents of the docker directory
+        run: ls -la ./docker
+
+      - name: Build the Frontend Docker image
         run: |
-          # Build both frontend and backend Docker images using Docker Compose
-          docker compose -f docker/production.docker-compose.yml build
+          docker build ./docker \
+            --file ./docker/pet-adoption-frontend.Dockerfile \
+            --tag my-frontend-image:${{ github.sha }}
+
+      - name: Build the API Docker image
+        run: |
+          docker build ./docker \
+            --file ./docker/pet-adoption-api.Dockerfile \
+            --tag my-api-image:${{ github.sha }}
+
+      - name: Build Docker images using Docker Compose
+        run: |
+          docker-compose -f ./docker/ci.docker-compose.yml build
 
       - name: Deploy containers
         run: |
           # Stop and remove existing containers to free up ports and names
-          docker compose -f docker/production.docker-compose.yml down
+          docker-compose -f ./docker/ci.docker-compose.yml down
           
           # Start new containers in detached mode with build
-          docker compose -f docker/production.docker-compose.yml up -d --build
+          docker-compose -f ./docker/ci.docker-compose.yml up -d --build
           
           # Prune unused images to free up space
           docker image prune -af
