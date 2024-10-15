@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: List contents of the docker directory
+        run: ls -la ./docker
+
+      - name: Build the Frontend Docker image
+        run: docker build ./docker --file ./docker/pet-adoption-frontend.Dockerfile --tag my-frontend-image:${{ github.sha }}
+
+      - name: Build the API Docker image
+        run: docker build ./docker --file ./docker/pet-adoption-api.Dockerfile --tag my-api-image:${{ github.sha }}
