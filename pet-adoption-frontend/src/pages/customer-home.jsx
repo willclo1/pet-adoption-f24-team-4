@@ -1,33 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Stack,
-  Typography,
-  AppBar,
-  Toolbar,
-  Button,
-  Avatar,
-  Menu,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Snackbar,
-} from '@mui/material';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [profilePictureFile, setProfilePictureFile] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
   const router = useRouter();
   const { email } = router.query;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Example dog data: names, image URLs, and descriptions
+  const dogs = [
+    {
+      name: 'Bella',
+      image: 'https://placekitten.com/400/300',
+      description: 'A friendly and energetic dog who loves to play in the park.'
+    },
+    {
+      name: 'Charlie',
+      image: 'https://placekitten.com/401/300',
+      description: 'Loyal and affectionate, Charlie is looking for his forever home.'
+    },
+    {
+      name: 'Max',
+      image: 'https://placekitten.com/402/300',
+      description: 'Max is a calm and gentle dog, perfect for a quiet household.'
+    },
+    {
+      name: 'Lucy',
+      image: 'https://placekitten.com/403/300',
+      description: 'Lucy is adventurous and loves long walks in the mountains.'
+    }
+  ];
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1 >= dogs.length ? 0 : prevSlide + 1));
+  };
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide - 1 < 0 ? dogs.length - 1 : prevSlide - 1));
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -39,86 +56,56 @@ export default function CustomerHomePage() {
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
-    handleCloseMenu();
+    handleCloseMenu(); // Close the menu when opening the dialog
   };
 
   const logoutAction = () => {
     setUser(null);
-    localStorage.setItem('validUser',JSON.stringify(null))
-    router.push(`/loginPage`);
+    router.push(`/loginPage`)
+    
   };
 
   const viewProfile = () => {
     setUser(null);
-    router.push(`/Profile?email=${email}`);
+    router.push(`/Profile?email=${email}`)
+    
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setProfilePictureFile(null); // Reset the file after closing the dialog
+    setTempProfilePicture(null); // Reset the temporary picture when closing
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setProfilePictureFile(file); // Store the file for uploading later
+      const imageUrl = URL.createObjectURL(file);
+      setTempProfilePicture(imageUrl); // Set the temporary image for preview
     }
   };
 
-  const handleSave = async () => {
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
-
-      try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to upload image');
-        }
-
-        // Get the updated user data
-        const updatedUser = await response.json();
-
-        // Update profile picture state
-        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
-          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        } else {
-          setProfilePicture(null);
-        }
-
-        setSnackbarOpen(true);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
-    handleCloseDialog();
-    
+  const handleSave = () => {
+    setProfilePicture(tempProfilePicture); // Save the temporary picture to the main profile picture
+    handleCloseDialog(); // Close the dialog after saving
+    setSnackbarOpen(true); // Open Snackbar
   };
 
-  // Fetch user data and handle the profile picture
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false); // Close the Snackbar
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
-
-    
+      
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
-
-          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
+          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          setUser(data);
-
-          // Set profile picture if exists
-          if (data.profilePicture && data.profilePicture.imageData) {
-            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
-          }
+          setUser(data); // Set the user data
+          
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.');
@@ -156,15 +143,15 @@ export default function CustomerHomePage() {
           </Typography>
           <Button color="inherit">Edit Preferences</Button>
           <Button color="inherit">Adopt a Pet</Button>
-
           <Avatar
-            alt={user.firstName}
+            alt={user.firstName} // Use user's first name for accessibility
             src={profilePicture} // Use the uploaded profile picture here
             sx={{ marginLeft: 2, width: 56, height: 56 }}
             onClick={handleClick}
           />
         </Toolbar>
       </AppBar>
+
       <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
         <Typography variant="h3">Welcome, {user.firstName}</Typography>
         <Typography variant="body1" color="text.secondary">
@@ -172,11 +159,13 @@ export default function CustomerHomePage() {
         </Typography>
       </Stack>
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-        <MenuItem onClick={logoutAction}>Logout</MenuItem>
-        <MenuItem onClick={viewProfile}>View Profile</MenuItem>
       </Menu>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -220,6 +209,13 @@ export default function CustomerHomePage() {
                 Upload Profile Picture
               </Button>
             </label>
+            {tempProfilePicture && ( // Show the temporary profile picture preview
+              <Avatar
+                alt="Profile Picture Preview"
+                src={tempProfilePicture}
+                sx={{ width: 56, height: 56, marginTop: 1 }}
+              />
+            )}
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -236,7 +232,7 @@ export default function CustomerHomePage() {
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-        message="Profile picture updated successfully"
+        message="Personal information updated successfully"
       />
     </main>
   );
