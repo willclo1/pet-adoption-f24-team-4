@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import {
+  Stack,
+  Typography,
+  AppBar,
+  Toolbar,
+  Button,
+  Avatar,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Snackbar,
+} from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const router = useRouter();
-  const { email } = router.query; // Use email from query parameters
+  const { email } = router.query;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,51 +39,91 @@ export default function CustomerHomePage() {
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
-    handleCloseMenu(); // Close the menu when opening the dialog
+    handleCloseMenu();
   };
 
   const logoutAction = () => {
-      router.push(`/loginPage`)
+    setUser(null);
+    localStorage.setItem('validUser',JSON.stringify(null))
+    router.push(`/loginPage`);
+  };
+
+  const viewProfile = () => {
+    setUser(null);
+    router.push(`/Profile?email=${email}`);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setTempProfilePicture(null); // Reset the temporary picture when closing
+    setProfilePictureFile(null); // Reset the file after closing the dialog
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setTempProfilePicture(imageUrl); // Set the temporary image for preview
+      setProfilePictureFile(file); // Store the file for uploading later
     }
   };
 
-  const handleSave = () => {
-    setProfilePicture(tempProfilePicture); // Save the temporary picture to the main profile picture
-    handleCloseDialog(); // Close the dialog after saving
-    setSnackbarOpen(true); // Open Snackbar
+  const handleSave = async () => {
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('image', profilePictureFile);
+
+      try {
+        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        // Get the updated user data
+        const updatedUser = await response.json();
+
+        // Update profile picture state
+        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        } else {
+          setProfilePicture(null);
+        }
+
+        setSnackbarOpen(true);
+        window.location.reload();
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+    handleCloseDialog();
+    
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close the Snackbar
-  };
-
+  // Fetch user data and handle the profile picture
   useEffect(() => {
     const fetchUser = async () => {
+
+    
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
-          if (!response.ok) {
+          const response = await fetch(`http://localhost:8080/users/email/${email}`);
+
+          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          setUser(data); // Set the user data
+          setUser(data);
+
+          // Set profile picture if exists
+          if (data.profilePicture && data.profilePicture.imageData) {
+            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+          }
         } catch (error) {
           console.error('Error fetching user:', error);
-          setError('User not found.'); // Update error state
+          setError('User not found.');
         } finally {
-          setLoading(false); // Loading is done
+          setLoading(false);
         }
       }
     };
@@ -76,16 +131,20 @@ export default function CustomerHomePage() {
     fetchUser();
   }, [email]);
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   if (loading) {
-    return <div>Loading...</div>; // Show a loading message while fetching
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>; // Show the error message if there's an error
+    return <div>{error}</div>;
   }
 
   if (!user) {
-    return <div>User not found.</div>; // Show a fallback if user data isn't available
+    return <div>User not found.</div>;
   }
 
   return (
@@ -99,7 +158,7 @@ export default function CustomerHomePage() {
           <Button color="inherit">Adopt a Pet</Button>
 
           <Avatar
-            alt={user.firstName} // Use user's first name for accessibility
+            alt={user.firstName}
             src={profilePicture} // Use the uploaded profile picture here
             sx={{ marginLeft: 2, width: 56, height: 56 }}
             onClick={handleClick}
@@ -113,16 +172,12 @@ export default function CustomerHomePage() {
         </Typography>
       </Stack>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-      >
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
+        <MenuItem onClick={viewProfile}>View Profile</MenuItem>
       </Menu>
-      
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Edit Personal Information</DialogTitle>
@@ -134,7 +189,7 @@ export default function CustomerHomePage() {
             type="text"
             fullWidth
             variant="outlined"
-            defaultValue={user.firstName} // Pre-fill with existing first name
+            defaultValue={user.firstName}
           />
           <TextField
             margin="dense"
@@ -142,7 +197,7 @@ export default function CustomerHomePage() {
             type="text"
             fullWidth
             variant="outlined"
-            defaultValue={user.lastName} // Pre-fill with existing last name
+            defaultValue={user.lastName}
           />
           <TextField
             margin="dense"
@@ -165,13 +220,6 @@ export default function CustomerHomePage() {
                 Upload Profile Picture
               </Button>
             </label>
-            {tempProfilePicture && ( // Show the temporary profile picture preview
-              <Avatar
-                alt="Profile Picture Preview"
-                src={tempProfilePicture}
-                sx={{ width: 56, height: 56, marginTop: 1 }}
-              />
-            )}
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -184,12 +232,11 @@ export default function CustomerHomePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar to notify user of success */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-        message="Personal information updated successfully"
+        message="Profile picture updated successfully"
       />
     </main>
   );
