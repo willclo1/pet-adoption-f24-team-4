@@ -77,6 +77,8 @@ public class AdoptionCenter {
         if (description.length() > 150) {
             log.error("ERR: Description length exceeds 150 characters");
             this.description = description.substring(0, 150);
+        } else {
+            this.description = description;
         }
     }
 
