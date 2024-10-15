@@ -1,33 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Stack,
-  Typography,
-  AppBar,
-  Toolbar,
-  Button,
-  Avatar,
-  Menu,
-  MenuItem,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Snackbar,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActions
-} from '@mui/material';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [tempProfilePicture, setTempProfilePicture] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
   const router = useRouter();
   const { email } = router.query;
   const [user, setUser] = useState(null);
@@ -76,42 +56,56 @@ export default function CustomerHomePage() {
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
-    handleCloseMenu();
+    handleCloseMenu(); // Close the menu when opening the dialog
+  };
+
+  const logoutAction = () => {
+    setUser(null);
+    router.push(`/loginPage`)
+    
+  };
+
+  const viewProfile = () => {
+    setUser(null);
+    router.push(`/Profile?email=${email}`)
+    
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setTempProfilePicture(null);
+    setTempProfilePicture(null); // Reset the temporary picture when closing
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setTempProfilePicture(imageUrl);
+      setTempProfilePicture(imageUrl); // Set the temporary image for preview
     }
   };
 
   const handleSave = () => {
-    setProfilePicture(tempProfilePicture);
-    handleCloseDialog();
-    setSnackbarOpen(true);
+    setProfilePicture(tempProfilePicture); // Save the temporary picture to the main profile picture
+    handleCloseDialog(); // Close the dialog after saving
+    setSnackbarOpen(true); // Open Snackbar
   };
 
   const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
+    setSnackbarOpen(false); // Close the Snackbar
   };
 
   useEffect(() => {
     const fetchUser = async () => {
+      
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
+          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          setUser(data);
+          setUser(data); // Set the user data
+          
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.');
@@ -123,6 +117,10 @@ export default function CustomerHomePage() {
 
     fetchUser();
   }, [email]);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -146,8 +144,8 @@ export default function CustomerHomePage() {
           <Button color="inherit">Edit Preferences</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
-            alt={user.firstName}
-            src={profilePicture}
+            alt={user.firstName} // Use user's first name for accessibility
+            src={profilePicture} // Use the uploaded profile picture here
             sx={{ marginLeft: 2, width: 56, height: 56 }}
             onClick={handleClick}
           />
@@ -161,60 +159,6 @@ export default function CustomerHomePage() {
         </Typography>
       </Stack>
 
-      {/* Slider Section */}
-      <div className="slider-container">
-        <Button onClick={handlePrevSlide}>Previous</Button>
-        <div className="slider">
-          <Card
-            sx={{
-              width: 400,
-              height: 450,
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'transform 0.5s ease-in-out',
-            }}
-          >
-            <CardMedia
-              component="img"
-              height="250"
-              image={dogs[currentSlide].image}
-              alt={dogs[currentSlide].name}
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {dogs[currentSlide].name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {dogs[currentSlide].description}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
-        </div>
-        <Button onClick={handleNextSlide}>Next</Button>
-      </div>
-
-      {/* Styles for Slider */}
-      <style jsx>{`
-        .slider-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 20px;
-        }
-
-        .slider {
-          display: flex;
-          overflow: hidden;
-          width: 450px; /* Width of the slider */
-          position: relative;
-        }
-      `}</style>
-
-      {/* Menu and Dialog */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -265,7 +209,7 @@ export default function CustomerHomePage() {
                 Upload Profile Picture
               </Button>
             </label>
-            {tempProfilePicture && (
+            {tempProfilePicture && ( // Show the temporary profile picture preview
               <Avatar
                 alt="Profile Picture Preview"
                 src={tempProfilePicture}
@@ -284,13 +228,12 @@ export default function CustomerHomePage() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar to notify user of success */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
         message="Personal information updated successfully"
-        />
+      />
     </main>
   );
 }

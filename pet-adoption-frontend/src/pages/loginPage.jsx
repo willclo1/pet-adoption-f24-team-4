@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import PetsIcon from '@mui/icons-material/Pets';
 
 
@@ -9,13 +10,16 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [userType, setUserType] = useState('');
+    const [currentUser,setCurrentUser] = useState(null);
     const router = useRouter(); // Initialize the router
+
 
     const handleForgotClick = () => {
       };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         try {
             const response = await fetch("http://localhost:8080/login", {
                 method: 'POST',
@@ -29,7 +33,9 @@ export default function LoginPage() {
                 throw new Error("Bad network response");
             }
             const result = await response.json();
+            
             setMessage(result.message);
+            localStorage.setItem('validUser', JSON.stringify(email));
 
             // Route to customer home page if login is successful
             if (response.status === 200) {

@@ -33,6 +33,9 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 
+
+	// JJWT library for handling JWTs
+
 	// Utility libraries
 	implementation 'com.google.guava:guava:33.0.0-jre'
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
