@@ -19,7 +19,6 @@ services:
       - '8080:8080'
     environment:
       MYSQL_HOST: db
-      MYSQL_PORT: 3306  # Internal port of MySQL container
 
   db:
     image: mysql:8.4.2
@@ -32,12 +31,8 @@ services:
       MYSQL_DATABASE: petadoption
     volumes:
       - mysql-data:/var/lib/mysql
-
 volumes:
   mysql-data:
-
-# Note: We are taking advantage of the Docker network that is automatically created 
-# so that these containers are able to communicate with each other.
 
 # Note: we are taking advantage of the Docker network that is automatically created so
 # that these containers are able to communicate with each other.
