@@ -38,8 +38,6 @@ export default function HomePage() {
 
             {/* Another way is by creating a dedicated CSS file and using the styles from there: */}
             <Button variant='contained' color="secondary" onClick={handleRegisterSelect} className={styles.wideButton}>Register</Button>
-
-            <Button variant='contained' color="prima" onClick={handleRegisterSelect} className={styles.wideButton}>Register a new Adoption Center</Button>
           </Stack>
         </Stack>
       </main>
