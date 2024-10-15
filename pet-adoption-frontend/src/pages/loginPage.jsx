@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import PetsIcon from '@mui/icons-material/Pets';
 
 
