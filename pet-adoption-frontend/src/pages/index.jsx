@@ -41,6 +41,9 @@ export default function HomePage() {
       case 'Contact':
         //router.push("/contactPage");
         break;
+      case 'Register Center':
+        router.push("/registerCenterPage");
+        break;
       default:
         console.error("Unknown", message);
         break;
@@ -86,6 +89,9 @@ export default function HomePage() {
               <ListItemButton onClick={() => handleNavigation('Register')} sx={{ pl: 4 }}>
                 <ListItemText>Register</ListItemText>
               </ListItemButton>
+              <ListItemButton onClick={() => handleNavigation('Register Center')} sx={{ pl: 4 }}>
+                <ListItemText>Register Adoption Center</ListItemText>
+              </ListItemButton>
           </List>
         </Collapse>
 
@@ -104,12 +110,6 @@ export default function HomePage() {
       </List>
     </Box>
   );
-    router.push('/registerPage');
-  };
-
-  const handleRegisterAdoptionCenter = () => {
-    router.push('/registerAdoptionCenter');
-  };
 
   return (
     <>
@@ -133,31 +133,32 @@ export default function HomePage() {
 
         <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}> {list('left')} </Drawer>
 
-        {/* Home page content */}
+        {/* Home page content
         <Stack sx={{ paddingTop: 4 }} alignItems='center' gap={2}>
           <Card sx={{ width: 600 }} elevation={4}>
-        <Stack sx={{ paddingTop: 8 }} alignItems="center" gap={4}>
-          <Card sx={{ width: 600 }} elevation={6}>
-            <CardContent>
-              <Typography variant="h3" align="center" gutterBottom>
-                Welcome to Whisker Works!
-              </Typography>
-              <Typography variant="body1" color="text.secondary" align="center">
-                Select an option below to login, register, or register a new adoption center.
-              </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
-                <img
-                  src="https://side-out.org/wp-content/uploads/2021/07/5200.jpg"
-                  width={400}
-                  height={300}
-                  alt="Adoption Center"
-                  style={{ borderRadius: '8px' }}
-                />
-              </Box>
-            </CardContent>
-
+            <Stack sx={{ paddingTop: 8 }} alignItems="center" gap={4}>
+              <Card sx={{ width: 600 }} elevation={6}>
+                <CardContent>
+                  <Typography variant="h3" align="center" gutterBottom>
+                    Welcome to Whisker Works!
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" align="center">
+                    Select an option below to login, register, or register a new adoption center.
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+                    <img
+                      src="https://side-out.org/wp-content/uploads/2021/07/5200.jpg"
+                      width={400}
+                      height={300}
+                      alt="Adoption Center"
+                      style={{ borderRadius: '8px' }}
+                    />
+                  </Box>
+                </CardContent>
+                </Stack>
+              </Card>
           </Card>
-        </Stack>
+        </Stack>; */}
       </main>
     </>
   );
