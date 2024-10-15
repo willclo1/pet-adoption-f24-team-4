@@ -14,7 +14,3 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        boot:
-          allow_jdbc_metadata_access: false
