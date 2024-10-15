@@ -17,8 +17,15 @@ export default function Profile() {
   const [password, setPassword] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
   const [currentPassword, setCurrentPassowrd] = useState(null);
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
 
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setProfilePictureFile(file); // Store the file for uploading later
+    }
+  };
 
   const deleteAccount = async (e) => {
     e.preventDefault();
@@ -86,6 +93,41 @@ export default function Profile() {
 
   }
 
+
+  const handleSave = async () => {
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('image', profilePictureFile);
+
+      try {
+        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        // Get the updated user data
+        const updatedUser = await response.json();
+
+        // Update profile picture state
+        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        } else {
+          setProfilePicture(null);
+        }
+
+        setSnackbarOpen(true);
+        window.location.reload(); // Reload to refresh user data
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+  
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       
@@ -100,7 +142,9 @@ export default function Profile() {
           setUser(data); // Set the user data
           
           console.log(data.password);
-          //setFirstName(data.firstName);
+          if (data.profilePicture && data.profilePicture.imageData) {
+            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+          }
           setPassword(data.password);
         } catch (error) {
           console.error('Error fetching user:', error);
@@ -199,8 +243,6 @@ export default function Profile() {
 
             <td> 
               <section className='square'>
-                <Typography variant="h6">DELETE ACCOUNT</Typography>
-                
                 <Button
                   onClick={deleteAccount}
                   //type="submit"
@@ -208,8 +250,8 @@ export default function Profile() {
                   fullWidth
                   fullHeight
                   sx={{
-                      marginBottom:0,
-                      paddingY: 20,
+                      marginBottom:0.5,
+                      paddingY: 0,
                       borderRadius: 1.5,
                       marginLeft: 0,
                       backgroundColor: 'red',
@@ -218,27 +260,43 @@ export default function Profile() {
                       },
                     }}
                   >
-                      DELETE
+                      DELETE ACCOUNT
                 </Button>
               </section>
 
             </td>
             <td> 
-              {/* <section className='square'>
-              <Typography variant="h6">Change Password:</Typography>
-                <form onSubmit={changePassword()}>
-                <TextField
-                  label="First Name"
-                  variant="outlined"
-                  //fullWidth
-                  margin="normal"
-                  //value={firstName}
-                  //onChange={(e) => setFirst(e.target.value)}
-                  required
-                  sx={{ borderRadius: 2 }}
-                />
-                </form>
-              </section> */}
+              <section className='square'>
+              <Typography variant="h6">Change Profile Picture:</Typography>
+               <Stack marginTop={2}>
+               <Avatar
+                  src={profilePicture} // Use the uploaded profile picture here
+                  sx={{ marginLeft: 7
+                    , width: 225
+                    , height: 225 }}
+            />
+            <Typography variant="body1">Profile Picture</Typography>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="profile-picture-upload"
+              type="file"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="profile-picture-upload">
+              <Button variant="contained" component="span">
+                Upload Profile Picture
+              </Button>
+            
+
+            <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+          </label>
+          </Stack>
+
+
+              </section> 
 
             </td>
         
