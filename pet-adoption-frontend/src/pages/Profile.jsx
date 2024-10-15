@@ -11,18 +11,78 @@ export default function Profile() {
   const { email } = router.query; // Use email from query parameters
  
   const [user, setUser] = useState(null);
+  const [firstName, setFirstName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [password, setPassword] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
   const [currentPassword, setCurrentPassowrd] = useState(null);
 
 
-  const changePassword = () => {
 
+  const deleteAccount = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/profile", {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+
+        body: JSON.stringify({ email: email, password: password })
+      });
+
+      if (!response.ok) {
+          throw new Error("Bad network response");
+      }
+      const result = await response.json();
+      
+      if(response.status == 200){
+          console.log('WE LIKE FOTNITE')
+      }
+      } catch (error) {
+      console.error("Error logging in: ", error);
+      //setMessage("NOOB");
+      }
+      router.push(`/`);
+
+
+  }
+
+  const changePassword = async (e) => {
+    e.preventDefault();
     console.log('LKJSDN');
     console.log(currentPassword);
-    console.log(newPassword);
-    
+
+    if(currentPassword == password && newPassword != null){
+      setPassword(newPassword);
+      console.log('YOur new Password is:' +newPassword);
+      try {
+        const response = await fetch("http://localhost:8080/profile", {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+  
+  
+          body: JSON.stringify({ email: email, password: newPassword })
+        });
+  
+        if (!response.ok) {
+            throw new Error("Bad network response");
+        }
+        const result = await response.json();
+        
+        if(response.status == 200){
+            console.log('WE LIKE FOTNITE')
+        }
+        } catch (error) {
+        console.error("Error logging in: ", error);
+        //setMessage("NOOB");
+        }
+    }
 
   }
 
@@ -40,6 +100,8 @@ export default function Profile() {
           setUser(data); // Set the user data
           
           console.log(data.password);
+          //setFirstName(data.firstName);
+          setPassword(data.password);
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.'); // Update error state
@@ -83,8 +145,8 @@ export default function Profile() {
       <Stack>
 
         <table>
+          
           <tr>
-            <th></th>
             <td >
             <section className='square'>
               <Typography variant="h6">Change Password:</Typography>
@@ -101,6 +163,7 @@ export default function Profile() {
                 />
                 <TextField
                   label="New Password"
+                  
                   variant="outlined"
                   //fullWidth
                   margin="normal"
@@ -109,45 +172,54 @@ export default function Profile() {
                   required
                   sx={{ borderRadius: 2 }}
                 />
-                
                 <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                        marginBottom:0,
-                        paddingY: 1.5,
-                        borderRadius: 2.5,
-                        marginLeft: 0,
-                        backgroundColor: '#1976d2',
-                        '&:hover': {
-                            backgroundColor: '#1565c0',
-                        },
+                  onClick={changePassword}
+                  //type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                      marginBottom:0,
+                      paddingY: 1.5,
+                      borderRadius: 2.5,
+                      marginLeft: 0,
+                      backgroundColor: '#1976d2',
+                      '&:hover': {
+                          backgroundColor: '#1565c0',
+                      },
                     }}
-                    onClick={changePassword}
                   >
                     Change Password
                 </Button>
+                
               </form>
-            
+              
 
             </section>
             </td>
 
             <td> 
               <section className='square'>
-              <Typography variant="h6">DELETE ACCOUNT</Typography>
-                <form onSubmit={changePassword()}>
-                  <TextField
-                    label="First Name"
-                    variant="outlined"
-                    //fullWidth
-                    margin="normal"
-                    //value={firstName}
-                    //onChange={(e) => setFirst(e.target.value)}
-                    required
-                    sx={{ borderRadius: 2 }}
-                  />
-                </form>
+                <Typography variant="h6">DELETE ACCOUNT</Typography>
+                
+                <Button
+                  onClick={deleteAccount}
+                  //type="submit"
+                  variant="contained"
+                  fullWidth
+                  fullHeight
+                  sx={{
+                      marginBottom:0,
+                      paddingY: 20,
+                      borderRadius: 1.5,
+                      marginLeft: 0,
+                      backgroundColor: 'red',
+                      '&:hover': {
+                          backgroundColor: 'darkRed',
+                      },
+                    }}
+                  >
+                      DELETE
+                </Button>
               </section>
 
             </td>

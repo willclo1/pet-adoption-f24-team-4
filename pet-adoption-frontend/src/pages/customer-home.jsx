@@ -18,6 +18,12 @@ export default function CustomerHomePage() {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleLoginInformation = () => {
+
+    router.push(`/Profile?email=${email}`);
+
+  }
+
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
@@ -151,7 +157,7 @@ export default function CustomerHomePage() {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
+        <MenuItem onClick={handleLoginInformation}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>

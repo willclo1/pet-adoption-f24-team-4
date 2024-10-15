@@ -96,7 +96,7 @@ export default function RegisterPage() {
                         Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
-                        <TextField
+                    <TextField
                             label="First Name"
                             variant="outlined"
                             fullWidth
