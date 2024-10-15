@@ -20,10 +20,10 @@ public class AdoptionCenterService {
     public Optional<AdoptionCenter> getCenter(Long centerID){
         return repository.findById(centerID);
     }
+
     public AdoptionCenter saveCenter(AdoptionCenter center) {
         return repository.save(center);
     }
-
 
     public List<AdoptionCenter> getAllAdoptionCenters() {
         return repository.findAll();

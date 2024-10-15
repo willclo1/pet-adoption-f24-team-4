@@ -8,6 +8,7 @@ import petadoption.api.pet.Pet;
 import petadoption.api.user.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/adoption-centers")
@@ -28,5 +29,11 @@ public class AdoptionCenterEndpoint {
     public String addSampleCenters() {
         adoptionCenterService.addSampleAdoptionCenters();
         return "Sample adoption centers added successfully.";
+    }
+
+    //
+    @GetMapping("/{adoptionID}")
+    public Optional<AdoptionCenter> getAdoptionCenter(@PathVariable Long adoptionID) {
+        return adoptionCenterService.getCenter(adoptionID);
     }
 }
