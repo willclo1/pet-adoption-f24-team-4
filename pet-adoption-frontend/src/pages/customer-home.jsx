@@ -6,45 +6,13 @@ export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [tempProfilePicture, setTempProfilePicture] = useState(null); // Temporary state for dialog preview
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
   const router = useRouter();
   const { email } = router.query;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Example dog data: names, image URLs, and descriptions
-  const dogs = [
-    {
-      name: 'Bella',
-      image: 'https://placekitten.com/400/300',
-      description: 'A friendly and energetic dog who loves to play in the park.'
-    },
-    {
-      name: 'Charlie',
-      image: 'https://placekitten.com/401/300',
-      description: 'Loyal and affectionate, Charlie is looking for his forever home.'
-    },
-    {
-      name: 'Max',
-      image: 'https://placekitten.com/402/300',
-      description: 'Max is a calm and gentle dog, perfect for a quiet household.'
-    },
-    {
-      name: 'Lucy',
-      image: 'https://placekitten.com/403/300',
-      description: 'Lucy is adventurous and loves long walks in the mountains.'
-    }
-  ];
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide + 1 >= dogs.length ? 0 : prevSlide + 1));
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide - 1 < 0 ? dogs.length - 1 : prevSlide - 1));
-  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -61,47 +29,70 @@ export default function CustomerHomePage() {
 
   const logoutAction = () => {
     setUser(null);
-    router.push(`/loginPage`)
-    
-  };
-
-  const viewProfile = () => {
-    setUser(null);
-    router.push(`/Profile?email=${email}`)
-    
+    router.push(`/loginPage`);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setTempProfilePicture(null); // Reset the temporary picture when closing
+    setProfilePictureFile(null); // Reset the file when closing the dialog
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setTempProfilePicture(imageUrl); // Set the temporary image for preview
+      setProfilePictureFile(file); // Store the file for uploading later
     }
   };
 
-  const handleSave = () => {
-    setProfilePicture(tempProfilePicture); // Save the temporary picture to the main profile picture
-    handleCloseDialog(); // Close the dialog after saving
-    setSnackbarOpen(true); // Open Snackbar
+  const handleSave = async () => {
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('image', profilePictureFile);
+
+      try {
+        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        // Get the updated user data
+        const updatedUser = await response.json();
+
+        // Update profile picture state
+        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        } else {
+          setProfilePicture(null);
+        }
+
+        setSnackbarOpen(true);
+        window.location.reload(); // Reload to refresh user data
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+    handleCloseDialog();
   };
 
   useEffect(() => {
     const fetchUser = async () => {
-      
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          const response = await fetch(`http://localhost:8080/users/email/${email}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          setUser(data); // Set the user data
-          
+          setUser(data);
+
+          // Set profile picture if exists
+          if (data.profilePicture && data.profilePicture.imageData) {
+            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+          }
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.');
@@ -115,7 +106,7 @@ export default function CustomerHomePage() {
   }, [email]);
 
   const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
+    setSnackbarOpen(false); // Close the Snackbar
   };
 
   if (loading) {
@@ -162,6 +153,7 @@ export default function CustomerHomePage() {
       >
         <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+        <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -205,10 +197,10 @@ export default function CustomerHomePage() {
                 Upload Profile Picture
               </Button>
             </label>
-            {tempProfilePicture && ( // Show the temporary profile picture preview
+            {profilePicture && ( // Show the profile picture preview
               <Avatar
                 alt="Profile Picture Preview"
-                src={tempProfilePicture}
+                src={profilePicture}
                 sx={{ width: 56, height: 56, marginTop: 1 }}
               />
             )}
@@ -228,7 +220,7 @@ export default function CustomerHomePage() {
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-        message="Personal information updated successfully"
+        message="Profile picture updated successfully"
       />
     </main>
   );
