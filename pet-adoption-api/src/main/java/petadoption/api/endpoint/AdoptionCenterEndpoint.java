@@ -5,8 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
-import petadoption.api.pet.Pet;
-import petadoption.api.user.User;
 
 import java.util.List;
 import java.util.Optional;
