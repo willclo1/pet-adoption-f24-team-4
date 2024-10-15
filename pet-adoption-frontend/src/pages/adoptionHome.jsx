@@ -44,6 +44,7 @@ export default function AdoptionHome() {
   };
 
   const logoutAction = () => {
+    localStorage.setItem('validUser',JSON.stringify(null))
     router.push(`/loginPage`);
   };
 
@@ -98,7 +99,7 @@ export default function AdoptionHome() {
       if (email) {
         try {
           const response = await fetch(`http://localhost:8080/users/email/${email}`);
-          if (!response.ok) {
+          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
