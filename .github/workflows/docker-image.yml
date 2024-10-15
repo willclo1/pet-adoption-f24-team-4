@@ -1,0 +1,28 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted  # Ensure your self-hosted runner is set up correctly
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: List Docker Directory
+        run: |
+          ls -la docker/  # List contents of the docker directory
+
+      - name: Build Docker Images
+        run: |
+          docker compose -f docker/ci.docker-compose.yml build
+
+      - name: Deploy Docker Containers
+        run: |
+          docker compose -f docker/ci.docker-compose.yml down
+          docker compose -f docker/ci.docker-compose.yml up -d --build
+          docker image prune -af

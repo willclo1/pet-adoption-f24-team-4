@@ -42,4 +42,5 @@ public class UserService {
 
     public Optional<User> findUserByEmail(String emailAddress) {return userRepository.findByEmailAddress(emailAddress);}
 
+    public Optional<Long> findAdoptionIDByEmailAddress(String email) { return userRepository.findAdoptionIDByEmailAddress(email); }
 }
