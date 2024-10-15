@@ -39,6 +39,17 @@ public class UserEndpoint {
         }
     }
 
+    @GetMapping("/users/adoption-center/{email}")
+    public Optional<Long> findAdoptionIDByEmail(@PathVariable String email) {
+        Optional<User> userOptional = userService.findUserByEmail(email);
+
+        if (userOptional.isPresent()) {
+            log.info("User found with email: {}", email);
+            return userService.findAdoptionIDByEmailAddress(email);
+        }
+        return null;
+    }
+
 //    @PostMapping("/users")
 //    public User saveUser(@RequestBody User user) {
 //        return userService.saveUser();

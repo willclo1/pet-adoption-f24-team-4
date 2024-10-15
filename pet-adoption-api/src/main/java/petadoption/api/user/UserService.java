@@ -18,7 +18,7 @@ public class UserService {
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
 
-    public Optional<User> findUser(Long userId)  {
+    public Optional<User> findUser(Long userId) {
         return userRepository.findById(userId);
     }
 
@@ -42,22 +42,4 @@ public class UserService {
 
     public Optional<User> findUserByEmail(String emailAddress) {return userRepository.findByEmailAddress(emailAddress);}
 
-    public void changePassword(ChangePassword ucer) {
-        User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
-        if(!user.getPassword().equals(ucer.getPassword())) {
-            user.setPassword(ucer.getPassword());
-            userRepository.save(user);
-
-        }
-    }
-
-    public void deleteUser(ChangePassword ucer) {
-
-        User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
-        if(user.getEmailAddress().equals(ucer.getEmail())) {
-            userRepository.delete(user);
-
-        }
-
-    }
 }
