@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [userType, setUserType] = useState('');
     const [currentUser,setCurrentUser] = useState(null);
     const router = useRouter(); // Initialize the router
+    const [isSuccess, setIsSuccess] = useState(null);
 
 
     const handleForgotClick = () => {
@@ -39,6 +40,7 @@ export default function LoginPage() {
 
             // Route to customer home page if login is successful
             if (response.status === 200) {
+                setIsSuccess(true);
                 const userType = result.userType;
                 if(userType == "User"){
                     router.push(`/customer-home?email=${email}`); 
@@ -48,12 +50,14 @@ export default function LoginPage() {
                 }
                 else{
             
-                    setMessage("Login failed. Please try again.");
+                    setMessage("Login failed. Please try again");
+                    setIsSuccess(false);
                 }
             }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
+            setIsSuccess(false);
         }
     };
 
@@ -70,7 +74,7 @@ export default function LoginPage() {
             }}
         >
             <Typography variant = "h1" sx={{ marginBottom: 8 }}>Whisker Works</Typography>
-        
+
             <Card sx={{ width: 400, boxShadow: 7, marginTop: 7 }}>
                 <CardContent>
                     <Typography variant="h4" align="center" gutterBottom>
@@ -121,9 +125,10 @@ export default function LoginPage() {
                     {message && (
                         <Typography
                             variant="body2"
-                            color="error"
                             align="center"
-                            sx={{ marginTop: 2 }}
+                            sx={{ marginTop: 2,
+                                color: isSuccess ? 'green' : 'red'
+                             }}
                         >
                             {message}
                         </Typography>

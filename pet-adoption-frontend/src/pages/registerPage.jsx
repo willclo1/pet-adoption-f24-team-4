@@ -58,7 +58,7 @@ export default function RegisterPage() {
             }
         } catch (error) {
             console.error("Error logging in: ", error);
-            setMessage("Login failed. Please try again.");
+            setMessage("Register failed. Please try again.");
         }
     };
 
