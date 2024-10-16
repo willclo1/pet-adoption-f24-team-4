@@ -146,7 +146,7 @@ export default function Profile() {
       if (email) {
         try {
           const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
-          if (!response.ok) {
+          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
