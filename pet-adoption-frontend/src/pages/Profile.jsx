@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { red } from '@mui/material/colors';
-
+import config from '@/config/config';
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -22,6 +22,7 @@ export default function Profile() {
   const [passwordMessgae,setPasswordMessage] = useState('');
   const [passColor, setPassColor] = useState(null);
 
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -37,7 +38,7 @@ export default function Profile() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/profile", {
+      const response = await fetch(`http://${config.API_URL}/profile`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export default function Profile() {
       setPassword(newPassword);
       console.log('YOur new Password is:' +newPassword);
       try {
-        const response = await fetch("http://localhost:8080/profile", {
+        const response = await fetch(`http://${config.API_URL}/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -116,12 +117,12 @@ export default function Profile() {
       formData.append('image', profilePictureFile);
       
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`http://${config.API_URL}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
       
-        const reponse = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+        const reponse = await fetch(`http://${config.API_URL}/users/email/${email}`); // Updated to fetch by email
           
         if (!response.ok) {
           throw new Error('Failed to upload image');
@@ -154,7 +155,7 @@ export default function Profile() {
 
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          const response = await fetch(`http://${config.API_URL}/users/email/${email}`); // Updated to fetch by email
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }

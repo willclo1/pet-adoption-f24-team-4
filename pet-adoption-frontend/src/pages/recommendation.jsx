@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Box, Card, CardContent, Typography } from '@mui/material';
+import config from '@/config/config';
 
 export default function Recommendation() {
     const [data, setData] = useState('');
@@ -8,7 +9,7 @@ export default function Recommendation() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/recommendation");
+                const response = await fetch(`http://${config.API_URL}/recommendation`);
                 if (!response.ok) {
                     throw new Error("Bad network response");
                 }

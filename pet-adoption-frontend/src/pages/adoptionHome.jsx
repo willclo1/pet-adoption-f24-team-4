@@ -17,6 +17,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import config from '@/config/config';
 
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,7 +67,7 @@ export default function AdoptionHome() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`http://${config.API_URL}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
@@ -98,7 +99,7 @@ export default function AdoptionHome() {
     const fetchUser = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
+          const response = await fetch(`http://${config.API_URL}/users/email/${email}`);
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
             throw new Error('Network response was not ok');
           }

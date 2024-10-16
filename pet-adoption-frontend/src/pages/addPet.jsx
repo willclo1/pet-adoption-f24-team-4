@@ -3,8 +3,11 @@ import { useRouter } from 'next/router';
 import { Box, Card, CardContent, TextField, Typography, Button, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import config from '@/config/config';
+
 
 export default function AddPet() {
+
   const [petType, setPetType] = useState('');
   const [firstName, setFirst] = useState('');
   const [lastName, setLast] = useState('');
@@ -18,7 +21,7 @@ export default function AddPet() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try{
-    const response = await fetch("http://localhost:8080/addPet", {
+    const response = await fetch(`http://${config.API_URL}/addPet`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

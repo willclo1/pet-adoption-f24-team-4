@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
+import config from '@/config/config';
 
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -13,6 +14,7 @@ export default function CustomerHomePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,7 +58,7 @@ export default function CustomerHomePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`http://${config.API_URL}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
@@ -88,7 +90,7 @@ export default function CustomerHomePage() {
     const fetchUser = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
+          const response = await fetch(`http://${config.API_URL}/users/email/${email}`);
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }

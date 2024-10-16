@@ -8,6 +8,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
+import config from '@/config/config';
 
 export default function RecommendationEnginePage() {
   const [state, setState] = useState({ left: false });
@@ -35,7 +36,7 @@ export default function RecommendationEnginePage() {
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/email/${email}`);
+      const response = await fetch(`http://${config.API_URL}/users/email/${email}`);
       if (!response.ok) throw new Error('Failed to fetch user data');
       const data = await response.json();
       setUser(data);
@@ -78,7 +79,7 @@ export default function RecommendationEnginePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${userEmail}`, {
+        const response = await fetch(`http://${config.API_URL}/user/profile-image/${userEmail}`, {
           method: 'POST',
           body: formData,
         });

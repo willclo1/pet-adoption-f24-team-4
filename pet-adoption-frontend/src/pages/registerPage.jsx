@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useRouter } from 'next/router'; 
+import config from '@/config/config';
 
 export default function RegisterPage() {
     const [firstName, setFirst] = useState('');
@@ -23,7 +24,7 @@ export default function RegisterPage() {
     useEffect(()=> {
         const fetchAdoptionCenters = async() => {
             try{
-                const respose = await fetch("http://localhost:8080/adoption-centers");
+                const respose = await fetch(`http://${config.API_URL}/adoption-centers`);
                 if(!respose.ok){
                     throw new Error("Failed to fetch Adoption Centers")
                 }
@@ -43,7 +44,7 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/register", {
+            const response = await fetch(`http://${config.API_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

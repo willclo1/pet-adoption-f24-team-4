@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   TextField, Button, Paper, Box, Typography,  Grid } from '@mui/material';
 import { useRouter } from 'next/router';
+import config from '@/config/config';
 
 export default function ModifyAdoptionCenter() {
   const router = useRouter();
@@ -11,13 +12,14 @@ export default function ModifyAdoptionCenter() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
   // Attempt to retrieve adoption center information
   useEffect(
     () => {
       const fetchAdoptionCenter = async() => {
         if (adoptionID) {
           try {
-            const response = await fetch(`http://localhost:8080/adoption-centers/${adoptionID}`);
+            const response = await fetch(`http://${config.API_URL}/adoption-centers/${adoptionID}`);
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
@@ -40,7 +42,7 @@ export default function ModifyAdoptionCenter() {
   const handleAdoptionCenterEditSubmit = async () => {
     //s.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/adoption-centers/updateAdoptionCenter", {
+      const response = await fetch(`http://${config.API_URL}/adoption-centers/updateAdoptionCenter`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(adoptionCenter)
