@@ -117,7 +117,7 @@ export default function AdoptionHome() {
         }
       }
     };
-
+    
     fetchUser();
   }, [email]);
 
@@ -160,6 +160,15 @@ export default function AdoptionHome() {
       query: { adoptionID, email },
     });
   }
+
+  const handleModifyAdoptionCenterProfile= () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/modifyAdoptionCenterProfile',
+      query: { adoptionID, email },
+    });
+    
+  } 
 
   return (
     <main>
@@ -240,6 +249,28 @@ export default function AdoptionHome() {
               sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
             >
               Modify Adoption Center Information
+            </Button>
+          </Box>
+
+
+          <Box
+            sx={{
+              width: 300,
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+              Modify Adoption Center Profile Page
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleModifyAdoptionCenterProfile}
+              sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
+            >
+              Edit Profile
             </Button>
           </Box>
         </Stack>

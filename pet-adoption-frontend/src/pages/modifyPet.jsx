@@ -59,30 +59,30 @@ export default function modifyPet() {
     };
 
     const handleModifyPet = async () => {
-            if (window.confirm("Are you sure you want to modify this pet?")) {
-                try {
-                    const response = await fetch(`http://localhost:8080/updatePet`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(selectedPet),
-                    });
+      if (window.confirm("Are you sure you want to modify this pet?")) {
+          try {
+              const response = await fetch(`http://localhost:8080/updatePet`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(selectedPet),
+              });
 
-                    if (!response.ok) {
-                        throw new Error("Failed to modify the pet");
-                    }
+              if (!response.ok) {
+                  throw new Error("Failed to modify the pet");
+              }
 
-                    setPets((prevPets) => 
-                        prevPets.map((pet) => (pet.id === selectedPet.id ? { ...pet, ...selectedPet } : pet))
-                    );
-                    setOpenDialog(false); // Close dialog after modifying
-                } catch (error) {
-                    console.error("Error modifying Pet:", error);
-                    setError("Failed to modify the pet.");
-                }
-            }
-        };
+              setPets((prevPets) => 
+                  prevPets.map((pet) => (pet.id === selectedPet.id ? { ...pet, ...selectedPet } : pet))
+              );
+              setOpenDialog(false); // Close dialog after modifying
+          } catch (error) {
+              console.error("Error modifying Pet:", error);
+              setError("Failed to modify the pet.");
+          }
+      }
+    };
 
      if (loading) {
     return (
