@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { red } from '@mui/material/colors';
 
 
 export default function Profile() {
@@ -18,7 +19,8 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState(null);
   const [currentPassword, setCurrentPassowrd] = useState(null);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
-
+  const [passwordMessgae,setPasswordMessage] = useState('');
+  const [passColor, setPassColor] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -87,12 +89,19 @@ export default function Profile() {
         const result = await response.json();
         
         if(response.status == 200){
+          setPassColor('green')
+          setPasswordMessage('Password Successfully Changed');
             console.log('WE LIKE FOTNITE')
         }
         } catch (error) {
         console.error("Error logging in: ", error);
         //setMessage("NOOB");
         }
+    }
+    else{
+      setPassColor('red');
+      setPasswordMessage('Please Enter the Correct Password');
+
     }
 
   }
@@ -247,7 +256,8 @@ export default function Profile() {
                 </Button>
                 
               </form>
-              
+              <Typography sx={{color: `${passColor}`,fontSize: 18 }}>{passwordMessgae}</Typography>
+    
 
             </section>
             </td>
