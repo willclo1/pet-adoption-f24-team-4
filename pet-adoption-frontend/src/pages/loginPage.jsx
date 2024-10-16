@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useRouter } from 'next/router';
 import PetsIcon from '@mui/icons-material/Pets';
+import config from './config/config';
 
 
 export default function LoginPage() {
@@ -17,7 +18,7 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/login", {
+            const response = await fetch(`http://${config.API_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

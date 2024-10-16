@@ -4,6 +4,7 @@ import { DialogActions,
     DialogContent, Dialog, DialogTitle,
     ListItemSecondaryAction, Button, Divider, Paper, Box, Typography, CircularProgress, List, ListItem, ListItemText } from '@mui/material';
 import { Router, useRouter } from 'next/router';
+import config from './config/config';
 
 export default function modifyPet() {
         const router = useRouter();
@@ -17,7 +18,7 @@ export default function modifyPet() {
         useEffect(()=> {
         const fetchPets = async() => {
             try{
-                const response = await fetch(`http://localhost:8080/pets/${adoptionID}`);
+                const response = await fetch(`http://${config.API_URL}/pets/${adoptionID}`);
                 if(!response.ok){
                     throw new Error("Failed to fetch Pets")
                 }
@@ -38,7 +39,7 @@ export default function modifyPet() {
      const handleDelete = async (petId) => {
         if (window.confirm("Are you sure you want to delete this pet?")) {
             try {
-                const response = await fetch(`http://localhost:8080/deletePet`, {
+                const response = await fetch(`http://${config.API_URL}/deletePet`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -59,15 +60,15 @@ export default function modifyPet() {
     };
 
     const handleModifyPet = async () => {
-            if (window.confirm("Are you sure you want to modify this pet?")) {
-                try {
-                    const response = await fetch(`http://localhost:8080/updatePet`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(selectedPet),
-                    });
+      if (window.confirm("Are you sure you want to modify this pet?")) {
+          try {
+              const response = await fetch(`http://${config.API_URL}/updatePet`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(selectedPet),
+              });
 
                     if (!response.ok) {
                         throw new Error("Failed to modify the pet");
