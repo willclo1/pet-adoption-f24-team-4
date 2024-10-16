@@ -27,6 +27,10 @@ export default function Profile() {
     }
   };
 
+  const updateProfilePicture = (newPictureUrl) => {
+    setProfilePicture(newPictureUrl);
+  };
+
   const deleteAccount = async (e) => {
     e.preventDefault();
 
@@ -95,22 +99,29 @@ export default function Profile() {
 
 
   const handleSave = async () => {
+    
+    console.log('WEHIWRIF');
+        //console.log(updatedUser);
     if (profilePictureFile) {
       const formData = new FormData();
       formData.append('image', profilePictureFile);
-
+      
       try {
         const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
-
+      
+        const reponse = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          
         if (!response.ok) {
           throw new Error('Failed to upload image');
         }
 
         // Get the updated user data
-        const updatedUser = await response.json();
+        const updatedUser = await reponse.json();
+        console.log('WEHIWRIF');
+        console.log(updatedUser);
 
         // Update profile picture state
         if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
@@ -118,7 +129,7 @@ export default function Profile() {
         } else {
           setProfilePicture(null);
         }
-
+        
         setSnackbarOpen(true);
         window.location.reload(); // Reload to refresh user data
       } catch (error) {
