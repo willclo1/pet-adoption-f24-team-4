@@ -20,7 +20,7 @@ jobs:
       - name: Prune Docker Info
         run: |
           echo "Pruning unused Docker images..."
-          ddocker system prune -a --volumes
+          docker system prune -a --volumes
           
       - name: Build Docker Images
         run: |
