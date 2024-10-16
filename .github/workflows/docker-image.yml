@@ -17,6 +17,11 @@ jobs:
         run: |
           ls -la docker/  # List contents of the docker directory
 
+      - name: Prune Docker Images
+        run: |
+          echo "Pruning unused Docker images..."
+          docker image prune -af
+          
       - name: Build Docker Images
         run: |
           docker compose -f docker/ci.docker-compose.yml build
