@@ -3,7 +3,8 @@ FROM gradle:8.9.0-jdk22 AS build
 WORKDIR /build
 COPY . .
 
-RUN ./gradlew build --no-daemon -p .
+# Clean and then build the project
+RUN ./gradlew clean build --no-daemon -p .
 
 # Copy the build artifacts
 FROM openjdk:22
