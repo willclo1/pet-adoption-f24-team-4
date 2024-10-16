@@ -38,7 +38,7 @@ export default function Profile() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://${config.API_URL}/profile`, {
+      const response = await fetch(`${apiUrl}/profile`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
