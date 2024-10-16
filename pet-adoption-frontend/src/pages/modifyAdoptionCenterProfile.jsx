@@ -15,14 +15,23 @@ const [error, setError] = useState(null);
 
 
     return (
-            
-      <Typography
-      variant="h4"
-      align="center"
-      sx={{ mt: 7, mb: 3, fontWeight: 500, color: '#333' }}
-     >
-        Register
-     </Typography>
+      <main>
+
+        <Box>
+
+        <Typography
+        variant="h4"
+        align="center"
+        sx={{ mt: 7, mb: 3, fontWeight: 500, color: '#333' }}
+       >
+        hi
+      </Typography>
+
+        </Box>
+        
+
+      </main>    
+      
 
     );
 }
