@@ -14,11 +14,12 @@ export default function modifyPet() {
         const {adoptionID, email} = router.query;
         const [openDialog, setOpenDialog] = useState(false);
         const [selectedPet, setSelectedPet] = useState(null);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
         useEffect(()=> {
         const fetchPets = async() => {
             try{
-                const response = await fetch(`http://${config.API_URL}/pets/${adoptionID}`);
+                const response = await fetch(`${apiUrl}}/pets/${adoptionID}`);
                 if(!response.ok){
                     throw new Error("Failed to fetch Pets")
                 }
@@ -39,7 +40,7 @@ export default function modifyPet() {
      const handleDelete = async (petId) => {
         if (window.confirm("Are you sure you want to delete this pet?")) {
             try {
-                const response = await fetch(`http://${config.API_URL}/deletePet`, {
+                const response = await fetch(`${apiUrl}/deletePet`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export default function modifyPet() {
     const handleModifyPet = async () => {
       if (window.confirm("Are you sure you want to modify this pet?")) {
           try {
-              const response = await fetch(`http://${config.API_URL}/updatePet`, {
+              const response = await fetch(`${apiUrl}/updatePet`, {
                   method: 'PUT',
                   headers: {
                       'Content-Type': 'application/json',

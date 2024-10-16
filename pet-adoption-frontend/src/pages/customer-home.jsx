@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
-import config from '@/config/config';
 
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -14,6 +13,7 @@ export default function CustomerHomePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
   const handleClick = (event) => {
@@ -58,7 +58,7 @@ export default function CustomerHomePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://${config.API_URL}/user/profile-image/${email}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
@@ -90,7 +90,7 @@ export default function CustomerHomePage() {
     const fetchUser = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://${config.API_URL}/users/email/${email}`);
+          const response = await fetch(`${apiUrl}/users/email/${email}`);
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }

@@ -5,11 +5,12 @@ import config from '@/config/config';
 
 export default function Recommendation() {
     const [data, setData] = useState('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://${config.API_URL}/recommendation`);
+                const response = await fetch(`${apiUrl}/recommendation`);
                 if (!response.ok) {
                     throw new Error("Bad network response");
                 }

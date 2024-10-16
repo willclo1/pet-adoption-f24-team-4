@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useRouter } from 'next/router';
 import PetsIcon from '@mui/icons-material/Pets';
-import config from '@/config/config';
 
 
 export default function LoginPage() {
@@ -13,6 +12,7 @@ export default function LoginPage() {
     const [currentUser,setCurrentUser] = useState(null);
     const router = useRouter(); // Initialize the router
     const [isSuccess, setIsSuccess] = useState(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
     const handleForgotClick = () => {
@@ -25,7 +25,7 @@ export default function LoginPage() {
         e.preventDefault();
         
         try {
-            const response = await fetch(`http://${config.API_URL}/login`, {
+            const response = await fetch(`${apiUrl}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

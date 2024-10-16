@@ -21,6 +21,7 @@ export default function Profile() {
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [passwordMessgae,setPasswordMessage] = useState('');
   const [passColor, setPassColor] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
   const handleFileChange = (event) => {
@@ -74,7 +75,7 @@ export default function Profile() {
       setPassword(newPassword);
       console.log('YOur new Password is:' +newPassword);
       try {
-        const response = await fetch(`http://${config.API_URL}/profile`, {
+        const response = await fetch(`${apiUrl}}/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -117,12 +118,12 @@ export default function Profile() {
       formData.append('image', profilePictureFile);
       
       try {
-        const response = await fetch(`http://${config.API_URL}/user/profile-image/${email}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
       
-        const reponse = await fetch(`http://${config.API_URL}/users/email/${email}`); // Updated to fetch by email
+        const reponse = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
           
         if (!response.ok) {
           throw new Error('Failed to upload image');
@@ -155,7 +156,7 @@ export default function Profile() {
 
       if (email) {
         try {
-          const response = await fetch(`http://${config.API_URL}/users/email/${email}`); // Updated to fetch by email
+          const response = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }
