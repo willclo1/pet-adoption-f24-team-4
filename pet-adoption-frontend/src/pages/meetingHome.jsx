@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import config from './config/config';
+import config from '@/config/config';
 
 export default function AdoptionHome() {
     const [data, setData] = useState('');

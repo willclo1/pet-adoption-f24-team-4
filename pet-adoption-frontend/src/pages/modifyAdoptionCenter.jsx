@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   TextField, Button, Paper, Box, Typography,  Grid } from '@mui/material';
 import { useRouter } from 'next/router';
-import config from './config/config';
+import config from '@/config/config';
 
 export default function ModifyAdoptionCenter() {
   const router = useRouter();

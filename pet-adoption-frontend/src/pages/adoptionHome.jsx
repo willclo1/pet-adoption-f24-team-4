@@ -17,7 +17,7 @@ import {
   Snackbar,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import config from './config/config';
+import config from '@/config/config';
 
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);

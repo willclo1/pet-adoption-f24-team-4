@@ -8,7 +8,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
-import config from './config/config';
+import config from '@/config/config';
 
 export default function RecommendationEnginePage() {
   const [state, setState] = useState({ left: false });

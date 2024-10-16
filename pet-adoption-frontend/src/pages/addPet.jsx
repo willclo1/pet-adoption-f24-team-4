@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Box, Card, CardContent, TextField, Typography, Button, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import config from './config/config';
+import config from '@/config/config';
 
 
 export default function AddPet() {
