@@ -74,7 +74,7 @@ export default function Profile() {
       setPassword(newPassword);
       console.log('YOur new Password is:' +newPassword);
       try {
-        const response = await fetch(`${apiUrl}}/profile`, {
+        const response = await fetch(`${apiUrl}/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

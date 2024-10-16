@@ -18,7 +18,7 @@ export default function modifyPet() {
         useEffect(()=> {
         const fetchPets = async() => {
             try{
-                const response = await fetch(`${apiUrl}}/pets/${adoptionID}`);
+                const response = await fetch(`${apiUrl}/pets/${adoptionID}`);
                 if(!response.ok){
                     throw new Error("Failed to fetch Pets")
                 }
