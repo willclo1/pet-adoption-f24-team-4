@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
-import { current } from '@reduxjs/toolkit';
+
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -11,20 +11,122 @@ export default function Profile() {
   const { email } = router.query; // Use email from query parameters
  
   const [user, setUser] = useState(null);
+  const [firstName, setFirstName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [password, setPassword] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
   const [currentPassword, setCurrentPassowrd] = useState(null);
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
 
 
-  const changePassword = () => {
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setProfilePictureFile(file); // Store the file for uploading later
+    }
+  };
 
-    console.log('LKJSDN');
-    console.log(currentPassword);
-    console.log(newPassword);
-    
+  const deleteAccount = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/profile", {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+
+        body: JSON.stringify({ email: email, password: password })
+      });
+
+      if (!response.ok) {
+          throw new Error("Bad network response");
+      }
+      const result = await response.json();
+      
+      if(response.status == 200){
+          console.log('WE LIKE FOTNITE')
+      }
+      } catch (error) {
+      console.error("Error logging in: ", error);
+      //setMessage("NOOB");
+      }
+      router.push(`/`);
+
 
   }
+
+  const changePassword = async (e) => {
+    e.preventDefault();
+    console.log('LKJSDN');
+    console.log(currentPassword);
+
+    if(currentPassword == password && newPassword != null){
+      setPassword(newPassword);
+      console.log('YOur new Password is:' +newPassword);
+      try {
+        const response = await fetch("http://localhost:8080/profile", {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+  
+  
+          body: JSON.stringify({ email: email, password: newPassword })
+        });
+  
+        if (!response.ok) {
+            throw new Error("Bad network response");
+        }
+        const result = await response.json();
+        
+        if(response.status == 200){
+            console.log('WE LIKE FOTNITE')
+        }
+        } catch (error) {
+        console.error("Error logging in: ", error);
+        //setMessage("NOOB");
+        }
+    }
+
+  }
+
+
+  const handleSave = async () => {
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('image', profilePictureFile);
+
+      try {
+        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        // Get the updated user data
+        const updatedUser = await response.json();
+
+        // Update profile picture state
+        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        } else {
+          setProfilePicture(null);
+        }
+
+        setSnackbarOpen(true);
+        window.location.reload(); // Reload to refresh user data
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+  
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,6 +142,10 @@ export default function Profile() {
           setUser(data); // Set the user data
           
           console.log(data.password);
+          if (data.profilePicture && data.profilePicture.imageData) {
+            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+          }
+          setPassword(data.password);
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.'); // Update error state
@@ -83,8 +189,8 @@ export default function Profile() {
       <Stack>
 
         <table>
+          
           <tr>
-            <th></th>
             <td >
             <section className='square'>
               <Typography variant="h6">Change Password:</Typography>
@@ -101,6 +207,7 @@ export default function Profile() {
                 />
                 <TextField
                   label="New Password"
+                  
                   variant="outlined"
                   //fullWidth
                   margin="normal"
@@ -109,64 +216,87 @@ export default function Profile() {
                   required
                   sx={{ borderRadius: 2 }}
                 />
-                
                 <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                        marginBottom:0,
-                        paddingY: 1.5,
-                        borderRadius: 2.5,
-                        marginLeft: 0,
-                        backgroundColor: '#1976d2',
-                        '&:hover': {
-                            backgroundColor: '#1565c0',
-                        },
+                  onClick={changePassword}
+                  //type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                      marginBottom:0,
+                      paddingY: 1.5,
+                      borderRadius: 2.5,
+                      marginLeft: 0,
+                      backgroundColor: '#1976d2',
+                      '&:hover': {
+                          backgroundColor: '#1565c0',
+                      },
                     }}
-                    onClick={changePassword}
                   >
                     Change Password
                 </Button>
+                
               </form>
-            
+              
 
             </section>
             </td>
 
             <td> 
               <section className='square'>
-              <Typography variant="h6">DELETE ACCOUNT</Typography>
-                <form onSubmit={changePassword()}>
-                  <TextField
-                    label="First Name"
-                    variant="outlined"
-                    //fullWidth
-                    margin="normal"
-                    //value={firstName}
-                    //onChange={(e) => setFirst(e.target.value)}
-                    required
-                    sx={{ borderRadius: 2 }}
-                  />
-                </form>
+                <Button
+                  onClick={deleteAccount}
+                  //type="submit"
+                  variant="contained"
+                  fullWidth
+                  fullHeight
+                  sx={{
+                      marginBottom:0.5,
+                      paddingY: 0,
+                      borderRadius: 1.5,
+                      marginLeft: 0,
+                      backgroundColor: 'red',
+                      '&:hover': {
+                          backgroundColor: 'darkRed',
+                      },
+                    }}
+                  >
+                      DELETE ACCOUNT
+                </Button>
               </section>
 
             </td>
             <td> 
-              {/* <section className='square'>
-              <Typography variant="h6">Change Password:</Typography>
-                <form onSubmit={changePassword()}>
-                <TextField
-                  label="First Name"
-                  variant="outlined"
-                  //fullWidth
-                  margin="normal"
-                  //value={firstName}
-                  //onChange={(e) => setFirst(e.target.value)}
-                  required
-                  sx={{ borderRadius: 2 }}
-                />
-                </form>
-              </section> */}
+              <section className='square'>
+              <Typography variant="h6">Change Profile Picture:</Typography>
+               <Stack marginTop={2}>
+               <Avatar
+                  src={profilePicture} // Use the uploaded profile picture here
+                  sx={{ marginLeft: 7
+                    , width: 225
+                    , height: 225 }}
+            />
+            <Typography variant="body1">Profile Picture</Typography>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="profile-picture-upload"
+              type="file"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="profile-picture-upload">
+              <Button variant="contained" component="span">
+                Upload Profile Picture
+              </Button>
+            
+
+            <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+          </label>
+          </Stack>
+
+
+              </section> 
 
             </td>
         

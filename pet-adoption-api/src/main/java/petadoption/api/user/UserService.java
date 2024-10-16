@@ -42,4 +42,23 @@ public class UserService {
 
     public Optional<User> findUserByEmail(String emailAddress) {return userRepository.findByEmailAddress(emailAddress);}
 
+
+    public void changePassword(ChangePassword ucer) {
+        User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
+        if(!user.getPassword().equals(ucer.getPassword())) {
+            user.setPassword(ucer.getPassword());
+            userRepository.save(user);
+        }
+    }
+    public void deleteUser(ChangePassword ucer) {
+        User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
+        if(user.getEmailAddress().equals(ucer.getEmail())) {
+            userRepository.delete(user);
+        }
+    }
+
+
+    public Optional<Long> findAdoptionIDByEmailAddress(String email) {
+        return userRepository.findAdoptionIDByEmailAddress(email);
+    }
 }

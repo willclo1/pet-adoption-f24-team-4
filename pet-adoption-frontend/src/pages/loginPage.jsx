@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import PetsIcon from '@mui/icons-material/Pets';
 
 
@@ -12,10 +11,14 @@ export default function LoginPage() {
     const [userType, setUserType] = useState('');
     const [currentUser,setCurrentUser] = useState(null);
     const router = useRouter(); // Initialize the router
+    const [isSuccess, setIsSuccess] = useState(null);
 
 
     const handleForgotClick = () => {
-      };
+    };
+    const handleRegisterClick = () => {
+        router.push('/registerPage');
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,6 +42,7 @@ export default function LoginPage() {
 
             // Route to customer home page if login is successful
             if (response.status === 200) {
+                setIsSuccess(true);
                 const userType = result.userType;
                 if(userType == "User"){
                     router.push(`/customer-home?email=${email}`); 
@@ -48,12 +52,14 @@ export default function LoginPage() {
                 }
                 else{
             
-                    setMessage("Login failed. Please try again.");
+                    setMessage("Login failed. Please try again");
+                    setIsSuccess(false);
                 }
             }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
+            setIsSuccess(false);
         }
     };
 
@@ -70,7 +76,7 @@ export default function LoginPage() {
             }}
         >
             <Typography variant = "h1" sx={{ marginBottom: 8 }}>Whisker Works</Typography>
-        
+
             <Card sx={{ width: 400, boxShadow: 7, marginTop: 7 }}>
                 <CardContent>
                     <Typography variant="h4" align="center" gutterBottom>
@@ -108,22 +114,23 @@ export default function LoginPage() {
                         >
                             Login
                         </Button>
-                        <Button
+                    <Button
                         variant="text" // Text button style
                         color="primary"
                         fullWidth
                         sx={{ marginTop: 2, textDecoration: 'underline' }} // Underline the text for emphasis
-                        onClick={() => handleForgotClick()} // You can define this function to handle the action
+                        onClick={() => handleRegisterClick()}
                     >
-                        Forgot Username/Password?
+                        Haven't Registered?
                     </Button>
                     </form>
                     {message && (
                         <Typography
                             variant="body2"
-                            color="error"
                             align="center"
-                            sx={{ marginTop: 2 }}
+                            sx={{ marginTop: 2,
+                                color: isSuccess ? 'green' : 'red'
+                             }}
                         >
                             {message}
                         </Typography>
