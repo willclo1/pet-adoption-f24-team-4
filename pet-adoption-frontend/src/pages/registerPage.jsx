@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { useRouter } from 'next/router'; 
-import config from '@/config/config';
 
 export default function RegisterPage() {
     const [firstName, setFirst] = useState('');

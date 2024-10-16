@@ -4,7 +4,6 @@ import { DialogActions,
     DialogContent, Dialog, DialogTitle,
     ListItemSecondaryAction, Button, Divider, Paper, Box, Typography, CircularProgress, List, ListItem, ListItemText } from '@mui/material';
 import { Router, useRouter } from 'next/router';
-import config from '@/config/config';
 
 export default function modifyPet() {
         const router = useRouter();
