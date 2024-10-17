@@ -5,6 +5,7 @@ import { Box, Card, CardContent, Typography } from '@mui/material';
 export default function AdoptionHome() {
     const [data, setData] = useState('');
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const [adoptionCenter, setAdoptionCenter] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {

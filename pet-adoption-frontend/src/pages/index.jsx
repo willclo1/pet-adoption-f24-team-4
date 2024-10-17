@@ -26,6 +26,7 @@ export default function HomePage() {
   const handleRegisterSelect = () => {
     router.push("/registerPage");
   }
+  
 
   const handleNavigation = (page) => {
     switch (page) {
@@ -36,13 +37,13 @@ export default function HomePage() {
         router.push("/registerPage");
         break;
       case 'View Centers':
-        //router.push("/centersPage");
+        router.push("/ViewCenters");
         break;
       case 'Contact':
         //router.push("/contactPage");
         break;
       case 'Register Center':
-        router.push("/registerCenterPage");
+        router.push("/addAdoptionCenter");
         break;
       default:
         console.error("Unknown", message);

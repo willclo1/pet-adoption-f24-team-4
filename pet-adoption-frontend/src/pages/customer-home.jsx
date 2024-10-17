@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
+
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -25,6 +26,7 @@ export default function CustomerHomePage() {
     router.push(`/Profile?email=${email}`);
 
   }
+
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
