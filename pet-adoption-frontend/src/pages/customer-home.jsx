@@ -39,7 +39,7 @@ export default function CustomerHomePage() {
 
   const logoutAction = () => {
     localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/loginPage`);
+    router.push(`/`);
   };
 
   const handleCloseDialog = () => {
