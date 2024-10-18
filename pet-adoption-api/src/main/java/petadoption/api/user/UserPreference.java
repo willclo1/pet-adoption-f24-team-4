@@ -1,38 +1,25 @@
 package petadoption.api.user;
-// using integer from 1-5 to denote preferences
-// 1 is the worst, 5 is the best
-package petadoption.api.user;
 
+import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.pet.Size;
+import petadoption.api.pet.Temperament;
 
 @Data
+@Entity
+@Table(name = "USER_PREFERENCES")
 public class UserPreference {
 
-    private int preference1; // Example preference
-    private int preference2; // Another preference
-    private int preference3; // Another preference
-    // Add more preferences as needed
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public void setPreference1(int preference1) {
-        validatePreference(preference1);
-        this.preference1 = preference1;
-    }
+    private String furColor;
+    private String petType;
+    private String breed;
+    private Size petSize;
+    private int age;
+    private Temperament temperament;
+    private String healthStatus;
 
-    public void setPreference2(int preference2) {
-        validatePreference(preference2);
-        this.preference2 = preference2;
-    }
-
-    public void setPreference3(int preference3) {
-        validatePreference(preference3);
-        this.preference3 = preference3;
-    }
-
-    // Add setter methods for more preferences if needed
-
-    private void validatePreference(int preference) {
-        if (preference < 1 || preference > 5) {
-            throw new IllegalArgumentException("Preference value must be between 1 and 5.");
-        }
-    }
 }

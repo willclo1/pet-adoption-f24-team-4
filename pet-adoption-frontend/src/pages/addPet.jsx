@@ -15,6 +15,11 @@ export default function AddPet() {
   const [furType, setFur] = useState('');
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState('');
+  const [breed, setBreed] = useState('');
+  const [petSize, setPetSize] = useState(''); // If Size is an enum, you might want to handle it accordingly
+  const [age, setAge] = useState('');
+  const [temperament, setTemperament] = useState('');
+  const [healthStatus, setHealthStatus] = useState('');
   const router = useRouter();
   const { adoptionID, email } = router.query;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -28,7 +33,7 @@ export default function AddPet() {
                     'Content-Type': 'application/json',
                 },
                    body: JSON.stringify({firstName, lastName, petType, weight, furType,
-                    adoptionID}),
+                    adoptionID, petSize, temperament, breed, age, healthStatus}),
             });
              if (!response.ok) {
                 throw new Error("Bad network response");
@@ -92,9 +97,7 @@ export default function AddPet() {
               {message}
             </Alert>
           )}
-
-
-          <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
             <TextField
               label="Pet's First Name"
               variant="outlined"
@@ -105,6 +108,7 @@ export default function AddPet() {
               placeholder="Enter pet's first name"
               required
             />
+            
             <TextField
               label="Pet's Last Name"
               variant="outlined"
@@ -115,6 +119,7 @@ export default function AddPet() {
               placeholder="Enter pet's last name"
               required
             />
+
             <TextField
               label="Pet's Weight"
               variant="outlined"
@@ -125,6 +130,7 @@ export default function AddPet() {
               placeholder="Enter pet's weight"
               required
             />
+
             <TextField
               label="Pet's Fur Color"
               variant="outlined"
@@ -136,13 +142,80 @@ export default function AddPet() {
               required
             />
 
+            <TextField
+              label="Pet's Breed"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={breed}
+              onChange={(e) => setBreed(e.target.value)}
+              placeholder="Enter pet's breed"
+              required
+            />
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="pet-size-label">Pet Size</InputLabel>
+              <Select
+                labelId="pet-size-label"
+                id="pet-size"
+                value={petSize}
+                onChange={(e) => setPetSize(e.target.value)} // Add function to set pet size
+                label="Pet Size"
+                required
+              >
+                <MenuItem value="SMALL">Small</MenuItem>
+                <MenuItem value="MEDIUM">Medium</MenuItem>
+                <MenuItem value="LARGE">Large</MenuItem>
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Pet's Age"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              placeholder="Enter pet's age"
+              required
+            />
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="pet-temperament-label">Pet Temper</InputLabel>
+              <Select
+                labelId="pet-temperament-label"
+                id="pet-temperament"
+                value={temperament}
+                onChange={(e) => setTemperament(e.target.value)} // Add function to set pet size
+                label="Pet Temperament"
+                required
+              >
+                <MenuItem value="CHILL">Chill</MenuItem>
+                <MenuItem value="NEEDY">Needy</MenuItem>
+                <MenuItem value="AGGRESSIVE">Aggresive</MenuItem>
+                <MenuItem value="ENERGETIC">Energetic</MenuItem>
+              </Select>
+            </FormControl>
+
+            <TextField
+              label="Pet's Health Status"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={healthStatus}
+              onChange={(e) => setHealthStatus(e.target.value)}
+              placeholder="Enter pet's health status"
+              required
+            />
+
             <FormControl fullWidth margin="normal">
               <InputLabel id="pet-type-label">Pet Type</InputLabel>
               <Select
                 labelId="pet-type-label"
                 id="pet-type"
                 value={petType}
-                onChange={handlePetTypeChange}
+                onChange={(e) => setPetType(e.target.value)} // Ensure this function is defined
                 label="Pet Type"
                 required
               >
@@ -167,7 +240,6 @@ export default function AddPet() {
               Add Pet
             </Button>
           </form>
-
           <Button
             variant="outlined"
             fullWidth

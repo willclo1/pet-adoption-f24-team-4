@@ -25,24 +25,33 @@ public class PetEndpoint {
     }
     @PostMapping("/addPet")
     public ResponseEntity<?> addPet(@RequestBody PetRequest petRequest) {
-        try{
+        try {
             Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter(petRequest.getAdoptionID());
+
+            if (adoptionCenter.isEmpty()) {
+                return ResponseEntity.badRequest().body("Adoption center not found");
+            }
+
             Pet pet = new Pet();
             pet.setFirstName(petRequest.getFirstName());
             pet.setLastName(petRequest.getLastName());
             pet.setPetType(petRequest.getPetType());
             pet.setWeight(petRequest.getWeight());
             pet.setFurType(petRequest.getFurType());
+            pet.setBreed(petRequest.getBreed());
+            pet.setAge(petRequest.getAge()); // Set the age
+            pet.setTemperament(petRequest.getTemperament()); // Set the temperament enum
+            pet.setPetSize(petRequest.getPetSize()); // Set the size enum
+            pet.setHealthStatus(petRequest.getHealthStatus()); // Set health status
             pet.setCenter(adoptionCenter.get());
 
             petService.savePet(pet, adoptionCenter.get().getAdoptionID());
             log.info("Pet registered to adoption center " + pet.getCenter().getCenterName());
             return ResponseEntity.ok(pet);
-        }catch (Exception e){
-            log.error("Error adding pet User");
+        } catch (Exception e) {
+            log.error("Error adding pet", e);
             return ResponseEntity.badRequest().build();
         }
-
     }
     @GetMapping("/pets")
     public ResponseEntity<?> getAllPets() {
@@ -87,6 +96,11 @@ public class PetEndpoint {
             existingPet.setPetType(petRequest.getPetType());
             existingPet.setWeight(petRequest.getWeight());
             existingPet.setFurType(petRequest.getFurType());
+            existingPet.setPetSize(petRequest.getPetSize());
+            existingPet.setBreed(petRequest.getBreed());
+            existingPet.setAge(petRequest.getAge());
+            existingPet.setTemperament(petRequest.getTemperament());
+            existingPet.setHealthStatus(petRequest.getHealthStatus());
 
 
             petService.savePet(existingPet, existingPet.getCenter().getAdoptionID());

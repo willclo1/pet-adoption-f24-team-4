@@ -5,6 +5,8 @@ import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 
+import java.util.prefs.Preferences;
+
 @Data
 @Entity
 @Table(name = User.TABLE_NAME)
@@ -35,6 +37,12 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
     Image profilePicture;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_PREFERENCE_ID", referencedColumnName = "id")
+    private UserPreference userPreference;
+
+
 
     public Image getProfilePicture() {
         return profilePicture;

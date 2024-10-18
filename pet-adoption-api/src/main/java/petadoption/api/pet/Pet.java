@@ -3,7 +3,6 @@ package petadoption.api.pet;
 import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.user.User;
 
 @Data
 @Entity
@@ -39,51 +38,20 @@ public class Pet {
     private AdoptionCenter center;
 
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "BREED") // Added breed column
+    private String breed;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Enumerated(EnumType.STRING) // Use this annotation if petSize is an enum
+    @Column(name = "PET_SIZE") // Added petSize column
+    private Size petSize;
 
-    public String getFirstName() {
-        return firstName;
-    }
+    @Column(name = "AGE") // Added age column
+    private int age;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TEMPERAMENT") // Added temperament column
+    private Temperament temperament;
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPetType() {
-        return petType;
-    }
-
-    public void setPetType(String petType) {
-        this.petType = petType;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    public String getFurType() {
-        return furType;
-    }
-
-    public void setFurType(String furType) {
-        this.furType = furType;
-    }
+    @Column(name = "HEALTH_STATUS") // Added healthStatus column
+    private String healthStatus;
 }

@@ -122,6 +122,10 @@ export default function CustomerHomePage() {
   const handleStartMatching = () => {
     router.push(`/recommendationEngine?email=${email}`);
   };
+ const handleEditPreferences = () => {
+    router.push(`/EditPreferences?userId=${user.id}&email=${email}`);
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -142,7 +146,7 @@ export default function CustomerHomePage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
-          <Button color="inherit">Edit Preferences</Button>
+          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
@@ -166,71 +170,9 @@ export default function CustomerHomePage() {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleLoginInformation}>Login Information</MenuItem>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
+        <MenuItem onClick={handleLoginInformation}>Manage My Profile</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Personal Information</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="First Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.firstName}
-          />
-          <TextField
-            margin="dense"
-            label="Last Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.lastName}
-          />
-          <TextField
-            margin="dense"
-            label="Address"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <Stack marginTop={2}>
-            <Typography variant="body1">Profile Picture</Typography>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="profile-picture-upload"
-              type="file"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">
-                Upload Profile Picture
-              </Button>
-            </label>
-            {profilePicture && ( // Show the profile picture preview
-              <Avatar
-                alt="Profile Picture Preview"
-                src={profilePicture}
-                sx={{ width: 56, height: 56, marginTop: 1 }}
-              />
-            )}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
