@@ -37,6 +37,12 @@ export default function CustomerHomePage() {
     handleCloseMenu(); // Close the menu when opening the dialog
   };
 
+  const handleViewCenters = () => {
+     
+      router.push(`/ViewCenters`);
+    
+  }
+
   const logoutAction = () => {
     localStorage.setItem('validUser',JSON.stringify(null));
     router.push(`/`);
@@ -146,6 +152,7 @@ export default function CustomerHomePage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
+          <Button color="inherit" onClick={handleViewCenters}>View Centers</Button>
           <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>

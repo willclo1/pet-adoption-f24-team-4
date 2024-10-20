@@ -40,8 +40,10 @@ export default function ViewCenters() {
     });
     };
 
+
     return (
         <Box sx={{ padding: 4, backgroundColor: '#f4f6f8' }}> {/* Light greyish background for contrast */}
+           
             <Typography variant="h4" gutterBottom sx={{ color: '#000', marginBottom: 3, fontWeight: 'bold'}}>
                 View Adoption Centers
             </Typography>

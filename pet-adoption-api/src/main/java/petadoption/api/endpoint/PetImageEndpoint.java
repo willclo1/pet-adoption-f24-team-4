@@ -1,6 +1,5 @@
 package petadoption.api.endpoint;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,36 +8,42 @@ import org.springframework.web.multipart.MultipartFile;
 import petadoption.api.Utility.Image;
 import petadoption.api.Utility.ImageService;
 import petadoption.api.pet.Pet;
+import petadoption.api.pet.PetService;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
 
+import javax.imageio.plugins.jpeg.JPEGQTable;
 import java.io.IOException;
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
+
 @RestController
-@RequestMapping("/user/profile-image")
-public class UserImageEndpoint {
+@RequestMapping("/pet/pet-image")
+public class PetImageEndpoint {
+
 
     private final ImageService imageService;
-    private final UserService userService;
+    private final PetService petService;
 
-    public UserImageEndpoint(ImageService imageService, UserService userService) {
+    public PetImageEndpoint(ImageService imageService, PetService petService) {
         this.imageService = imageService;
-        this.userService = userService;
+        this.petService = petService;
     }
 
-    @PostMapping("/{email}")
-    public ResponseEntity<?> uploadProfileImage(@PathVariable String email,
+    @PostMapping("/{petId}")
+    public ResponseEntity<?> updatePetImage(@PathVariable long petId,
                                                 @RequestParam("image") MultipartFile file) throws IOException {
-        Optional<User> userOptional = userService.findUserByEmail(email);
+        Optional<Pet> userOptional = petService.getPetById(petId);
+        System.out.println("SJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSN");
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
+            Pet pet = userOptional.get();
+            long adoptionId = pet.getCenter().getAdoptionID();
 
-            if (user.getProfilePicture() != null) {
+            if (pet.getProfilePicture() != null) {
 
-                Long oldImageId = user.getProfilePicture().getId();
+                Long oldImageId = pet.getProfilePicture().getId();
 
                 // Delete the old image
                 imageService.deleteImage(oldImageId);
@@ -51,27 +56,34 @@ public class UserImageEndpoint {
             profileImage.setImageData(file.getBytes());
 
             // Set the new profile image
-            user.setProfilePicture(profileImage);
-            userService.saveUser(user);
+            pet.setProfilePicture(profileImage);
+            petService.savePet(pet,adoptionId);
 
             return ResponseEntity.status(HttpStatus.OK).body("Profile image uploaded successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
+
+        /* Optional<Pet> existingPetOpt = petService.getPetById(petID);
+        if (!existingPetOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Pet existingPet = existingPetOpt.set;
+        */
+
     }
+    @GetMapping("/{petId}")
+    public ResponseEntity<?> downloadProfileImage(@PathVariable long petId) throws IOException {
 
-
-    @GetMapping("/{email}")
-    public ResponseEntity<?> downloadProfileImage(@PathVariable String email) {
-
-        Optional<User> userOptional = userService.findUserByEmail(email);
+        Optional<Pet> userOptional = petService.getPetById(petId);
         if (userOptional.isPresent() && userOptional.get().getProfilePicture() != null) {
             byte[] imageData = userOptional.get().getProfilePicture().getImageData();
             return ResponseEntity.status(HttpStatus.OK)
                     .contentType(MediaType.valueOf(IMAGE_PNG_VALUE))
                     .body(imageData);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or profile image not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pet or profile image not found.");
         }
     }
+
 }

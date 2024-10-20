@@ -2,6 +2,7 @@ package petadoption.api.pet;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 
 @Data
@@ -32,6 +33,10 @@ public class Pet {
 
     @Column(name = "FUR_TYPE")
     String furType;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
+    Image profilePicture;
 
     @ManyToOne
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)

@@ -16,14 +16,18 @@ import {
     ListItem,
     ListItemText,
     Select,
+    Avatar,
+    Snackbar,
     MenuItem
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import { ContactlessOutlined } from '@mui/icons-material';
 
 export default function ModifyPet() {
     const router = useRouter();
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [petPicture, setPetPicture] = useState(null);
     const [error, setError] = useState('');
     const { adoptionID, email } = router.query;
     const [openDialog, setOpenDialog] = useState(false);
@@ -33,12 +37,16 @@ export default function ModifyPet() {
     useEffect(() => {
         const fetchPets = async () => {
             try {
+                console.log(`${apiUrl}/pets/${adoptionID}`);
                 const response = await fetch(`${apiUrl}/pets/${adoptionID}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch Pets");
                 }
                 const data = await response.json();
                 setPets(data);
+                console.log('hello')
+                
+                
             } catch (error) {
                 console.error("Error fetching Pets:", error);
                 setError("Failed to load Pets.");
@@ -48,7 +56,7 @@ export default function ModifyPet() {
         };
 
         fetchPets();
-    }, [adoptionID, apiUrl]);
+    }, [adoptionID, apiUrl] );
 
     const handleDelete = async (petId) => {
         if (window.confirm("Are you sure you want to delete this pet?")) {
@@ -72,6 +80,69 @@ export default function ModifyPet() {
             }
         }
     };
+
+
+
+    const handleFileChange = (event) =>{
+        const file = event.target.files[0];
+        
+        if (file) {
+            setPetPicture(file)
+             // Store the file for uploading later
+        }
+        else{
+            console.log('you did literally nothing')
+        }
+        
+      };
+
+
+      const handleSave = async (petId) => {
+    
+    
+
+          const formData = new FormData();
+          formData.append('image', petPicture);
+          console.log('PET ID KID')
+          console.log(petId)
+          try {
+            console.log('WELL HELLO THRE')
+            const response = await fetch(`${apiUrl}/pet/pet-image/${petId}`, {
+              method: 'POST',
+              body: formData
+            });
+          
+            
+            if (!response.ok) {
+              throw new Error('Failed to upload image');
+            }
+            else{
+
+                console.log('OWKREDS')
+            }
+
+             const reponse = await fetch(`${apiUrl}/pets/${adoptionID}`); // Updated to fetch by email
+              
+    
+            // Get the updated user data
+            const updatedUser = await reponse.json();
+            console.log('WEHIWRIF');
+            console.log(updatedUser);
+    
+            // Update profile picture state
+            if (reponse.ok) {
+                setPets(updatedUser)
+            }
+            else{
+                console.log('YOU FAILED KID')
+
+            }
+
+            
+          } catch (error) {
+            console.error('Error uploading Pet picture:', error);
+          }
+      }
 
     const handleModifyPet = async () => {
         if (window.confirm("Are you sure you want to modify this pet?")) {
@@ -145,6 +216,47 @@ export default function ModifyPet() {
                                         primaryTypographyProps={{ variant: 'h6', color: '#333' }}
                                         secondaryTypographyProps={{ variant: 'body2', color: 'textSecondary' }}
                                     />
+                                     <Avatar
+                                     src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null} // Use the uploaded profile picture here
+                                    sx={{ 
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 0}}
+
+                                     />     
+                                    <input
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    id="profile-picture-upload"
+                                    type="file"
+                                    onChange={(e) => handleFileChange(e, pet)}
+                                    />
+                                    <label htmlFor="profile-picture-upload">
+                                    <Button variant="contained" component="span" 
+                                    sx={{
+                                        marginTop: 1,
+                                        paddingY: 0,
+                                        backgroundImage: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                    }}
+                                    >
+                                        Upload Pet Photo (Optional)
+                                    </Button>
+                                    </label>
+                                    <Button variant="contained" component="span" 
+                                    sx={{
+                                        marginTop: 1,
+                                        paddingY: 0,
+                                        backgroundImage: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                    }}
+                                    onClick={ () => handleSave(pet.id)}
+                                    >
+                                       Save
+                                    </Button>
+                                    
                                     <Button
                                         variant="outlined"
                                         color="info"

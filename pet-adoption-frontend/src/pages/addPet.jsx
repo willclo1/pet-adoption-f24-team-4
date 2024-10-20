@@ -20,6 +20,7 @@ export default function AddPet() {
   const [age, setAge] = useState('');
   const [temperament, setTemperament] = useState('');
   const [healthStatus, setHealthStatus] = useState('');
+  const [petPicture,setPetPicture] = useState('');
   const router = useRouter();
   const { adoptionID, email } = router.query;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -47,7 +48,57 @@ export default function AddPet() {
             setSuccess(false); 
         }
 
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setPetPicture(file); // Store the file for uploading later
     }
+    handleSave();
+  };
+  const handleSave = async () => {
+
+
+    if (petPicture) {
+      const formData = new FormData();
+      formData.append('image', petPicture);
+      
+      try {
+        const response = await fetch(`${apiUrl}/pets/`, {
+          method: 'POST',
+          body: formData,
+        });
+      
+        
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+        const reponse = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
+          
+
+        // Get the updated user data
+        const updatedUser = await reponse.json();
+        console.log('WEHIWRIF');
+        console.log(updatedUser);
+
+        // Update profile picture state
+        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        } else {
+          setProfilePicture(null);
+        }
+        
+        setSnackbarOpen(true);
+        window.location.reload(); // Reload to refresh user data
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+
+
+  }
+  
 
   const handlePetTypeChange = (event) => {
     setPetType(event.target.value);
@@ -223,13 +274,13 @@ export default function AddPet() {
                 <MenuItem value="Dog">Dog</MenuItem>
               </Select>
             </FormControl>
-
+            
             <Button
               type="submit"
               variant="contained"
               fullWidth
               sx={{
-                marginTop: 3,
+                marginTop: 1,
                 paddingY: 1.5,
                 backgroundImage: 'linear-gradient(45deg, #1976d2, #42a5f5)',
                 color: 'white',
