@@ -20,6 +20,7 @@ export default function RecommendationEnginePage() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   // Fetch user data when page loads
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function RecommendationEnginePage() {
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/email/${email}`);
+      const response = await fetch(`${apiUrl}/users/email/${email}`);
       if (!response.ok) throw new Error('Failed to fetch user data');
       const data = await response.json();
       setUser(data);
@@ -78,7 +79,7 @@ export default function RecommendationEnginePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${userEmail}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
           method: 'POST',
           body: formData,
         });

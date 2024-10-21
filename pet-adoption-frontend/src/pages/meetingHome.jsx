@@ -4,11 +4,13 @@ import { Box, Card, CardContent, Typography } from '@mui/material';
 
 export default function AdoptionHome() {
     const [data, setData] = useState('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const [adoptionCenter, setAdoptionCenter] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/MeetingHome");
+                const response = await fetch(`${apiUrl}/MeetingHome`);
                 if (!response.ok) {
                     throw new Error("Bad network response");
                 }

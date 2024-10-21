@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [currentUser,setCurrentUser] = useState(null);
     const router = useRouter(); // Initialize the router
     const [isSuccess, setIsSuccess] = useState(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
     const handleForgotClick = () => {
@@ -24,7 +25,7 @@ export default function LoginPage() {
         e.preventDefault();
         
         try {
-            const response = await fetch("http://localhost:8080/login", {
+            const response = await fetch(`${apiUrl}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

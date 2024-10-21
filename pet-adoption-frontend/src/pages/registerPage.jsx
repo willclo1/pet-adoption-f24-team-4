@@ -13,6 +13,7 @@ export default function RegisterPage() {
     const [adoptionCenters, setAdoptionCenters] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const router = useRouter(); 
 
@@ -23,7 +24,7 @@ export default function RegisterPage() {
     useEffect(()=> {
         const fetchAdoptionCenters = async() => {
             try{
-                const respose = await fetch("http://localhost:8080/adoption-centers");
+                const respose = await fetch(`${apiUrl}/adoption-centers`);
                 if(!respose.ok){
                     throw new Error("Failed to fetch Adoption Centers")
                 }
@@ -43,7 +44,7 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/register", {
+            const response = await fetch(`${apiUrl}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

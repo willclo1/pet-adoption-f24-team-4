@@ -1,11 +1,13 @@
 package petadoption.api.user;
 
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserTests {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void testUserCreate() {
@@ -40,5 +45,56 @@ public class UserTests {
     void testUserFind() {
         Optional<User> user1 = userService.findUser(1L);
         assertTrue(user1.isEmpty());
+    }
+    @BeforeEach
+    void setUp(){
+        userRepository.deleteAll();
+    }
+    @Test
+    void testUserCreation(){
+        for(int i = 0; i < 10; i++){
+            User user = new User();
+            user.setUserType("User");
+            user.setEmailAddress("testEmail@test.com");
+            user.setPassword("password");
+            user.setLastName("Test");
+            user.setFirstName("Test");
+            userRepository.save(user);
+        }
+        List<User> userList = userRepository.findAll();
+        assertEquals(10, userList.size(), "There should be 10 in the database");
+    }
+
+    @Test
+    void testSaveUser(){
+        User user = new User();
+        User userSave = userService.saveUser(user);
+        assertEquals(userSave, userService.findUser(1L).get(), "Users are equal");
+    }
+
+    @Test
+    void deleteUser(){
+        User user = new User();
+        user.setId(5L);
+        user.setEmailAddress("test@test");
+        user.setPassword("Hello");
+        ChangePassword userSave = new ChangePassword();
+        userSave.setFirstName("test@test");
+        userSave.setPassword("Hello");
+        userService.saveUser(user);
+        userService.deleteUser(userSave);
+        assertNotEquals(user, userService.findUser(5L));
+    }
+
+    @Test
+    void findUser(){
+        User user = new User();
+        user.setUserType("User");
+        user.setEmailAddress("testEmail@test.com");
+        user.setPassword("password");
+        user.setLastName("Test");
+        user.setFirstName("Test");
+        userService.saveUser(user);
+        assertEquals(user, userService.findUserByEmail("testEmail@test.com").get());
     }
 }

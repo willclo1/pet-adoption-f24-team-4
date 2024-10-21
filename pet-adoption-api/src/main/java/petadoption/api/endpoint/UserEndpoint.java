@@ -2,8 +2,10 @@ package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
+import petadoption.api.user.UserPreference;
 import petadoption.api.user.UserService;
 
 import java.util.Optional;
@@ -50,6 +52,32 @@ public class UserEndpoint {
         return null;
     }
 
+    @GetMapping("/{userId}/preferences")
+    public ResponseEntity<UserPreference> getUserPreferences(@PathVariable Long userId) {
+        Optional<User> userOpt = userService.findUser(userId);
+
+        if (userOpt.get().getUserPreference() != null) {
+            User user = userOpt.get();
+            UserPreference preferences = user.getUserPreference(); // Get preferences from user
+            return ResponseEntity.ok(preferences);
+        } else {
+            return ResponseEntity.notFound().build(); // Handle user not found
+        }
+    }
+    @PutMapping("/users/{userId}/preferences")
+    public ResponseEntity<UserPreference> updateUserPreferences(
+            @PathVariable Long userId,
+            @RequestBody UserPreference userPreference) {
+
+        Optional<User> optionalUser = userService.findUser(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUserPreference(userPreference); // Update user preference
+            userService.saveUser(user); // Save updated user
+            return ResponseEntity.ok(userPreference);
+        }
+        return ResponseEntity.notFound().build();
+    }
 //    @PostMapping("/users")
 //    public User saveUser(@RequestBody User user) {
 //        return userService.saveUser();

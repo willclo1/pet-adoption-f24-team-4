@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 
+
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -29,6 +30,7 @@ export default function AdoptionHome() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,7 +47,7 @@ export default function AdoptionHome() {
 
   const logoutAction = () => {
     localStorage.setItem('validUser',JSON.stringify(null))
-    router.push(`/loginPage`);
+    router.push(`/`);
   };
 
   const handleCloseDialog = () => {
@@ -66,7 +68,7 @@ export default function AdoptionHome() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
         });
@@ -98,7 +100,7 @@ export default function AdoptionHome() {
     const fetchUser = async () => {
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
+          const response = await fetch(`${apiUrl}/users/email/${email}`);
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
             throw new Error('Network response was not ok');
           }
@@ -251,28 +253,7 @@ export default function AdoptionHome() {
               Modify Adoption Center Information
             </Button>
           </Box>
-
-
-          <Box
-            sx={{
-              width: 300,
-              padding: 4,
-              borderRadius: 2,
-              boxShadow: 3,
-              backgroundColor: '#fff',
-            }}
-          >
-            <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
-              Modify Adoption Center Profile Page
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={handleModifyAdoptionCenterProfile}
-              sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
-            >
-              Edit Profile
-            </Button>
-          </Box>
+          
         </Stack>
       </Box>
 

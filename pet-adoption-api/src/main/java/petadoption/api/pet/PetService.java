@@ -20,6 +20,7 @@ public class PetService {
     public Optional<Pet> savePet(Long petID){
         return repository.findById(petID);
     }
+
     public Pet savePet(Pet pet, Long adoptionID) {
         if(adoptionID != null) {
             Optional<AdoptionCenter> center = adoptionCenterRepository.findById(adoptionID);
@@ -45,6 +46,8 @@ public class PetService {
     public List<Pet> getAdoptionCenterPets(long adoptionID) {
         return repository.findByCenter_adoptionID(adoptionID);
     }
+
+
     public void deletePet(long petID){
         repository.deleteById(petID);
     }

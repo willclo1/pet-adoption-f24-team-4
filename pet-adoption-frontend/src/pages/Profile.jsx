@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { red } from '@mui/material/colors';
 
-
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -21,6 +20,8 @@ export default function Profile() {
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [passwordMessgae,setPasswordMessage] = useState('');
   const [passColor, setPassColor] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -37,7 +38,7 @@ export default function Profile() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:8080/profile", {
+      const response = await fetch(`${apiUrl}/profile`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export default function Profile() {
       setPassword(newPassword);
       console.log('YOur new Password is:' +newPassword);
       try {
-        const response = await fetch("http://localhost:8080/profile", {
+        const response = await fetch(`${apiUrl}/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export default function Profile() {
         }
         } catch (error) {
         console.error("Error logging in: ", error);
-        //setMessage("NOOB");
+
         }
     }
     else{
@@ -111,40 +112,41 @@ export default function Profile() {
     
     console.log('WEHIWRIF');
         //console.log(updatedUser);
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
-      
-      try {
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
-          method: 'POST',
-          body: formData,
-        });
-      
-        const reponse = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+        if (profilePictureFile) {
+          const formData = new FormData();
+          formData.append('image', profilePictureFile);
           
-        if (!response.ok) {
-          throw new Error('Failed to upload image');
+          try {
+            const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
+              method: 'POST',
+              body: formData,
+            });
+          
+            
+            if (!response.ok) {
+              throw new Error('Failed to upload image');
+            }
+            const reponse = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
+              
+    
+            // Get the updated user data
+            const updatedUser = await reponse.json();
+            console.log('WEHIWRIF');
+            console.log(updatedUser);
+    
+            // Update profile picture state
+            if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+              setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+            } else {
+              setProfilePicture(null);
+            }
+            
+            setSnackbarOpen(true);
+            window.location.reload(); // Reload to refresh user data
+          } catch (error) {
+            console.error('Error uploading profile picture:', error);
+          }
         }
-
-        // Get the updated user data
-        const updatedUser = await reponse.json();
-        console.log('WEHIWRIF');
-        console.log(updatedUser);
-
-        // Update profile picture state
-        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
-          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        } else {
-          setProfilePicture(null);
-        }
-        
-        setSnackbarOpen(true);
-        window.location.reload(); // Reload to refresh user data
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
   
   };
 
@@ -154,10 +156,13 @@ export default function Profile() {
 
       if (email) {
         try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`); // Updated to fetch by email
+          const response = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
+          
+          
           if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
             throw new Error('Network response was not ok');
           }
+
           const data = await response.json();
           setUser(data); // Set the user data
           
@@ -305,12 +310,12 @@ export default function Profile() {
               onChange={handleFileChange}
             />
             <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">
+              <Button variant="contained" component="span" >
                 Upload Profile Picture
               </Button>
             
 
-            <Button onClick={handleSave} color="primary">
+              <Button onClick={handleSave} color="primary">
             Save
           </Button>
           </label>
