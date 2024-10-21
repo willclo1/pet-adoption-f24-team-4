@@ -36,7 +36,6 @@ public class PetImageEndpoint {
     public ResponseEntity<?> updatePetImage(@PathVariable long petId,
                                                 @RequestParam("image") MultipartFile file) throws IOException {
         Optional<Pet> userOptional = petService.getPetById(petId);
-        System.out.println("SJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSNSJNFNDJFDSN");
         if (userOptional.isPresent()) {
             Pet pet = userOptional.get();
             long adoptionId = pet.getCenter().getAdoptionID();
@@ -45,7 +44,6 @@ public class PetImageEndpoint {
 
                 Long oldImageId = pet.getProfilePicture().getId();
 
-                // Delete the old image
                 imageService.deleteImage(oldImageId);
             }
 
@@ -55,7 +53,6 @@ public class PetImageEndpoint {
             profileImage.setType(file.getContentType());
             profileImage.setImageData(file.getBytes());
 
-            // Set the new profile image
             pet.setProfilePicture(profileImage);
             petService.savePet(pet,adoptionId);
 
