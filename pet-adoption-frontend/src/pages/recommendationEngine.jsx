@@ -8,6 +8,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
+import NavBar from './nav_bar';
 
 export default function RecommendationEnginePage() {
   const [state, setState] = useState({ left: false });
@@ -132,43 +133,7 @@ export default function RecommendationEnginePage() {
 
   return (
     <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color='inherit' onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>Whisker Works</Typography>
-          <Avatar alt={user?.firstName} src={profilePicture} onClick={handleAvatarClick} sx={{ marginLeft: 2, width: 56, height: 56 }} />
-        </Toolbar>
-      </AppBar>
-
-      <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}> {list('left')} </Drawer>
-
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-        <MenuItem onClick={() => router.push('/loginPage')}>Logout</MenuItem>
-      </Menu>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Personal Information</DialogTitle>
-        <DialogContent>
-          <TextField margin="dense" label="First Name" fullWidth variant="outlined" defaultValue={user?.firstName} />
-          <TextField margin="dense" label="Last Name" fullWidth variant="outlined" defaultValue={user?.lastName} />
-          <Stack marginTop={2}>
-            <Typography variant="body1">Profile Picture</Typography>
-            <input accept="image/*" id="profile-picture-upload" type="file" style={{ display: 'none' }} onChange={handlePfFile} />
-            <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">Upload Profile Picture</Button>
-            </label>
-            {profilePicture && <Avatar src={profilePicture} sx={{ width: 56, height: 56, marginTop: 1 }} />}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">Cancel</Button>
-          <Button onClick={handleSave} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)} message="Profile picture updated successfully" />
-
+      <NavBar />
       <Stack sx={{ paddingTop: 5 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         <Typography variant="body1" color="text.secondary">Adopt Now :D</Typography>

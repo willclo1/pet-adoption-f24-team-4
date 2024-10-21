@@ -3,7 +3,7 @@
 */
 
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Avatar, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Menu, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, Typography, Avatar, Button, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, Stack, DialogActions, Snackbar} from '@mui/material';
 import { useRouter } from 'next/router';
 import HouseIcon from '@mui/icons-material/House';
 import PetsIcon from '@mui/icons-material/Pets';
@@ -11,7 +11,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import MenuIcon from '@mui/icons-material/Menu';
 
-export default function nav_bar() {
+export default function NavBar() {
     const [state, setState] = useState({ left: false });
     const router = useRouter();
     const [userEmail, setUserEmail] = useState(null);
