@@ -8,6 +8,7 @@ import petadoption.api.user.User;
 import petadoption.api.user.UserPreference;
 import petadoption.api.user.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -77,6 +78,17 @@ public class UserEndpoint {
             return ResponseEntity.ok(userPreference);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> findAllUsers() {
+        List<User> users = userService.findAllUsers();
+        if (!users.isEmpty()) {
+            return ResponseEntity.ok(users);
+        } else {
+            log.warn("No users found");
+            return ResponseEntity.noContent().build();
+        }
     }
 //    @PostMapping("/users")
 //    public User saveUser(@RequestBody User user) {

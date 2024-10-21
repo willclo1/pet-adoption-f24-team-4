@@ -2,6 +2,9 @@ package petadoption.api.user;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
@@ -19,6 +22,12 @@ public class UserService {
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
+
+    @Autowired
+    AuthenticationManager authManager;
+
+    @Autowired
+    private JWTService jwtService;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -73,5 +82,14 @@ public class UserService {
     public User register(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    public String verify(User user){
+        Authentication authentication =
+                authManager.authenticate((new UsernamePasswordAuthenticationToken(user.getEmailAddress(), user.getPassword())));
+        if(authentication.isAuthenticated())
+            return jwtService.generateToken(user.getEmailAddress());
+
+        return "Fail";
     }
 }

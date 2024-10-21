@@ -24,33 +24,7 @@ public class LoginPageEndpoint {
     private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");  // Use "email" instead of "emailAddress"
-        String password = credentials.get("password");
-
-        log.info("Received login attempt for email: {}", email);
-
-        // Find user by email
-        Optional<User> userOptional = userService.findUserByEmail(email);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // Validate the password using BCrypt
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                // Successful login
-                log.info("User successfully logged in: {}, User Type: {}", user.getEmailAddress(), user.getUserType());
-
-                return ResponseEntity.ok(Map.of("message", "Login successful!", "userType", user.getUserType()));
-            } else {
-                // Incorrect password
-                log.warn("Incorrect password for user: {}", email);
-                return ResponseEntity.status(401).body(Collections.singletonMap("message", "Invalid credentials."));
-            }
-        } else {
-            // User not found
-            log.warn("User not found: {}", email);
-            return ResponseEntity.status(404).body(Collections.singletonMap("message", "User not found."));
-        }
+    public String login(@RequestBody User user) {
+        return userService.verify(user);
     }
 }
