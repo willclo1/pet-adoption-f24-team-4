@@ -113,7 +113,16 @@ export default function centerPublicProfile() {
                     <Grid container spacing={3}>
                         {pets.map((pet) => (
                             <Grid item xs={12} sm={6} md={4} key={pet.id}>
+                                
                                 <Card sx={{ borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }}>
+                                <Avatar
+                                     src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null} // Use the uploaded profile picture here
+                                    sx={{ 
+                                    width: 200,
+                                    height: 200,
+                                    borderRadius: 0}}
+
+                                     />
                                     <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                                         <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
                                             <PetsIcon />
@@ -121,7 +130,9 @@ export default function centerPublicProfile() {
                                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                                             {pet.firstName} {pet.lastName}
                                         </Typography>
+                                        
                                     </Box>
+                                      
 
                                     <Typography variant="body2" color="textSecondary">
                                         Type: {pet.petType}
@@ -132,6 +143,7 @@ export default function centerPublicProfile() {
                                     <Typography variant="body2" color="textSecondary">
                                         Fur Type: {pet.furType}
                                     </Typography>
+                                     
                                 </Card>
                             </Grid>
                         ))}
