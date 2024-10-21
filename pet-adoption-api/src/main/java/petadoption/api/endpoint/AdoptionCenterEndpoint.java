@@ -1,9 +1,11 @@
 package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.adoptionCenter.AdoptionCenterRequest;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
 
 import java.util.List;
@@ -29,6 +31,25 @@ public class AdoptionCenterEndpoint {
     public String addSampleCenters() {
         adoptionCenterService.addSampleAdoptionCenters();
         return "Sample adoption centers added successfully.";
+    }
+    @PostMapping("/add")
+    public ResponseEntity<AdoptionCenter> addAdoptionCenter(@RequestBody AdoptionCenterRequest request) {
+        try{
+            AdoptionCenter center = new AdoptionCenter();
+            center.setCenterName(request.getAdoptionName());
+            center.setBuildingAddress(request.getAdoptionAddress());
+            center.setDescription(request.getDescription());
+            AdoptionCenter savedCenter = adoptionCenterService.saveCenter(center);
+            log.info("Center saved!");
+            return ResponseEntity.ok(savedCenter);
+        }
+        catch (Exception e){
+            log.info("Center Failed!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+
+
     }
 
     //

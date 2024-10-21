@@ -2,13 +2,12 @@ package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
+import petadoption.api.user.UserPreference;
 import petadoption.api.user.UserService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -30,18 +29,17 @@ public class UserEndpoint {
 
 
     @GetMapping("/users/email/{email}")
-    public ResponseEntity<User> findUserByEmail(@PathVariable String email) {
+    public User findUserByEmail(@PathVariable String email) {
         Optional<User> userOptional = userService.findUserByEmail(email);
 
         if (userOptional.isPresent()) {
             log.info("User found with email: {}", email);
-            return ResponseEntity.ok(userOptional.get()); // Return user with 200 OK status
+            return userOptional.get();
         } else {
             log.warn("User not found with email: {}", email);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 NOT FOUND
+            return null; // Or throw an exception if preferred
         }
     }
-
 
     @GetMapping("/users/adoption-center/{email}")
     public Optional<Long> findAdoptionIDByEmail(@PathVariable String email) {
@@ -54,19 +52,32 @@ public class UserEndpoint {
         return null;
     }
 
-    @GetMapping("register/users/all")
-    public ResponseEntity<List<User>> findAllUsers() {
-        List<User> users = userService.findAllUsers();
+    @GetMapping("/{userId}/preferences")
+    public ResponseEntity<UserPreference> getUserPreferences(@PathVariable Long userId) {
+        Optional<User> userOpt = userService.findUser(userId);
 
-        if (users.isEmpty()) {
-            log.warn("No users found in the database");
-            return ResponseEntity.noContent().build(); // Returns a 204 No Content response
+        if (userOpt.get().getUserPreference() != null) {
+            User user = userOpt.get();
+            UserPreference preferences = user.getUserPreference(); // Get preferences from user
+            return ResponseEntity.ok(preferences);
+        } else {
+            return ResponseEntity.notFound().build(); // Handle user not found
         }
-
-        log.info("Retrieved {} users from the database", users.size());
-        return ResponseEntity.ok(users); // Returns a 200 OK response with the users
     }
+    @PutMapping("/users/{userId}/preferences")
+    public ResponseEntity<UserPreference> updateUserPreferences(
+            @PathVariable Long userId,
+            @RequestBody UserPreference userPreference) {
 
+        Optional<User> optionalUser = userService.findUser(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setUserPreference(userPreference); // Update user preference
+            userService.saveUser(user); // Save updated user
+            return ResponseEntity.ok(userPreference);
+        }
+        return ResponseEntity.notFound().build();
+    }
 //    @PostMapping("/users")
 //    public User saveUser(@RequestBody User user) {
 //        return userService.saveUser();

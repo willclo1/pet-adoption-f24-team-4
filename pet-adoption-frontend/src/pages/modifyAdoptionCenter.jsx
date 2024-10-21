@@ -10,6 +10,8 @@ export default function ModifyAdoptionCenter() {
   const [adoptionCenter, setAdoptionCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
   // Attempt to retrieve adoption center information
   useEffect(
@@ -17,7 +19,7 @@ export default function ModifyAdoptionCenter() {
       const fetchAdoptionCenter = async() => {
         if (adoptionID) {
           try {
-            const response = await fetch(`http://localhost:8080/adoption-centers/${adoptionID}`);
+            const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`);
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
@@ -40,7 +42,7 @@ export default function ModifyAdoptionCenter() {
   const handleAdoptionCenterEditSubmit = async () => {
     //s.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/adoption-centers/updateAdoptionCenter", {
+      const response = await fetch(`${apiUrl}/adoption-centers/updateAdoptionCenter`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(adoptionCenter)

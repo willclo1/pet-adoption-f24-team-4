@@ -18,15 +18,6 @@ public class ProfileEndpoint {
     @RequestMapping(value = "/profile", method = RequestMethod.PUT)
     public ResponseEntity<ChangePassword> ProfileStatement(@RequestBody ChangePassword user) {
         try{
-
-            System.out.println("ROBLOX");
-            System.out.println(user.getEmail());
-            System.out.println(user.getPassword());
-
-            if(user.getPassword() ==  null){
-                System.out.println("JAMES CHARKLES");
-                user.setPassword("BOB");
-            }
             userService.changePassword(user);
             return ResponseEntity.ok(user);
         } catch (Exception e){
@@ -40,11 +31,9 @@ public class ProfileEndpoint {
     @RequestMapping(value = "/profile", method = RequestMethod.DELETE)
     public ResponseEntity<ChangePassword> DeleteAccount(@RequestBody ChangePassword user) {
         try{
-
-            System.out.println("ROBLOX");
-
             userService.deleteUser(user);
             return ResponseEntity.ok(user);
+
         } catch (Exception e){
             log.error("Error registering User");
             return ResponseEntity.badRequest().build();
