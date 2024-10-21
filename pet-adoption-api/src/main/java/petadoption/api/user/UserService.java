@@ -2,10 +2,12 @@ package petadoption.api.user;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -17,6 +19,8 @@ public class UserService {
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public Optional<User> findUser(Long userId) {
         return userRepository.findById(userId);
@@ -60,5 +64,14 @@ public class UserService {
 
     public Optional<Long> findAdoptionIDByEmailAddress(String email) {
         return userRepository.findAdoptionIDByEmailAddress(email);
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User register(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 }

@@ -83,33 +83,45 @@ export default function CustomerHomePage() {
     }
     handleCloseDialog();
   };
-
   useEffect(() => {
     const fetchUser = async () => {
-      if (email) {
-        try {
-          const response = await fetch(`http://localhost:8080/users/email/${email}`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          setUser(data);
-
-          // Set profile picture if exists
-          if (data.profilePicture && data.profilePicture.imageData) {
-            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
-          }
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          setError('User not found.');
-        } finally {
-          setLoading(false);
+        if (email) {
+            setLoading(true); // Set loading to true at the start
+            console.log("Fetching user with email:", email); // Log email
+            
+            try {
+                const response = await fetch(`http://localhost:8080/users/email/${email}`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setError('User not found.');
+                        return; // Exit if user is not found
+                    }
+                    throw new Error('Network response was not ok');
+                }
+  
+                const data = await response.json();
+                console.log("Fetched user data:", data); // Log user data
+                setUser(data);
+  
+                // Set profile picture if it exists
+                if (data.profilePicture && data.profilePicture.imageData) {
+                    setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+                }
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                setError('User not found.'); // This could be updated based on actual error
+            } finally {
+                setLoading(false); // Ensure loading is set to false at the end
+            }
         }
-      }
     };
 
-    fetchUser();
-  }, [email]);
+    fetchUser(); // Call the fetch function
+}, [email]); // Dependency array
+
+
+  
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false); // Close the Snackbar

@@ -29,29 +29,29 @@ export default function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password,  userType}), // Sending email instead of username
+                body: JSON.stringify({ email, password }), // Removed userType
             });
-
+    
             if (!response.ok) {
                 throw new Error("Bad network response");
             }
             const result = await response.json();
-            
+            console.log(result); // Debugging line
+    
             setMessage(result.message);
             localStorage.setItem('validUser', JSON.stringify(email));
-
+    
             // Route to customer home page if login is successful
             if (response.status === 200) {
                 setIsSuccess(true);
-                const userType = result.userType;
-                if(userType == "User"){
+                const userType = result.userType; // Ensure this field is returned from backend
+                if(userType === "USER"){
                     router.push(`/customer-home?email=${email}`); 
                 }
-                else if(userType == "adoptionCenter"){
+                else if(userType === "ADMIN"){
                     router.push(`/adoptionHome?email=${email}`); 
                 }
-                else{
-            
+                else {
                     setMessage("Login failed. Please try again");
                     setIsSuccess(false);
                 }
@@ -62,6 +62,7 @@ export default function LoginPage() {
             setIsSuccess(false);
         }
     };
+    
 
     return (
         <Box

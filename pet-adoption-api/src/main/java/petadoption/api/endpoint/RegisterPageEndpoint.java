@@ -19,24 +19,8 @@ public class RegisterPageEndpoint {
     @Autowired
     UserService userService;
     @PostMapping("/register")
-    public ResponseEntity<RegisterRequest> register(@RequestBody RegisterRequest registerRequest) {
-        try {
-            User user = new User();
-            user.setFirstName(registerRequest.getFirstName());
-            user.setLastName(registerRequest.getLastName());
-            user.setEmailAddress(registerRequest.getEmailAddress());
-            user.setPassword(registerRequest.getPassword());
-            user.setUserType(registerRequest.getUserType());
-            Long adoptionId = registerRequest.getAdoptionId();
-            User saveUser = userService.saveUser(user, adoptionId);
-            log.info("User Registered: " + saveUser.getEmailAddress());
-
-            return ResponseEntity.ok(registerRequest);
-
-        } catch (Exception e){
-            log.error("Error registering User");
-            return ResponseEntity.badRequest().build();
-        }
+    public User register(@RequestBody User user){
+        return userService.register(user);
     }
 
 }

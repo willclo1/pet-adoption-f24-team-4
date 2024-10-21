@@ -8,9 +8,7 @@ export default function RegisterPage() {
     const [emailAddress, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [userType, setUserType] = useState('User');
-    const [selectedCenter, setSelectedCenter] = useState('');
-    const [adoptionCenters, setAdoptionCenters] = useState([]); 
+    const [userType, setUserType] = useState('User'); // Default to User
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -20,26 +18,6 @@ export default function RegisterPage() {
         router.push('/loginPage');
     }
 
-    useEffect(()=> {
-        const fetchAdoptionCenters = async() => {
-            try{
-                const respose = await fetch("http://localhost:8080/adoption-centers");
-                if(!respose.ok){
-                    throw new Error("Failed to fetch Adoption Centers")
-                }
-                const data = await respose.json();
-                setAdoptionCenters(data);
-            }
-            catch (error) {
-                console.error("Error fetching adoption centers:", error);
-                setMessage("Failed to load adoption centers.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAdoptionCenters();
-    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -48,8 +26,7 @@ export default function RegisterPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, emailAddress, password, userType,
-                    adoptionId: selectedCenter}),
+                body: JSON.stringify({ firstName, lastName, emailAddress, password, userType }),
             });
 
             if (!response.ok) {
@@ -57,16 +34,16 @@ export default function RegisterPage() {
             }
             const result = await response.json();
             setMessage(result.message);
-            if(response.status == 200){
+            if (response.status === 200) {
                 router.push(`/loginPage`);
             }
         } catch (error) {
-            console.error("Error logging in: ", error);
+            console.error("Error registering: ", error);
             setMessage("Register failed. Please try again.");
         }
     };
 
-      return (
+    return (
         <Box
             sx={{
                 display: 'flex',
@@ -100,7 +77,7 @@ export default function RegisterPage() {
                         Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
-                    <TextField
+                        <TextField
                             label="First Name"
                             variant="outlined"
                             fullWidth
@@ -141,7 +118,7 @@ export default function RegisterPage() {
                             required
                             sx={{ borderRadius: 2 }}
                         />
-                       <FormControl fullWidth margin="normal">
+                        <FormControl fullWidth margin="normal">
                             <InputLabel id="account-type-label">Account Type</InputLabel>
                             <Select
                                 labelId="account-type-label"
@@ -153,27 +130,9 @@ export default function RegisterPage() {
                                 required
                             >
                                 <MenuItem value="User">User</MenuItem>
-                                <MenuItem value="adoptionCenter">adoptionCenter</MenuItem>
+                                <MenuItem value="Admin">Admin</MenuItem>
                             </Select>
                         </FormControl>
-                        {userType === 'adoptionCenter' && (
-                            <FormControl fullWidth margin="normal" required>
-                                <InputLabel id="adoption-center-label">Adoption Center</InputLabel>
-                                <Select
-                                    labelId="adoption-center-label"
-                                    value={selectedCenter}
-                                    onChange={(e) => setSelectedCenter(e.target.value)}
-                                >
-                                    {loading && <MenuItem disabled>Loading...</MenuItem>}
-                                    {error && <MenuItem disabled>{error}</MenuItem>}
-                                    {!loading && !error && adoptionCenters.map((center) => (
-                                        <MenuItem key={center.adoptionID} value={center.adoptionID}>
-                                            {center.centerName}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        )}
                         <Button
                             type="submit"
                             variant="contained"
@@ -195,7 +154,7 @@ export default function RegisterPage() {
                             color="primary"
                             fullWidth
                             sx={{ marginTop: 2, textDecoration: 'underline' }}
-                            onClick={() => handleRegistered()}
+                            onClick={handleRegistered}
                         >
                             Already Registered?
                         </Button>

@@ -3,6 +3,7 @@ package petadoption.api.endpoint;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
@@ -18,6 +19,10 @@ public class LoginPageEndpoint {
     @Autowired
     private UserService userService;
 
+    // Use the BCryptPasswordEncoder to compare passwords
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");  // Use "email" instead of "emailAddress"
@@ -30,11 +35,12 @@ public class LoginPageEndpoint {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // Validate the password (assuming you're using plain text for now)
-            // Ideally, you should use a secure hash comparison (e.g., BCrypt)
-            if (user.getPassword().equals(password)) {
+
+            // Validate the password using BCrypt
+            if (passwordEncoder.matches(password, user.getPassword())) {
                 // Successful login
-                log.info("User successfully logged in: {}", user.getEmailAddress());
+                log.info("User successfully logged in: {}, User Type: {}", user.getEmailAddress(), user.getUserType());
+
                 return ResponseEntity.ok(Map.of("message", "Login successful!", "userType", user.getUserType()));
             } else {
                 // Incorrect password
