@@ -13,5 +13,4 @@ public class AdoptionHomeEndpoint {
     public String home_title() {
         return "Welcome to the adoption Home";
     }
-
 }
