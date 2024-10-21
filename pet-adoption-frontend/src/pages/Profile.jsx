@@ -70,119 +70,128 @@ export default function Profile() {
     console.log('LKJSDN');
     console.log(currentPassword);
 
-    if(currentPassword == password && newPassword != null){
-      setPassword(newPassword);
-      console.log('YOur new Password is:' +newPassword);
-      try {
-        const response = await fetch(`${apiUrl}/profile`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-  
-  
-          body: JSON.stringify({ email: email, password: newPassword })
-        });
-  
-        if (!response.ok) {
-            throw new Error("Bad network response");
-        }
-        const result = await response.json();
-        
-        if(response.status == 200){
-          setPassColor('green')
-          setPasswordMessage('Password Successfully Changed');
-            console.log('WE LIKE FOTNITE')
-        }
+    if (currentPassword === password && newPassword) {
+        setPassword(newPassword);
+        console.log('Your new Password is: ' + newPassword);
+        try {
+            const token = localStorage.getItem('token'); // Get the token from local storage
+            
+            const response = await fetch(`${apiUrl}/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, // Add token to headers
+                },
+                body: JSON.stringify({ email: email, password: newPassword }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Bad network response");
+            }
+            const result = await response.json();
+
+            if (response.status === 200) {
+                setPassColor('green');
+                setPasswordMessage('Password Successfully Changed');
+                console.log('WE LIKE FOTNITE');
+            }
         } catch (error) {
-        console.error("Error logging in: ", error);
-
+            console.error("Error changing password: ", error);
+            setPassColor('red');
+            setPasswordMessage('Error changing password');
         }
+    } else {
+        setPassColor('red');
+        setPasswordMessage('Please Enter the Correct Password');
     }
-    else{
-      setPassColor('red');
-      setPasswordMessage('Please Enter the Correct Password');
-
-    }
-
-  }
-
+};
 
   const handleSave = async () => {
-    
     console.log('WEHIWRIF');
-        //console.log(updatedUser);
-        if (profilePictureFile) {
-          const formData = new FormData();
-          formData.append('image', profilePictureFile);
-          
-          try {
-            const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
-              method: 'POST',
-              body: formData,
-            });
-          
+
+    if (profilePictureFile) {
+        const formData = new FormData();
+        formData.append('image', profilePictureFile);
+        
+        try {
+            const token = localStorage.getItem('token'); // Get the token from local storage
             
+            const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Add token to the headers
+                },
+            });
+
             if (!response.ok) {
-              throw new Error('Failed to upload image');
+                throw new Error('Failed to upload image');
             }
-            const reponse = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
-              
-    
+
+            // Fetch the updated user data after the image upload
+            const userResponse = await fetch(`${apiUrl}/users/email/${email}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include token for the GET request
+                    'Content-Type': 'application/json',
+                },
+            });
+
             // Get the updated user data
-            const updatedUser = await reponse.json();
+            const updatedUser = await userResponse.json();
             console.log('WEHIWRIF');
             console.log(updatedUser);
-    
+
             // Update profile picture state
             if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
-              setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+                setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
             } else {
-              setProfilePicture(null);
+                setProfilePicture(null);
             }
             
             setSnackbarOpen(true);
             window.location.reload(); // Reload to refresh user data
-          } catch (error) {
+        } catch (error) {
             console.error('Error uploading profile picture:', error);
-          }
         }
-  
-  };
+    }
+};
 
   useEffect(() => {
     const fetchUser = async () => {
-      
+        if (email) {
+            const token = localStorage.getItem('token'); // Get the token from local storage
+            try {
+                const response = await fetch(`${apiUrl}/users/email/${email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include the token in the headers
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
 
-      if (email) {
-        try {
-          const response = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
-          
-          
-          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
-            throw new Error('Network response was not ok');
-          }
+                const data = await response.json();
+                setUser(data); // Set the user data
 
-          const data = await response.json();
-          setUser(data); // Set the user data
-          
-          console.log(data.password);
-          if (data.profilePicture && data.profilePicture.imageData) {
-            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
-          }
-          setPassword(data.password);
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          setError('User not found.'); // Update error state
-        } finally {
-          setLoading(false); // Loading is done
+                if (data.profilePicture && data.profilePicture.imageData) {
+                    setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+                }
+                setPassword(data.password);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                setError('User not found.'); // Update error state
+            } finally {
+                setLoading(false); // Loading is done
+            }
         }
-      }
     };
 
     fetchUser();
-  }, [email]);
-
+}, [email]);
   if (loading) {
     return <div>Loading...</div>; // Show a loading message while fetching
   }

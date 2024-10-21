@@ -19,8 +19,18 @@ export default function CustomerHomePage() {
   };
 
   const handleLoginInformation = () => {
-    router.push(`/Profile?email=${email}`);
-  };
+    // Retrieve the token from local storage
+    const token = localStorage.getItem('token'); // Get the token from local storage
+
+    // Check if the token exists before redirecting
+    if (token) {
+        // Redirect to the Profile page, only passing the email
+        router.push(`/Profile?email=${email}`);
+    } else {
+        console.error('No token found in local storage.'); // Handle the case where no token is found
+        // Optionally, you could show an error message to the user or redirect them to the login page
+    }
+};
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -129,8 +139,21 @@ export default function CustomerHomePage() {
   };
 
   const handleStartMatching = () => {
-    router.push(`/recommendationEngine?email=${email}`);
-  };
+    // Retrieve the token from local storage
+    const token = localStorage.getItem('token'); // Get the token from local storage
+
+    // Check if the token exists before redirecting
+    if (token) {
+        // Store the token in session storage or a context if needed
+        // For example: sessionStorage.setItem('token', token);
+        
+        // Redirect to the recommendation engine page with the email in the URL
+        router.push(`/recommendationEngine?email=${email}`);
+    } else {
+        console.error('No token found in local storage.'); // Handle the case where no token is found
+        // Optionally, redirect to the login page or show an error message
+    }
+};
 
   if (loading) {
     return <div>Loading...</div>;

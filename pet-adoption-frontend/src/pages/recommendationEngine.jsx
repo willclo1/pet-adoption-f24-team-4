@@ -22,7 +22,6 @@ export default function RecommendationEnginePage() {
   const [isLiked, setIsLiked] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // Fetch user data when page loads
   useEffect(() => {
     if (router.isReady) {
       const { email } = router.query;
@@ -36,7 +35,12 @@ export default function RecommendationEnginePage() {
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
     try {
-      const response = await fetch(`${apiUrl}/users/email/${email}`);
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const response = await fetch(`${apiUrl}/users/email/${email}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include the token in the headers
+        },
+      });
       if (!response.ok) throw new Error('Failed to fetch user data');
       const data = await response.json();
       setUser(data);
