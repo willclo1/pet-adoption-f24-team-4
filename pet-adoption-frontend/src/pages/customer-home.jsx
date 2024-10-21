@@ -2,31 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
-
 export default function CustomerHomePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const router = useRouter();
   const { email } = router.query;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleLoginInformation = () => {
-
     router.push(`/Profile?email=${email}`);
-
-  }
-
+  };
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -34,29 +28,24 @@ export default function CustomerHomePage() {
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
-    handleCloseMenu(); // Close the menu when opening the dialog
+    handleCloseMenu();
   };
 
-  const handleViewCenters = () => {
-     
-      router.push(`/ViewCenters`);
-    
-  }
-
   const logoutAction = () => {
-    localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/`);
+    setUser(null);
+    localStorage.removeItem('token'); // Remove the token from local storage on logout
+    router.push(`/loginPage`);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setProfilePictureFile(null); // Reset the file when closing the dialog
+    setProfilePictureFile(null);
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setProfilePictureFile(file); // Store the file for uploading later
+      setProfilePictureFile(file);
     }
   };
 
@@ -66,19 +55,20 @@ export default function CustomerHomePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
+        const token = localStorage.getItem('token'); // Get the token from local storage
+        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
+          headers: {
+            'Authorization': `Bearer ${token}` // Add token to headers
+          }
         });
 
-        if (!response.ok ) {
+        if (!response.ok) {
           throw new Error('Failed to upload image');
         }
 
-        // Get the updated user data
         const updatedUser = await response.json();
-
-        // Update profile picture state
         if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
           setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
         } else {
@@ -86,7 +76,7 @@ export default function CustomerHomePage() {
         }
 
         setSnackbarOpen(true);
-        window.location.reload(); // Reload to refresh user data
+        window.location.reload();
       } catch (error) {
         console.error('Error uploading profile picture:', error);
       }
@@ -97,15 +87,28 @@ export default function CustomerHomePage() {
   useEffect(() => {
     const fetchUser = async () => {
       if (email) {
+        setLoading(true);
+        console.log("Fetching user with email:", email);
+
         try {
-          const response = await fetch(`${apiUrl}/users/email/${email}`);
-          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`http://localhost:8080/users/email/${encodeURIComponent(email)}`, {
+            headers: {
+              'Authorization': `Bearer ${token}` // Add token to headers
+            }
+          });
+          if (!response.ok) {
+            if (response.status === 404) {
+              setError('User not found.');
+              return;
+            }
             throw new Error('Network response was not ok');
           }
+
           const data = await response.json();
+          console.log("Fetched user data:", data);
           setUser(data);
 
-          // Set profile picture if exists
           if (data.profilePicture && data.profilePicture.imageData) {
             setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
           }
@@ -122,16 +125,12 @@ export default function CustomerHomePage() {
   }, [email]);
 
   const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close the Snackbar
+    setSnackbarOpen(false);
   };
 
   const handleStartMatching = () => {
     router.push(`/recommendationEngine?email=${email}`);
   };
- const handleEditPreferences = () => {
-    router.push(`/EditPreferences?userId=${user.id}&email=${email}`);
-  };
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -152,13 +151,12 @@ export default function CustomerHomePage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
-          <Button color="inherit" onClick={handleViewCenters}>View Centers</Button>
-          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
+          <Button color="inherit">Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
-            alt={user.firstName} // Use user's first name for accessibility
-            src={profilePicture} // Use the uploaded profile picture here
+            alt={user.firstName}
+            src={profilePicture}
             sx={{ marginLeft: 2, width: 56, height: 56 }}
             onClick={handleClick}
           />
@@ -177,9 +175,71 @@ export default function CustomerHomePage() {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleLoginInformation}>Manage My Profile</MenuItem>
+        <MenuItem onClick={handleLoginInformation}>Login Information</MenuItem>
+        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Edit Personal Information</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="First Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            defaultValue={user.firstName}
+          />
+          <TextField
+            margin="dense"
+            label="Last Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            defaultValue={user.lastName}
+          />
+          <TextField
+            margin="dense"
+            label="Address"
+            type="text"
+            fullWidth
+            variant="outlined"
+          />
+          <Stack marginTop={2}>
+            <Typography variant="body1">Profile Picture</Typography>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="profile-picture-upload"
+              type="file"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="profile-picture-upload">
+              <Button variant="contained" component="span">
+                Upload Profile Picture
+              </Button>
+            </label>
+            {profilePicture && (
+              <Avatar
+                alt="Profile Picture Preview"
+                src={profilePicture}
+                sx={{ width: 56, height: 56, marginTop: 1 }}
+              />
+            )}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}

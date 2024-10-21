@@ -1,57 +1,62 @@
 import React, { useState } from 'react';
 import { Box, Card, CardContent, Typography, TextField, Button } from "@mui/material";
-import { useRouter } from 'next/router';
 import PetsIcon from '@mui/icons-material/Pets';
+import { useRouter } from 'next/router';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState(''); 
+    const [emailAddress, setEmail] = useState(''); 
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const router = useRouter(); 
+    const [tokenStored, setTokenStored] = useState(false);
+    const router = useRouter();// To check if token was stored successfully
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
-            const response = await fetch(`${apiUrl}/login`, {
+            const response = await fetch('http://localhost:8080/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }), 
+                body: JSON.stringify({ emailAddress, password }),
             });
 
+            console.log("Response status:", response.status);
+    
             if (!response.ok) {
-                throw new Error("Bad network response");
+                const errorMessage = await response.text();
+                setIsSuccess(false);
+                setMessage(errorMessage); // Display error message from backend
+                setTokenStored(false); // Reset token stored status
+                return;
             }
-
+    
             const result = await response.json();
-
-            if (response.status === 200 && result.token) {
+    
+            // Check if token exists in the response
+            if (result.token) {
                 setIsSuccess(true);
                 setMessage("Login successful!");
-
-                // Store the JWT token in localStorage or sessionStorage
+    
+                // Store the JWT token in localStorage
                 localStorage.setItem('token', result.token);
-
-                // Optionally, you can also store user data (like email) for future use
-                localStorage.setItem('userEmail', email);
-
-                // Redirect user after successful login, you can use user type if needed
-                router.push(`/customer-home?email=${email}`);
+                setTokenStored(true); // Set token stored status to true
+                router.push(`/customer-home?email=${emailAddress}`);
             } else {
                 setIsSuccess(false);
                 setMessage("Login failed. Please try again.");
+                setTokenStored(false); // Reset token stored status
             }
         } catch (error) {
             console.error("Error logging in: ", error);
             setMessage("Login failed. Please try again.");
             setIsSuccess(false);
+            setTokenStored(false); // Reset token stored status
         }
     };
-
+    
     return (
         <Box
             sx={{
@@ -77,7 +82,7 @@ export default function LoginPage() {
                             variant="outlined"
                             fullWidth
                             margin="normal"
-                            value={email} 
+                            value={emailAddress} 
                             onChange={(e) => setEmail(e.target.value)} 
                             required
                         />
@@ -111,8 +116,26 @@ export default function LoginPage() {
                             {message}
                         </Typography>
                     )}
+                    {tokenStored && (
+                        <Typography
+                            variant="body2"
+                            align="center"
+                            sx={{ marginTop: 2, color: 'blue' }}
+                        >
+                            Token stored successfully.
+                        </Typography>
+                    )}
+                    {!tokenStored && isSuccess && (
+                        <Typography
+                            variant="body2"
+                            align="center"
+                            sx={{ marginTop: 2, color: 'orange' }}
+                        >
+                            Login successful, but token storage failed.
+                        </Typography>
+                    )}
                 </CardContent>
             </Card>
         </Box>
     );
-}
+} 

@@ -19,12 +19,14 @@ public class LoginPageEndpoint {
     @Autowired
     private UserService userService;
 
-    // Use the BCryptPasswordEncoder to compare passwords
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return userService.verify(user);
+    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+        String token = userService.verify(user);
+
+        if ("Fail".equals(token)) {
+            return ResponseEntity.status(401).body(Collections.singletonMap("message", "Invalid credentials"));
+        } else {
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
+        }
     }
 }

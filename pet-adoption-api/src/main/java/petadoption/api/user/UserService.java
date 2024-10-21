@@ -84,12 +84,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String verify(User user){
-        Authentication authentication =
-                authManager.authenticate((new UsernamePasswordAuthenticationToken(user.getEmailAddress(), user.getPassword())));
-        if(authentication.isAuthenticated())
-            return jwtService.generateToken(user.getEmailAddress());
+    public String verify(User user) {
+        Optional<User> optionalUser = userRepository.findByEmailAddress(user.getEmailAddress());
 
-        return "Fail";
+        if (optionalUser.isPresent()) {
+            User foundUser = optionalUser.get();
+            if (encoder.matches(user.getPassword(), foundUser.getPassword())) {
+                return jwtService.generateToken(user.getEmailAddress());
+            }
+        }
+        return "Fail"; // Or you can throw an exception for better error handling
     }
 }

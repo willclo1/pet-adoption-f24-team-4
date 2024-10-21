@@ -2,6 +2,7 @@ package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
@@ -30,15 +31,15 @@ public class UserEndpoint {
 
 
     @GetMapping("/users/email/{email}")
-    public User findUserByEmail(@PathVariable String email) {
+    public ResponseEntity<User> findUserByEmailAddress(@PathVariable String email) {
         Optional<User> userOptional = userService.findUserByEmail(email);
 
         if (userOptional.isPresent()) {
             log.info("User found with email: {}", email);
-            return userOptional.get();
+            return ResponseEntity.ok(userOptional.get());
         } else {
             log.warn("User not found with email: {}", email);
-            return null; // Or throw an exception if preferred
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
