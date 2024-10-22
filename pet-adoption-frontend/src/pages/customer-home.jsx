@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
+import NavBar from './nav_bar';
 
 
 export default function CustomerHomePage() {
@@ -17,9 +18,9 @@ export default function CustomerHomePage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleClick = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleLoginInformation = () => {
 
@@ -32,67 +33,67 @@ export default function CustomerHomePage() {
     setAnchorEl(null);
   };
 
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleCloseMenu(); // Close the menu when opening the dialog
-  };
+  // const handleOpenDialog = () => {
+  //   setOpenDialog(true);
+  //   handleCloseMenu(); // Close the menu when opening the dialog
+  // };
 
-  const handleViewCenters = () => {
+  // const handleViewCenters = () => {
      
-      router.push(`/ViewCenters`);
+  //     router.push(`/ViewCenters`);
     
-  }
+  // }
 
-  const logoutAction = () => {
-    localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/`);
-  };
+  // const logoutAction = () => {
+  //   localStorage.setItem('validUser',JSON.stringify(null));
+  //   router.push(`/`);
+  // };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProfilePictureFile(null); // Reset the file when closing the dialog
-  };
+  // const handleCloseDialog = () => {
+  //   setOpenDialog(false);
+  //   setProfilePictureFile(null); // Reset the file when closing the dialog
+  // };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePictureFile(file); // Store the file for uploading later
-    }
-  };
+  // const handleFileChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     setProfilePictureFile(file); // Store the file for uploading later
+  //   }
+  // };
 
-  const handleSave = async () => {
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
+  // const handleSave = async () => {
+  //   if (profilePictureFile) {
+  //     const formData = new FormData();
+  //     formData.append('image', profilePictureFile);
 
-      try {
-        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
-          method: 'POST',
-          body: formData,
-        });
+  //     try {
+  //       const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
+  //         method: 'POST',
+  //         body: formData,
+  //       });
 
-        if (!response.ok ) {
-          throw new Error('Failed to upload image');
-        }
+  //       if (!response.ok ) {
+  //         throw new Error('Failed to upload image');
+  //       }
 
-        // Get the updated user data
-        const updatedUser = await response.json();
+  //       // Get the updated user data
+  //       const updatedUser = await response.json();
 
-        // Update profile picture state
-        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
-          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        } else {
-          setProfilePicture(null);
-        }
+  //       // Update profile picture state
+  //       if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+  //         setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+  //       } else {
+  //         setProfilePicture(null);
+  //       }
 
-        setSnackbarOpen(true);
-        window.location.reload(); // Reload to refresh user data
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
-    handleCloseDialog();
-  };
+  //       setSnackbarOpen(true);
+  //       window.location.reload(); // Reload to refresh user data
+  //     } catch (error) {
+  //       console.error('Error uploading profile picture:', error);
+  //     }
+  //   }
+  //   handleCloseDialog();
+  // };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -125,12 +126,12 @@ export default function CustomerHomePage() {
     setSnackbarOpen(false); // Close the Snackbar
   };
 
-  const handleStartMatching = () => {
-    router.push(`/recommendationEngine?email=${email}`);
-  };
- const handleEditPreferences = () => {
-    router.push(`/EditPreferences?userId=${user.id}&email=${email}`);
-  };
+//   const handleStartMatching = () => {
+//     router.push(`/recommendationEngine?email=${email}`);
+//   };
+//  const handleEditPreferences = () => {
+//     router.push(`/EditPreferences?userId=${user.id}&email=${email}`);
+//   };
 
 
   if (loading) {
@@ -147,7 +148,8 @@ export default function CustomerHomePage() {
 
   return (
     <main>
-      <AppBar position="static">
+      <NavBar />
+      {/* <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
@@ -163,7 +165,7 @@ export default function CustomerHomePage() {
             onClick={handleClick}
           />
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
 
       <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
         <Typography variant="h3">Welcome, {user.firstName}</Typography>
@@ -172,14 +174,14 @@ export default function CustomerHomePage() {
         </Typography>
       </Stack>
 
-      <Menu
+      {/* <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={handleLoginInformation}>Manage My Profile</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
-      </Menu>
+      </Menu> */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
