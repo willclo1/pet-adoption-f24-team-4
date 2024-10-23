@@ -1,6 +1,7 @@
 package petadoption.api.user;
 
 import jakarta.transaction.Transactional;
+import net.minidev.json.JSONUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,12 +80,41 @@ public class UserTests {
         user.setId(5L);
         user.setEmailAddress("test@test");
         user.setPassword("Hello");
+        userService.saveUser(user);
+
+        System.out.println("hi");
+        System.out.println(userService.findUser(5L));
+
         ChangePassword userSave = new ChangePassword();
         userSave.setFirstName("test@test");
         userSave.setPassword("Hello");
-        userService.saveUser(user);
+
+
         userService.deleteUser(userSave);
+
         assertNotEquals(user, userService.findUser(5L));
+    }
+
+    @Test
+    void changePassword(){
+
+
+        User user = new User();
+        user.setEmailAddress("test@test");
+        user.setPassword("hi");
+        userService.saveUser(user);
+
+
+        ChangePassword userSave = new ChangePassword();
+        userSave.setFirstName("test@test");
+        userSave.setPassword("Hello");
+        userService.changePassword(userSave);
+        
+        Optional<User> test =  userService.findUserByEmail("test@test");
+
+        User testUser = test.orElse(new User());
+
+        assertEquals("Hello", testUser.getPassword());
     }
 
     @Test
