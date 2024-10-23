@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
-import NavBar from './nav_bar';
+//import NavBar from './nav_bar';
 
 
 export default function CustomerHomePage() {
@@ -27,39 +27,30 @@ export default function CustomerHomePage() {
     router.push(`/Profile?email=${email}`);
 
   }
-
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-
   const handleOpenDialog = () => {
     setOpenDialog(true);
     handleCloseMenu(); // Close the menu when opening the dialog
   };
-
   const handleViewCenters = () => {
-     
-      router.push(`/ViewCenters`);
-    
+      router.push(`/viewCenters?email=${email}`);
   }
-
   const logoutAction = () => {
     localStorage.setItem('validUser',JSON.stringify(null));
     router.push(`/`);
   };
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setProfilePictureFile(null); // Reset the file when closing the dialog
   };
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setProfilePictureFile(file); // Store the file for uploading later
     }
   };
-
   const handleSave = async () => {
     if (profilePictureFile) {
       const formData = new FormData();
@@ -157,6 +148,7 @@ export default function CustomerHomePage() {
           <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
+          {/* <Button color='inherit' onClick={router.push(`/nav_bar?email=${email}`)}>Nav_BarTest</Button> */}
           <Avatar
             alt={user.firstName} // Use user's first name for accessibility
             src={profilePicture} // Use the uploaded profile picture here

@@ -8,7 +8,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
-import NavBar from './nav_bar';
+import NavBar from './NavBar';
 import { Pets } from '@mui/icons-material';
 
 export default function RecommendationEnginePage() {
@@ -20,7 +20,7 @@ export default function RecommendationEnginePage() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  //const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLiked, setIsLiked] = useState(null);

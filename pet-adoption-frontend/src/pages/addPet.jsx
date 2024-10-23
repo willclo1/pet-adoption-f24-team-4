@@ -138,16 +138,6 @@ export default function AddPet() {
           <Typography variant="h5" align="center" gutterBottom sx={{ color: '#1976d2' }}>
             Fill in Pet Details
           </Typography>
-
-            {/* Display success or error message */}
-          {message && (
-            <Alert 
-              severity={success ? "success" : "error"} 
-              sx={{ marginBottom: 2 }}
-            >
-              {message}
-            </Alert>
-          )}
         <form onSubmit={handleSubmit}>
             <TextField
               label="Pet's First Name"
@@ -160,7 +150,7 @@ export default function AddPet() {
               required
             />
             
-            <TextField
+            {/* <TextField
               label="Pet's Last Name"
               variant="outlined"
               fullWidth
@@ -169,7 +159,7 @@ export default function AddPet() {
               onChange={(e) => setLast(e.target.value)}
               placeholder="Enter pet's last name"
               required
-            />
+            /> */}
 
             <TextField
               label="Pet's Weight"
@@ -305,6 +295,15 @@ export default function AddPet() {
           >
             Back to Adoption Home
           </Button>
+          {/* Display success or error message */}
+          {message && (
+            <Alert 
+              severity={success ? "success" : "error"} 
+              sx={{ marginTop: 2 }}
+            >
+              {message}
+            </Alert>
+          )}
         </CardContent>
       </Card>
     </Box>

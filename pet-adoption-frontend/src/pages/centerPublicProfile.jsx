@@ -83,7 +83,7 @@ export default function centerPublicProfile() {
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
                 sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/viewCenters')}
             >
                 Back to Home
             </Button>
