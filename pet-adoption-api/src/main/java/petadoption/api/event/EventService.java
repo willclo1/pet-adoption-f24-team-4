@@ -26,6 +26,7 @@ public class EventService {
     }
 
     public Event saveEvent(Event event) {
+        /*
         boolean centerFound = adoptionCenterRepository.existsById(
                 event.getCenter().getAdoptionID()
         );
@@ -35,6 +36,8 @@ public class EventService {
         } else {
             return null;
         }
+        */
+        return eventRepository.save(event);
     }
 
     public void deleteEvent(Long eventID) { eventRepository.deleteById(eventID); }
