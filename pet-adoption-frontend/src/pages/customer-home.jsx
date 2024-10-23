@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
+import NavBar from './nav_bar';
 
 
 export default function CustomerHomePage() {
@@ -26,7 +27,6 @@ export default function CustomerHomePage() {
     router.push(`/Profile?email=${email}`);
 
   }
-
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -147,6 +147,7 @@ export default function CustomerHomePage() {
 
   return (
     <main>
+      {/* <NavBar /> */}
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>

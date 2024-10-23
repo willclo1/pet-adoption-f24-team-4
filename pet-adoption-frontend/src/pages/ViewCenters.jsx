@@ -79,8 +79,8 @@ export default function ViewCenters() {
                                 <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 1, color: '#1976d2' }}> {/* Blue title */}
                                     {center.centerName}
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#424242', marginBottom: 1 }}> {/* Black-grey text */}
-                                    Address: {center.buildingAddress}
+                                <Typography variant="body2" sx={{ color: '#424242', marginBottom: 1 }}> 
+                                    Address:
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#616161' }}> {/* Grey description */}
                                     {center.description}

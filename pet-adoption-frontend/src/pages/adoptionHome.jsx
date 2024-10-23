@@ -195,7 +195,6 @@ export default function AdoptionHome() {
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Whisker Works
           </Typography>
-          <Button color="inherit">Edit Preferences</Button>
           <Avatar
             alt={user.firstName}
             src={profilePicture} // Use the uploaded profile picture here
@@ -316,7 +315,6 @@ export default function AdoptionHome() {
       </Box>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>

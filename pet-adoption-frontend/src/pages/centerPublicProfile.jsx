@@ -93,13 +93,26 @@ export default function centerPublicProfile() {
                     {adoptionCenter?.centerName}
                 </Typography>
 
-                <Typography variant="body1" gutterBottom sx={{ color: '#555' }}>
+                <Typography variant="h6" component='span' gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                    <b>Address:</b>
+                </Typography>
+                <Typography variant="body1" component='span' gutterBottom>
                     {adoptionCenter?.buildingAddress}
                 </Typography>
 
-                <Typography variant="body2" sx={{ marginBottom: 3 }}>
-                    {adoptionCenter?.description}
-                </Typography>
+                
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                        <b>About:</b>
+                    </Typography>
+                    <Typography sx={{ 
+                                    display: 'inline-block', // Changed to 'inline-block'
+                                    marginBottom: 3,
+                                    width: 400, // Set a specific width
+                                    wordBreak: 'break-all' // Breaks the line at any character to prevent overflow
+                                    }}>
+                        {adoptionCenter?.description}
+                    </Typography>
+        
 
                 <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                     Pets Available for Adoption
