@@ -60,7 +60,7 @@ export default function ModifyEvent() {
   const handleDelete = async (eventID) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        const response = await fetch(`${apiUrl}/events/deleteEvent`, {
+        const response = await fetch(`${apiUrl}/events/deleteEvent/${eventID}`, {
           method: 'DELETE',
           headers: {
             'Content-Type' : 'application/json',
