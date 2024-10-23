@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 // @mui/material
 import { 
-  TextField, Button, Paper, Box, Typography,  Grid } from '@mui/material';
+  TextField, Button, Paper, Box, Typography,  Grid,Alert } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function ModifyAdoptionCenter() {
   const router = useRouter();
   const { adoptionID, email } = router.query;
   const [adoptionCenter, setAdoptionCenter] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [address,setAddress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [message,setMessage] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [formatError, setFormatError] = useState('');
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -20,15 +25,26 @@ export default function ModifyAdoptionCenter() {
         if (adoptionID) {
           try {
             const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`);
+           
             if (!response.ok) {
+              
               throw new Error('Network response was not ok');
             }
             const data = await response.json();
             setAdoptionCenter(data);
+            setDescription(adoptionCenter?.description);
+            setAddress(adoptionCenter?.buildingAddress);
+
+            console.log('the good stuff');
+            console.log(data);
+            console.log(description);
+            console.log(address);
           } catch (error) {
+            
             console.error('Error fetching adoption center:', error);
             setError('Adoption center not found.');
           } finally {
+            
             setLoading(false);
           }
         }
@@ -45,7 +61,9 @@ export default function ModifyAdoptionCenter() {
       const response = await fetch(`${apiUrl}/adoption-centers/updateAdoptionCenter`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adoptionCenter)
+        body: JSON.stringify({adoptionID : adoptionCenter?.adoptionID, centerName: adoptionCenter?.centerName,
+                              buildingAddress: adoptionCenter?.buildingAddress, description: adoptionCenter?.description
+         })
       });
 
       if (!response.ok) {
@@ -55,6 +73,9 @@ export default function ModifyAdoptionCenter() {
       //setMessage(result.message);
 
       if (response.status === 200) {
+        setFormatError('');
+        setMessage('Successfully changed!');
+        setSuccess(true);
         //router.push(``);
         //setMessage("Edits to adoption center have been saved!")
       }
@@ -62,6 +83,9 @@ export default function ModifyAdoptionCenter() {
         //setMessage("Failed to save edits to adoption center. Please try again.");
       }
     } catch (error) {
+      setFormatError('Formet Error: street address,city,state');
+      setMessage('ERROR: Something Went Wrong. I just dont know what tho.');
+      setSuccess(false);
       console.error("Error while submitting changes: ", error);
       //setMessage("Failed to save edits to adoption center. Please try again.");
     }
@@ -89,6 +113,14 @@ export default function ModifyAdoptionCenter() {
         <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold', color: '#1976d2' }}>
           Modify Adoption Center Information
         </Typography>
+        {message && (
+            <Alert 
+              severity={success ? "success" : "error"} 
+              sx={{ marginBottom: 2 }}
+            >
+              {message}
+            </Alert>
+          )}
         <Paper elevation={3} sx={{ padding: 3, backgroundColor: '#f5f5f5', borderRadius: 3 }}>
           <Grid container direction={"column"} spacing={5}>
             <Grid item>
@@ -119,6 +151,7 @@ export default function ModifyAdoptionCenter() {
                 color="primary"  
               />
             </Grid>
+            <Typography sx={{ marginLeft : 6, fontWeight: 'bold', color: 'red' }}> {formatError} </Typography>
             <Grid item>
               <TextField
                 //sx={{ padding : 3 }}

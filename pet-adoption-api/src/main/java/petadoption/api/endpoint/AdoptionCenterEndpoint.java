@@ -29,11 +29,13 @@ public class AdoptionCenterEndpoint {
 
     @GetMapping("/sample")
     public String addSampleCenters() {
+        System.out.println("1");
         adoptionCenterService.addSampleAdoptionCenters();
         return "Sample adoption centers added successfully.";
     }
     @PostMapping("/add")
     public ResponseEntity<AdoptionCenter> addAdoptionCenter(@RequestBody AdoptionCenterRequest request) {
+        System.out.println("2");
         try{
             AdoptionCenter center = new AdoptionCenter();
             center.setCenterName(request.getAdoptionName());
@@ -55,12 +57,14 @@ public class AdoptionCenterEndpoint {
     //
     @GetMapping("/{adoptionID}")
     public Optional<AdoptionCenter> getAdoptionCenter(@PathVariable Long adoptionID) {
+        System.out.println("3");
         return adoptionCenterService.getCenter(adoptionID);
     }
 
     @PutMapping("/updateAdoptionCenter")
     public ResponseEntity<AdoptionCenter> updateAdoptionCenter(@RequestBody AdoptionCenter ACRequest) {
         try {
+            System.out.println("4");
             Optional<AdoptionCenter> ACOpt = adoptionCenterService.getCenter(ACRequest.getAdoptionID());
             if (!ACOpt.isPresent()) {
                 return ResponseEntity.notFound().build();
