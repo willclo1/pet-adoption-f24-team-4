@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Drawer, ListItem, List, ListItemText, ListItemButton, Box, ListItemIcon, Card, CardMedia, CardActions, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Snackbar } from '@mui/material';
-import HouseIcon from '@mui/icons-material/House';
-import GroupsIcon from '@mui/icons-material/Groups';
-import ContactsIcon from '@mui/icons-material/Contacts';
-import MenuIcon from '@mui/icons-material/Menu';
-import PetsIcon from '@mui/icons-material/Pets';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
-import NavBar from './NavBar';
-import { Pets } from '@mui/icons-material';
+import NavBar from '../components/NavBar';
 
 export default function RecommendationEnginePage() {
-  const [state, setState] = useState({ left: false });
   const router = useRouter();
   const { email } = router.query;
   const [loading, setLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
-  //const [profilePictureFile, setProfilePictureFile] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
   const [error, setError] = useState(null);
@@ -68,14 +56,6 @@ export default function RecommendationEnginePage() {
           if (data.profilePicture && data.profilePicture.imageData) {
             setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
           }
-
-          // Fetch pets for the user
-          // const petsResponse = await fetch(`${apiUrl}/pets`);
-          // if (!petsResponse.ok) {
-          //   throw new Error('Network response was not ok');
-          // }
-          // const petsData = await petsResponse.json();
-          // setPets(petsData);
         } catch (error) {
           console.error('Error fetching user:', error);
           setError('User not found.');
@@ -88,62 +68,13 @@ export default function RecommendationEnginePage() {
     fetchUser();
   }, [email]);
 
-  // Function to handle avatar click for menu
-  const handleAvatarClick = (event) => setAnchorEl(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl(null);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // Open dialog for editing personal information
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleCloseMenu();
-  };
-
-  // Close dialog for editing personal information
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProfilePictureFile(null);
-  };
-
-  const handleStartMatching = () => {
-    router.push(`/recommendationEngine?email=${email}`);
-  };
-
-  const handleEditPreferences = () => {
-    router.push(`/EditPreferences?userId=${user.id}&email=${email}`);
-  };
-
-  const handleHomePage = () => {
-    router.push(`/customer-home?email=${email}`);
-  };
-
-  const handleViewCenters = () => { 
-    router.push(`/ViewCenters?email=${email}`);
-  };
-
-  const handleLoginInformation = () => {
-    router.push(`/Profile?email=${email}`);
-};
-
-const logoutAction = () => {
-    localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/`);
-};
-
-if (loading) {
-  return <div>Loading...</div>;
-}
-
-if (error) {
-  return <div>{error}</div>;
-}
-
-if (!user) {
-  return <div>User not found.</div>;
-}
-
-// if (pets.length === 0) {
-//   return <div>No pets available.</div>
-// }
+  if (!user) {
+    return <div>User not found.</div>;
+  }
 
   // Handle like or dislike button
   const handleYes = () => {
@@ -171,70 +102,11 @@ if (!user) {
     setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
   }
 
-  // Drawer toggle logic
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event.type === 'keydown' && (event.keyCode === 'Tab' || event.keyCode === 'Shift')) {
-      return;
-    }
-    setState({ ...state, [anchor]: open });
-  };
-
-  // List items for the drawer
-  const list = (anchor) => (
-    <Box sx={{ width: 250 }} onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
-      <List>
-      <ListItem disablePadding>
-                <ListItemButton onClick={handleHomePage}>
-                <ListItemIcon>
-                    <HouseIcon />
-                </ListItemIcon>
-                <ListItemText primary="Home" />
-                </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding>
-                <ListItemButton onClick={handleStartMatching}>
-                <ListItemIcon>
-                    <PetsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Adopt" />
-                </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding>
-                <ListItemButton onClick={handleViewCenters}>
-                <ListItemIcon>
-                    <ContactsIcon />
-                </ListItemIcon>
-                <ListItemText primary="View Centers" />
-                </ListItemButton>
-            </ListItem>
-      </List>
-    </Box>
-  );
-
   return (
     <main>
-      {/* <NavBar /> */}
-      <AppBar position="static">
-        <Toolbar>
-            <Button color='inherit' onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>Whisker Works</Typography>
-            <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
-            <Avatar alt={user?.firstName} src={profilePicture} onClick={handleAvatarClick} sx={{ marginLeft: 2, width: 56, height: 56 }} />
-        </Toolbar>
-      </AppBar>
-
-      <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}> {list('left')} </Drawer>
-
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleLoginInformation}>Manage My Profile</MenuItem>
-        <MenuItem onClick={logoutAction}>Logout</MenuItem>
-      </Menu>
-
+      <NavBar user={user} profilePicture={profilePicture} email={email} />
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
-
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
           <Card sx={{ maxWidth: 600 }}>
             <CardMedia 

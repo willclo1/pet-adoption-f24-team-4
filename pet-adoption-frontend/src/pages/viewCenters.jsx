@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid } from '@mui/material';
 import { useRouter } from 'next/router';
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 
 export default function ViewCenters() {
     const [adoptionCenters, setAdoptionCenters] = useState([]);

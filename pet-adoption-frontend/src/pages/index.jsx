@@ -25,7 +25,7 @@ export default function HomePage() {
         router.push("/registerPage");
         break;
       case 'View Centers':
-        router.push("/ViewCenters");
+        router.push("/viewCenters");
         break;
       case 'Register Center':
         router.push("/addAdoptionCenter");
