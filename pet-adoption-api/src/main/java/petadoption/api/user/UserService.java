@@ -2,10 +2,15 @@ package petadoption.api.user;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -17,6 +22,14 @@ public class UserService {
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
+
+    @Autowired
+    AuthenticationManager authManager;
+
+    @Autowired
+    private JWTService jwtService;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public Optional<User> findUser(Long userId) {
         return userRepository.findById(userId);
@@ -60,5 +73,26 @@ public class UserService {
 
     public Optional<Long> findAdoptionIDByEmailAddress(String email) {
         return userRepository.findAdoptionIDByEmailAddress(email);
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User register(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public String verify(User user) {
+        Optional<User> optionalUser = userRepository.findByEmailAddress(user.getEmailAddress());
+
+        if (optionalUser.isPresent()) {
+            User foundUser = optionalUser.get();
+            if (encoder.matches(user.getPassword(), foundUser.getPassword())) {
+                return jwtService.generateToken(user.getEmailAddress());
+            }
+        }
+        return "Fail"; // Or you can throw an exception for better error handling
     }
 }

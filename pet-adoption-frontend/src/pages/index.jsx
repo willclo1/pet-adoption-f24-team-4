@@ -71,7 +71,7 @@ export default function HomePage() {
               <ListItemText primary="Login" />
             </ListItemButton>
             <ListItemButton onClick={() => handleNavigation('Register')} sx={{ pl: 4 }}>
-              <ListItemText primary="Register" />
+              <ListItemText primary="Register1" />
             </ListItemButton>
             <ListItemButton onClick={() => handleNavigation('Register Center')} sx={{ pl: 4 }}>
               <ListItemText primary="Register Adoption Center" />

@@ -6,10 +6,14 @@ import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 
 export default function RecommendationEnginePage() {
+  const [state, setState] = useState({ left: false });
   const router = useRouter();
-  const { email } = router.query;
-  const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
   const [error, setError] = useState(null);
@@ -30,43 +34,81 @@ export default function RecommendationEnginePage() {
   const currentPet = pets[currentIndex]
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const petDetails = {
-    name: "Buddy",
-    breed: "Golden Retriever",
-    type: "Dog",
-    weight: "30 kg",
-    age: "3 years",
-    temperament: "Friendly",
-    healthStatus: "Healthy",
-    adoptionCenter: "Happy Paws Adoption Center",
+  useEffect(() => {
+    if (router.isReady) {
+      const { email } = router.query;
+      if (email) {
+        setUserEmail(email);
+        fetchUserData(email);
+      }
+    }
+  }, [router.isReady, router.query]);
+
+  // Function to fetch user data (including profile picture)
+  const fetchUserData = async (email) => {
+    try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const response = await fetch(`${apiUrl}/users/email/${email}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include the token in the headers
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch user data');
+      const data = await response.json();
+      setUser(data);
+      if (data.profilePicture && data.profilePicture.imageData) {
+        setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
   };
 
-  // Fetch user data when page loads
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (email) {
-        try {
-          const response = await fetch(`${apiUrl}/users/email/${email}`);
-          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"`)) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          setUser(data);
-          // Set profile picture if exists
-          if (data.profilePicture && data.profilePicture.imageData) {
-            setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
-          }
-        } catch (error) {
-          console.error('Error fetching user:', error);
-          setError('User not found.');
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+  // Function to handle avatar click for menu
+  const handleAvatarClick = (event) => setAnchorEl(event.currentTarget);
+  const handleCloseMenu = () => setAnchorEl(null);
 
-    fetchUser();
-  }, [email]);
+  // Open dialog for editing personal information
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+    handleCloseMenu();
+  };
+
+  // Close dialog for editing personal information
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setProfilePictureFile(null);
+  };
+
+  // Handle file upload for profile picture
+  const handlePfFile = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setProfilePictureFile(file);
+    }
+  };
+
+  // Save the profile picture to the backend
+  const handleSave = async () => {
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('image', profilePictureFile);
+
+      try {
+        const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
+          method: 'POST',
+          body: formData,
+        });
+        if (!response.ok) throw new Error('Failed to upload image');
+        const updatedUser = await response.json();
+        setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+      }
+    }
+    handleCloseDialog();
+  };
 
   if (loading) {
     return <div>Loading...</div>;
