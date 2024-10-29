@@ -163,6 +163,22 @@ export default function AdoptionHome() {
     });
   }
 
+  const handleModifyEvents = () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/modifyEvents',
+      query: { adoptionID, email },
+    })
+  }
+
+  const handleAddEvent = () => {
+    const adoptionID = user.center.adoptionID;
+    router.push({
+      pathname: '/addEvent',
+      query: { adoptionID, email },
+    });
+  }
+
   const handleModifyAdoptionCenterProfile= () => {
     const adoptionID = user.center.adoptionID;
     router.push({
@@ -179,7 +195,6 @@ export default function AdoptionHome() {
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Whisker Works
           </Typography>
-          <Button color="inherit">Edit Preferences</Button>
           <Avatar
             alt={user.firstName}
             src={profilePicture} // Use the uploaded profile picture here
@@ -253,12 +268,53 @@ export default function AdoptionHome() {
               Modify Adoption Center Information
             </Button>
           </Box>
+
+          <Box
+            sx={{
+              width: 300,
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+              Add Events
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleAddEvent}
+              sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
+            >
+              Add Events
+            </Button>
+          </Box>
+
+          <Box
+            sx={{
+              width: 300,
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+              Modify Events
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleModifyEvents}
+              sx={{ backgroundColor: '#1976d2', color: '#fff', fontWeight: 'bold' }}
+            >
+              Modify Events
+            </Button>
+          </Box>
           
         </Stack>
       </Box>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleCloseMenu}>Login Information</MenuItem>
         <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
         <MenuItem onClick={logoutAction}>Logout</MenuItem>
       </Menu>
