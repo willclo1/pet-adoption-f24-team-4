@@ -10,12 +10,13 @@ export default function LoginPage() {
     const [isSuccess, setIsSuccess] = useState(null);
     const [tokenStored, setTokenStored] = useState(false);
     const router = useRouter();// To check if token was stored successfully
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         try {
-            const response = await fetch('http://localhost:8080/login', {
+            const response = await fetch(`${apiUrl}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
