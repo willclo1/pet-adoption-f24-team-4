@@ -145,7 +145,6 @@ export default function CustomerHomePage() {
             Whisker Works
           </Typography>
           <Button color="inherit" onClick={handleViewCenters}>View Centers</Button>
-          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           {/* <Button color='inherit' onClick={router.push(`/nav_bar?email=${email}`)}>Nav_BarTest</Button> */}

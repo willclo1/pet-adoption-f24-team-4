@@ -24,7 +24,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import MenuIcon from '@mui/icons-material/Menu';
 
-export default function NavBar({user, profilePicture, email }) {
+const NavBar = ({user, profilePicture, email }) => {
     const router = useRouter();
     const [state, setState] = useState({ left: false });
     const [anchorEl, setAnchorEl] = useState(null);
@@ -128,3 +128,5 @@ export default function NavBar({user, profilePicture, email }) {
         </ main>
       );
 }
+
+export default NavBar;

@@ -3,7 +3,7 @@ import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer } 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
-import NavBar from '../components/NavBar';
+import NavBar from '@/components/NavBar';
 
 export default function RecommendationEnginePage() {
   const router = useRouter();
