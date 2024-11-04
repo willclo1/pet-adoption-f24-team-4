@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
@@ -166,6 +166,13 @@ export default function CustomerHomePage() {
   if (!user) {
     return <div>User not found.</div>;
   }
+  const handleEditPreferences = () => {
+    const token = localStorage.getItem('token'); 
+    if(token){
+      router.push(`/EditPreferences?email=${email}&userID=${user.id}`)
+    }
+
+  }
 
   return (
     <main>
@@ -174,7 +181,7 @@ export default function CustomerHomePage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
-          <Button color="inherit">Edit Preferences</Button>
+          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
@@ -191,6 +198,22 @@ export default function CustomerHomePage() {
         <Typography variant="body1" color="text.secondary">
           Check out the home page!
         </Typography>
+        <Box sx={{
+        position: 'absolute',
+        top: 100,
+        left: 20,
+        width: 300,
+        padding: 2,
+        boxShadow: 3,
+        borderRadius: 2,
+        textAlign: 'center',
+        backgroundColor: 'white',
+      }}>
+        <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
+        <Button variant="contained" color="primary">
+          Send/View Messages
+        </Button>
+      </Box>
       </Stack>
 
       <Menu
