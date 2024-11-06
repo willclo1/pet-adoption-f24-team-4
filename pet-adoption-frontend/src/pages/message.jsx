@@ -11,7 +11,8 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Snackbar
 } from '@mui/material';
 import { useRouter } from 'next/router';
 
@@ -23,6 +24,7 @@ export default function Message() {
   const [centerMessages, setCenterMessages] = useState([]); // State for messages from the selected center
   const [userID, setUserID] = useState(null);
   const [userName, setUserName] = useState(null);
+  const [notification, setNotification] = useState(null); // Notification state
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const { email } = router.query;
@@ -31,6 +33,18 @@ export default function Message() {
     fetchAdoptionCenters();
     fetchUserID();
   }, [email]);
+
+  // Polling for new messages every 5 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (selectedCenter) {
+        fetchMessagesForCenter(selectedCenter); // Check for new messages
+      }
+    }, 120000); // Adjust the interval as needed
+
+    // Cleanup on unmount
+    return () => clearInterval(intervalId);
+  }, [selectedCenter]);
 
   // Fetch adoption centers
   const fetchAdoptionCenters = async () => {
@@ -93,6 +107,12 @@ export default function Message() {
         if (response.ok) {
           const data = await response.json();
           setCenterMessages(data); // Set messages from the selected center
+
+          // Check if new messages are received and trigger a notification
+          const newMessage = data[data.length - 1];
+          if (newMessage && newMessage.senderID !== userID) {
+            setNotification(`New message from Adoption Center: ${newMessage.content}`);
+          }
         } else {
           console.error("Error fetching messages for center:", response.status);
         }
@@ -136,6 +156,10 @@ export default function Message() {
   const handleCenterSelect = (centerId) => {
     setSelectedCenter(centerId);
     fetchMessagesForCenter(centerId); // Fetch messages for the selected center
+  };
+
+  const handleCloseNotification = () => {
+    setNotification(null); // Close the notification
   };
 
   return (
@@ -190,6 +214,14 @@ export default function Message() {
           </Button>
         </Box>
       </Paper>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={!!notification}
+        autoHideDuration={4000}
+        onClose={handleCloseNotification}
+        message={notification}
+      />
     </Box>
   );
 }

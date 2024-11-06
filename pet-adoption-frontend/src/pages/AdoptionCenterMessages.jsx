@@ -11,7 +11,8 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Snackbar
 } from '@mui/material';
 import { useRouter } from 'next/router';
 
@@ -22,6 +23,7 @@ export default function AdoptionCenterMessages() {
   const [selectedUser, setSelectedUser] = useState(''); 
   const [userMessages, setUserMessages] = useState([]); 
   const [centerID, setCenterID] = useState(null);
+  const [notification, setNotification] = useState(null); // State for notifications
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const selectedReceiver = nonAdoptionCenterUsers.find(user => user.id === selectedUser);
@@ -31,6 +33,18 @@ export default function AdoptionCenterMessages() {
     fetchNonAdoptionCenterUsers();
     fetchCenterID();
   }, [email]);
+
+  // Polling for new messages every 5 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (selectedUser) {
+        fetchMessagesForUser(selectedUser); // Check for new messages
+      }
+    }, 120000); // Adjust the interval as needed
+
+    // Cleanup on unmount
+    return () => clearInterval(intervalId);
+  }, [selectedUser]);
 
   // Fetch non-adoption center users
   const fetchNonAdoptionCenterUsers = async () => {
@@ -90,6 +104,12 @@ export default function AdoptionCenterMessages() {
         if (response.ok) {
           const data = await response.json();
           setUserMessages(data);
+
+          // Check if new messages are received and trigger a notification
+          const newMessage = data[data.length - 1];
+          if (newMessage && newMessage.senderID !== centerID) {
+            setNotification(`New message from user: ${newMessage.content}`);
+          }
         } else {
           console.error("Error fetching messages for user:", response.status);
         }
@@ -135,12 +155,18 @@ export default function AdoptionCenterMessages() {
     fetchMessagesForUser(userId); // Fetch messages for the selected user
   };
 
+  // Close notification
+  const handleCloseNotification = () => {
+    setNotification(null); // Close the notification
+  };
+
   return (
     <Box p={3} display="flex" flexDirection="column" alignItems="center">
       <Paper elevation={3} style={{ maxWidth: 500, width: '100%', padding: 16 }}>
         <Typography variant="h6" gutterBottom>
           Messages with User
         </Typography>
+        
         {/* Non-Adoption Center User Selection */}
         <FormControl fullWidth style={{ marginBottom: 16 }}>
           <InputLabel>Select User</InputLabel>
@@ -200,6 +226,14 @@ export default function AdoptionCenterMessages() {
           </Button>
         </Box>
       </Paper>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={!!notification}
+        autoHideDuration={4000}
+        onClose={handleCloseNotification}
+        message={notification}
+      />
     </Box>
   );
 }
