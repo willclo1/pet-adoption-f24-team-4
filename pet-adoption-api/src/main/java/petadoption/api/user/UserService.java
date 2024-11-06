@@ -58,9 +58,11 @@ public class UserService {
 
 
     public void changePassword(ChangePassword ucer) {
+
         User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
+
         if(!user.getPassword().equals(ucer.getPassword())) {
-            user.setPassword(ucer.getPassword());
+            user.setPassword(encoder.encode(ucer.getPassword()));
             userRepository.save(user);
         }
     }
