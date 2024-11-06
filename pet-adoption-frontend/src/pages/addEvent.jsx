@@ -22,10 +22,12 @@ export default function AddEvent() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token'); 
       const response = await fetch(`${apiUrl}/events/addEvent`, {
         method: 'POST',
         headers: {
-          'Content-Type' : 'application/json'
+          'Content-Type' : 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({adoptionID, eventPicture, title, description, 
           location, startDateTime, endDateTime})

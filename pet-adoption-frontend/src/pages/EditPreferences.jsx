@@ -39,7 +39,12 @@ const EditPreferences = () => {
                 console.warn('User ID is not defined.');
                 return; // Early return if userId is not available
             }
-            const response = await fetch(`${apiUrl}/${userId}/preferences`);
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${apiUrl}/${userId}/preferences`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (!response.ok) {
                 throw new Error('Failed to fetch user preferences');
             }
@@ -67,10 +72,12 @@ const EditPreferences = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${apiUrl}/users/${userId}/preferences`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(preferences),
             });

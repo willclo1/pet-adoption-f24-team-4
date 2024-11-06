@@ -13,10 +13,11 @@ export default function AddAdoptionHome() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();  // Prevents the default form submission behavior
+        const token = localStorage.getItem('token'); 
         try {
             const response = await fetch(`${apiUrl}/adoption-centers/add`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
                 body: JSON.stringify({ adoptionName, adoptionAddress, description })
             });
 

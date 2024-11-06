@@ -28,10 +28,12 @@ export default function AddPet() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try{
+    const token = localStorage.getItem('token'); 
     const response = await fetch(`${apiUrl}/addPet`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                    body: JSON.stringify({firstName, lastName, petType, weight, furType,
                     adoptionID, petSize, temperament, breed, age, healthStatus}),
@@ -65,8 +67,12 @@ export default function AddPet() {
       formData.append('image', petPicture);
       
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/pets/`, {
           method: 'POST',
+          headers: {
+                    'Authorization': `Bearer ${token}`
+                },
           body: formData,
         });
       
@@ -74,7 +80,11 @@ export default function AddPet() {
         if (!response.ok) {
           throw new Error('Failed to upload image');
         }
-        const reponse = await fetch(`${apiUrl}/users/email/${email}`); // Updated to fetch by email
+        const reponse = await fetch(`${apiUrl}/users/email/${email}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
           
 
         // Get the updated user data
