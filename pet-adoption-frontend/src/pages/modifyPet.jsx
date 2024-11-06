@@ -34,11 +34,11 @@ export default function ModifyPet() {
     const [selectedPet, setSelectedPet] = useState(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-
     useEffect(() => {
         const fetchPets = async () => {
             try {
+                const token = localStorage.getItem('token');
+
                 console.log(`${apiUrl}/pets/${adoptionID}`);
                 const response = await fetch(`${apiUrl}/pets/${adoptionID}`, {
                     headers: {
@@ -60,11 +60,12 @@ export default function ModifyPet() {
         };
 
         fetchPets();
-    }, [adoptionID, apiUrl, token]);
+    }, [adoptionID, apiUrl]);
 
     const handleDelete = async (petId) => {
         if (window.confirm("Are you sure you want to delete this pet?")) {
             try {
+                const token = localStorage.getItem('token');
                 const response = await fetch(`${apiUrl}/deletePet`, {
                     method: 'DELETE',
                     headers: {
@@ -103,6 +104,7 @@ export default function ModifyPet() {
         console.log(petId);
 
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch(`${apiUrl}/pet/pet-image/${petId}`, {
                 method: 'POST',
                 body: formData,
@@ -138,6 +140,7 @@ export default function ModifyPet() {
     const handleModifyPet = async () => {
         if (window.confirm("Are you sure you want to modify this pet?")) {
             try {
+                const token = localStorage.getItem('token');
                 const response = await fetch(`${apiUrl}/updatePet`, {
                     method: 'PUT',
                     headers: {

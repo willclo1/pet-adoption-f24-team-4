@@ -32,11 +32,12 @@ export default function ModifyEvent() {
   const [openDialog, setOpenDialog] = useState(false);
 
   // Retrieve the Bearer token (assuming it's stored in localStorage or context)
-  const token = localStorage.getItem('token'); // Adjust this based on your token storage
+
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        const token = localStorage.getItem('token');
         console.log(`${apiUrl}/events/adoption-center/${adoptionID}`);
         const response = await fetch(`${apiUrl}/events/adoption-center/${adoptionID}`, {
           headers: {
@@ -59,15 +60,16 @@ export default function ModifyEvent() {
     };
 
     fetchEvents();
-  }, [adoptionID, apiUrl, token]);
+  }, [adoptionID, apiUrl]);
 
   const handleDelete = async (eventID) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/events/deleteEvent/${eventID}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`, // Include Bearer token here
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ id: eventID })
@@ -100,6 +102,7 @@ export default function ModifyEvent() {
     formData.append('image', eventPicture);
     console.log(`Event id: ${eventID}`);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/event/event-image/${eventID}`, {
         method: 'POST',
         headers: {
@@ -137,6 +140,7 @@ export default function ModifyEvent() {
   const handleModifyEvent = async () => {
     if (window.confirm("Are you sure you want to modify this event?")) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/events/updateEvent`, {
           method: 'PUT',
           headers: {
