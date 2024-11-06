@@ -13,6 +13,8 @@ export default function CustomerHomePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -66,7 +68,7 @@ export default function CustomerHomePage() {
 
       try {
         const token = localStorage.getItem('token'); // Get the token from local storage
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
           headers: {
@@ -102,7 +104,7 @@ export default function CustomerHomePage() {
 
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/users/email/${encodeURIComponent(email)}`, {
+          const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
               'Authorization': `Bearer ${token}` // Add token to headers
             }

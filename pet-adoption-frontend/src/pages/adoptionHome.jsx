@@ -111,7 +111,7 @@ export default function AdoptionHome() {
 
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/users/email/${encodeURIComponent(email)}`, {
+          const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
               'Authorization': `Bearer ${token}` // Add token to headers
             }

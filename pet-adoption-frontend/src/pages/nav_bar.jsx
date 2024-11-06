@@ -21,6 +21,7 @@ export default function NavBar() {
     const [profilePictureFile, setProfilePictureFile] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     // Fetch user data when page loads
     useEffect(() => {
@@ -78,7 +79,7 @@ export default function NavBar() {
             formData.append('image', profilePictureFile);
 
             try {
-            const response = await fetch(`http://localhost:8080/user/profile-image/${userEmail}`, {
+            const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
                 method: 'POST',
                 body: formData,
             });
