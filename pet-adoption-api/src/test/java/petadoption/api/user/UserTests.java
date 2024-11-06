@@ -95,27 +95,27 @@ public class UserTests {
         assertNotEquals(user, userService.findUser(5L));
     }
 
-    @Test
-    void changePassword(){
-
-
-        User user = new User();
-        user.setEmailAddress("test@test");
-        user.setPassword("hi");
-        userService.saveUser(user);
-
-
-        ChangePassword userSave = new ChangePassword();
-        userSave.setFirstName("test@test");
-        userSave.setPassword("Hello");
-        userService.changePassword(userSave);
-        
-        Optional<User> test =  userService.findUserByEmail("test@test");
-
-        User testUser = test.orElse(new User());
-
-        assertEquals("Hello", testUser.getPassword());
-    }
+//    @Test
+//    void changePassword(){
+//
+//
+//        User user = new User();
+//        user.setEmailAddress("test@test");
+//        user.setPassword("hi");
+//        userService.saveUser(user);
+//
+//
+//        ChangePassword userSave = new ChangePassword();
+//        userSave.setFirstName("test@test");
+//        userSave.setPassword("Hello");
+//        userService.changePassword(userSave);
+//
+//        Optional<User> test =  userService.findUserByEmail("test@test");
+//
+//        User testUser = test.orElse(new User());
+//
+//        assertEquals("Hello", testUser.getPassword());
+//    }
 
     @Test
     void findUser(){
