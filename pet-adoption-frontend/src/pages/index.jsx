@@ -44,7 +44,9 @@ export default function HomePage() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
+    console.log(anchor);
     setState({ ...state, [anchor]: open });
+    console.log(state);
   };
 
   const list = (anchor) => (

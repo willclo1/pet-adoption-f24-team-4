@@ -6,11 +6,13 @@ import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 
 export default function RecommendationEnginePage() {
-  const [state, setState] = useState({ left: false });
+  //const [state, setState] = useState({ left: false });
   const router = useRouter();
+  const { email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  //const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -31,12 +33,14 @@ export default function RecommendationEnginePage() {
     '/petImages/dog4.jpg',
     '/petImages/dog5.jpg'
   ]; 
+  const petDetails = [
+
+  ]
   const currentPet = pets[currentIndex]
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (router.isReady) {
-      const { email } = router.query;
       if (email) {
         setUserEmail(email);
         fetchUserData(email);
@@ -109,14 +113,6 @@ export default function RecommendationEnginePage() {
     }
     handleCloseDialog();
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <div>User not found.</div>;
-  }
 
   // Handle like or dislike button
   const handleYes = () => {

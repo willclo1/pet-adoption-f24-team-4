@@ -17,7 +17,8 @@ import { AppBar,
     Box, 
     Menu, 
     MenuItem,
-    AccountCircleIcon} from '@mui/material';
+    AccountCircleIcon,
+    IconButton} from '@mui/material';
 import { useRouter } from 'next/router';
 import PetsIcon from '@mui/icons-material/Pets';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -108,9 +109,9 @@ const NavBar = ({user, profilePicture, email }) => {
             <AppBar position="static">
                 <Toolbar>
                     <img src="/Friends_Logo.png" alt="Logo" onClick={() => handleNavigation('/customer-home')} style={{ width: 54, height: 54, cursor: 'pointer'}}/>
-                    <Button color='inherit' onClick={toggleDrawer('left', true)}> 
+                    <IconButton color='inherit' onClick={toggleDrawer('left', true)}> 
                         <MenuIcon /> 
-                    </Button>
+                    </IconButton>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>Whisker Works</Typography>
                     <Button color="inherit" onClick={() => handleNavigation('/editPreferences')}>Edit Preferences</Button>
                     <Avatar alt={user?.firstName} src={profilePicture} onClick={handleAvatarClick} sx={{ marginLeft: 2, width: 56, height: 56 }} />
