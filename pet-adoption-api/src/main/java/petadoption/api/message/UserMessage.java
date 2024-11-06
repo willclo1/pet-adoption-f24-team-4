@@ -23,15 +23,18 @@ public class UserMessage {
     @Column(name = "content")
     String content;
 
-    @Setter
     @Getter
-    @OneToOne
-    @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID")
-    AdoptionCenter receiver;
+    @Setter
+    @Column(name = "receiverID")
+    Long receiverID;
 
-    @Setter
     @Getter
-    @OneToOne
-    @JoinColumn(name = "userID", referencedColumnName = "USER_ID")
-    User sender;
+    @Setter
+    @Column(name = "senderID")
+    Long senderID;
+
+    @Getter
+    @Setter
+    @Column(name = "senderName")
+    String senderName;
 }

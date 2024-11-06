@@ -173,6 +173,14 @@ export default function CustomerHomePage() {
     }
 
   }
+    const handleMessage = () => {
+      const token = localStorage.getItem('token'); 
+      if(token){
+        router.push(`/message?email=${email}&userID=${user.id}`)
+      }
+
+  }
+
 
   return (
     <main>
@@ -210,7 +218,7 @@ export default function CustomerHomePage() {
         backgroundColor: 'white',
       }}>
         <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={handleMessage}>
           Send/View Messages
         </Button>
       </Box>

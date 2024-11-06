@@ -22,15 +22,13 @@ public class AdoptionCenterMessage {
     @Column(name = "content")
     String content;
 
-    @Setter
     @Getter
-    @OneToOne
-    @JoinColumn(name = "userID", referencedColumnName = "USER_ID")
-    User receiver;
+    @Setter
+    @Column(name = "receiverID")
+    int receiverID;
 
-    @Setter
     @Getter
-    @OneToOne
-    @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID")
-    AdoptionCenter sender;
+    @Setter
+    @Column(name = "senderID")
+    int senderID;
 }

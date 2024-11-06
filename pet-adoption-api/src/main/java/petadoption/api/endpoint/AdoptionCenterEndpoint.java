@@ -22,6 +22,7 @@ public class AdoptionCenterEndpoint {
         this.adoptionCenterService = adoptionCenterService;
     }
 
+
     @GetMapping
     public List<AdoptionCenter> displayCenters() {
         return adoptionCenterService.getAllAdoptionCenters();
@@ -53,6 +54,7 @@ public class AdoptionCenterEndpoint {
 
 
     }
+
 
     //
     @GetMapping("/{adoptionID}")

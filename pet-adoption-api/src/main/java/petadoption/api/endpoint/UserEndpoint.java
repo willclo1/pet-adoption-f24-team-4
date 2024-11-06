@@ -49,7 +49,9 @@ public class UserEndpoint {
 
         if (userOptional.isPresent()) {
             log.info("User found with email: {}", email);
-            return userService.findAdoptionIDByEmailAddress(email);
+            Optional<Long> id = userService.findAdoptionIDByEmailAddress(email);
+            log.info(id.get());
+            return id;
         }
         return null;
     }
@@ -95,4 +97,17 @@ public class UserEndpoint {
 //    public User saveUser(@RequestBody User user) {
 //        return userService.saveUser();
 //    }
+
+    @GetMapping("/users/non-adoption-center")
+    public ResponseEntity<List<User>> findAllNonAdoptionCenterUsers() {
+        List<User> nonAdoptionCenterUsers = userService.findNonAdoptionUsers();
+
+        if (!nonAdoptionCenterUsers.isEmpty()) {
+            log.info("Found {} non-adoption center users", nonAdoptionCenterUsers.size());
+            return ResponseEntity.ok(nonAdoptionCenterUsers);
+        } else {
+            log.warn("No non-adoption center users found");
+            return ResponseEntity.noContent().build();
+        }
+    }
 }

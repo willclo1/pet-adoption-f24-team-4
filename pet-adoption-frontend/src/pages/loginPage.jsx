@@ -35,6 +35,7 @@ export default function LoginPage() {
             }
     
             const result = await response.json();
+            
     
             // Check if token exists in the response
             if (result.token) {
@@ -42,9 +43,14 @@ export default function LoginPage() {
                 setMessage("Login successful!");
     
                 // Store the JWT token in localStorage
+                
                 localStorage.setItem('token', result.token);
                 setTokenStored(true); // Set token stored status to true
-                router.push(`/customer-home?email=${emailAddress}`);
+                if (result.adoptionId) {
+                    router.push(`/adoptionHome?email=${emailAddress}`); 
+                } else {
+                    router.push(`/customer-home?email=${emailAddress}`); 
+                }
             } else {
                 setIsSuccess(false);
                 setMessage("Login failed. Please try again.");
