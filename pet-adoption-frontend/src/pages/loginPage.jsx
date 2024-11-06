@@ -23,7 +23,12 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify({ emailAddress, password }),
             });
+            console.log('WE ETNERED');
+            console.log(emailAddress);
+            console.log(password);
 
+
+            console.log(`${apiUrl}/login`);
             console.log("Response status:", response.status);
     
             if (!response.ok) {

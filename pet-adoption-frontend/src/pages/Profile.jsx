@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { red } from '@mui/material/colors';
+import { MarkEmailUnread } from '@mui/icons-material';
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -11,6 +12,7 @@ export default function Profile() {
   const { email } = router.query; // Use email from query parameters
  
   const [user, setUser] = useState(null);
+
   const [firstName, setFirstName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,6 +50,7 @@ export default function Profile() {
         body: JSON.stringify({ email: email, password: password })
       });
 
+      
       if (!response.ok) {
           throw new Error("Bad network response");
       }
@@ -69,8 +72,48 @@ export default function Profile() {
     e.preventDefault();
     console.log('LKJSDN');
     console.log(currentPassword);
+    console.log(password);
+    console.log(newPassword);
+    console.log(`${apiUrl}/profile`);
+    console.log(email);
 
-    if (currentPassword === password && newPassword) {
+
+    try {
+      const response = await fetch(`${apiUrl}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emailAddress: email, password: currentPassword }),
+      });
+      console.log('WE ETNERED');
+      console.log(email);
+      console.log(currentPassword);
+
+
+      console.log(`${apiUrl}/login`);
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.log('aw man :(')
+        console.log(errorMessage);
+        //setIsSuccess(false);
+        //setMessage(errorMessage); // Display error message from backend
+        //setTokenStored(false); // Reset token stored status
+        return;
+      }
+
+      const result = await response.json();
+
+
+      localStorage.setItem('token', result.token);
+    
+
+  // Check if token exists in the response
+  //if (result.token) {
+
+    if (result.token && newPassword) {
         setPassword(newPassword);
         console.log('Your new Password is: ' + newPassword);
         try {
@@ -104,11 +147,18 @@ export default function Profile() {
         setPassColor('red');
         setPasswordMessage('Please Enter the Correct Password');
     }
+
+  }catch (error) {
+    console.error("Error logging in: ", error);
+    setMessage("Login failed. Please try again.");
+    setIsSuccess(false);
+    setTokenStored(false); // Reset token stored status
+  }
 };
 
   const handleSave = async () => {
     console.log('WEHIWRIF');
-
+    
     if (profilePictureFile) {
         const formData = new FormData();
         formData.append('image', profilePictureFile);
@@ -169,7 +219,7 @@ export default function Profile() {
                         'Content-Type': 'application/json',
                     },
                 });
-                
+                console.log(`${apiUrl}/profile`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
