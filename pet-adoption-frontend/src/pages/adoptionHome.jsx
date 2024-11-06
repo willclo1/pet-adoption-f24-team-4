@@ -61,6 +61,14 @@ export default function AdoptionHome() {
       setProfilePictureFile(file); // Store the file for uploading later
     }
   };
+    const handleMessage = () => {
+      const token = localStorage.getItem('token'); 
+      if(token){
+        router.push(`/AdoptionCenterMessages?email=${email}&userID=${user.firstName}`)
+      }
+
+  }
+
 
   const handleSave = async () => {
     if (profilePictureFile) {
@@ -95,19 +103,31 @@ export default function AdoptionHome() {
     }
     handleCloseDialog();
   };
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchUser = async () => {
       if (email) {
+        setLoading(true);
+        console.log("Fetching user with email:", email);
+
         try {
-          const response = await fetch(`${apiUrl}/users/email/${email}`);
-          if (!response.ok || !(localStorage.getItem('validUser') === `\"${email}\"` )) {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
+            headers: {
+              'Authorization': `Bearer ${token}` // Add token to headers
+            }
+          });
+          if (!response.ok) {
+            if (response.status === 404) {
+              setError('User not found.');
+              return;
+            }
             throw new Error('Network response was not ok');
           }
+
           const data = await response.json();
+          console.log("Fetched user data:", data);
           setUser(data);
 
-          // Set profile picture if exists
           if (data.profilePicture && data.profilePicture.imageData) {
             setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
           }
@@ -119,9 +139,10 @@ export default function AdoptionHome() {
         }
       }
     };
-    
+
     fetchUser();
   }, [email]);
+
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -310,6 +331,31 @@ export default function AdoptionHome() {
               Modify Events
             </Button>
           </Box>
+
+           <Box
+            sx={{
+              width: 300,
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor: '#fff',
+              textAlign: 'center',
+            }}
+        >
+          <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+            Check out your messages!
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleMessage}
+            sx={{ fontWeight: 'bold' }}
+          >
+            Send/View Messages
+          </Button>
+        </Box>
+
+      
           
         </Stack>
       </Box>

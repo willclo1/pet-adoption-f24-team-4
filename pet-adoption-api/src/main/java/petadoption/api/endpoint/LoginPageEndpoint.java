@@ -9,6 +9,7 @@ import petadoption.api.user.User;
 import petadoption.api.user.UserService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,13 +21,24 @@ public class LoginPageEndpoint {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
         String token = userService.verify(user);
 
         if ("Fail".equals(token)) {
             return ResponseEntity.status(401).body(Collections.singletonMap("message", "Invalid credentials"));
         } else {
-            return ResponseEntity.ok(Collections.singletonMap("token", token));
+            // Find the user to retrieve the adoptionId if available
+            Optional<User> userOptional = userService.findUserByEmail(user.getEmailAddress());
+
+            // Prepare response with token and adoptionId if present
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+
+            if (userOptional.isPresent() && userOptional.get().getCenter() != null) {
+                response.put("adoptionId", userOptional.get().getCenter().getAdoptionID());
+            }
+
+            return ResponseEntity.ok(response);
         }
     }
 }

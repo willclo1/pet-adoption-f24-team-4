@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -57,9 +58,11 @@ public class UserService {
 
 
     public void changePassword(ChangePassword ucer) {
+
         User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
+
         if(!user.getPassword().equals(ucer.getPassword())) {
-            user.setPassword(ucer.getPassword());
+            user.setPassword(encoder.encode(ucer.getPassword()));
             userRepository.save(user);
         }
     }
@@ -79,8 +82,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User register(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+    public User register(RegisterRequest registerRequest) {
+        registerRequest.setPassword(encoder.encode(registerRequest.getPassword()));
+        User user = new User();
+        if(registerRequest.getAdoptionId() != null) {
+            Optional<AdoptionCenter> center = (adoptionCenterRepository.findById(registerRequest.getAdoptionId()));
+            if (center.isPresent()) {
+                user.setCenter(center.get());
+            }
+        }
+
+        user.setEmailAddress(registerRequest.getEmailAddress());
+
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setUserType(registerRequest.getUserType());
+        user.setPassword(registerRequest.getPassword());
         return userRepository.save(user);
     }
 
@@ -94,5 +111,16 @@ public class UserService {
             }
         }
         return "Fail"; // Or you can throw an exception for better error handling
+    }
+
+    public List<User> findNonAdoptionUsers(){
+        List<User> users = userRepository.findAll();
+        List<User> nonAdoptionUsers = new ArrayList<>();
+        for(int i = 0; i < users.size(); i++){
+            if(users.get(i).getCenter() == null){
+                nonAdoptionUsers.add(users.get(i));
+            }
+        }
+        return nonAdoptionUsers;
     }
 }

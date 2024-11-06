@@ -57,6 +57,7 @@ export default function RegisterPage() {
                 throw new Error("Bad network response");
             }
             const result = await response.json();
+            console.log(result);
             setMessage(result.message);
             if(response.status == 200){
                 router.push(`/loginPage`);

@@ -19,8 +19,8 @@ public class RegisterPageEndpoint {
     @Autowired
     UserService userService;
     @PostMapping("/register")
-    public User register(@RequestBody User user){
-        return userService.register(user);
+    public User register(@RequestBody RegisterRequest registerRequest){
+        return userService.register(registerRequest);
     }
 
 }

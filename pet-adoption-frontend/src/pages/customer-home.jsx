@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
@@ -13,6 +13,8 @@ export default function CustomerHomePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -66,7 +68,7 @@ export default function CustomerHomePage() {
 
       try {
         const token = localStorage.getItem('token'); // Get the token from local storage
-        const response = await fetch(`http://localhost:8080/user/profile-image/${email}`, {
+        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
           headers: {
@@ -102,7 +104,7 @@ export default function CustomerHomePage() {
 
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/users/email/${encodeURIComponent(email)}`, {
+          const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
               'Authorization': `Bearer ${token}` // Add token to headers
             }
@@ -166,6 +168,21 @@ export default function CustomerHomePage() {
   if (!user) {
     return <div>User not found.</div>;
   }
+  const handleEditPreferences = () => {
+    const token = localStorage.getItem('token'); 
+    if(token){
+      router.push(`/EditPreferences?email=${email}&userID=${user.id}`)
+    }
+
+  }
+    const handleMessage = () => {
+      const token = localStorage.getItem('token'); 
+      if(token){
+        router.push(`/message?email=${email}&userID=${user.id}`)
+      }
+
+  }
+
 
   return (
     <main>
@@ -174,7 +191,7 @@ export default function CustomerHomePage() {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Whisker Works
           </Typography>
-          <Button color="inherit">Edit Preferences</Button>
+          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
           <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
           <Button color="inherit">Adopt a Pet</Button>
           <Avatar
@@ -191,6 +208,22 @@ export default function CustomerHomePage() {
         <Typography variant="body1" color="text.secondary">
           Check out the home page!
         </Typography>
+        <Box sx={{
+        position: 'absolute',
+        top: 100,
+        left: 20,
+        width: 300,
+        padding: 2,
+        boxShadow: 3,
+        borderRadius: 2,
+        textAlign: 'center',
+        backgroundColor: 'white',
+      }}>
+        <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
+        <Button variant="contained" color="primary" onClick={handleMessage}>
+          Send/View Messages
+        </Button>
+      </Box>
       </Stack>
 
       <Menu
