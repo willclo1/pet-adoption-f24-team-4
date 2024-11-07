@@ -41,7 +41,7 @@ const NavBar = ({user, profilePicture, email }) => {
         setAnchorEl(null);
     };
     const handleNavigation = (path) => {
-        router.push(`${path}?email=${email}`);
+        router.push(`${path}?email=${email}&userID=${user.id}`);
         handleCloseMenu();
     };
 

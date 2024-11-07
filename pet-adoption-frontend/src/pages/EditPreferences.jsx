@@ -118,9 +118,11 @@ const EditPreferences = () => {
         <Dialog open={open}>
             <DialogTitle>
                 Edit Preferences
-                <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
+                {/* <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
                     <CloseIcon />
-                </IconButton>
+                </IconButton> */}
+                <BackButton  defaultPath='/customer-home'/>
+
             </DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit}>

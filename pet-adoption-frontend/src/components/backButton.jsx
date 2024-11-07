@@ -3,22 +3,26 @@ import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Email } from '@mui/icons-material';
 
-const BackButton = ({ email, defaultPath = '/customer-home'}) => {
+const BackButton = ({defaultPath='/customer-home'}) => {
     const router = useRouter();
+    const { userId, email } = router.query;
     const [previousPage, setPreviousPage] = useState(defaultPath);
     
-    useEffect(() => {
-        const fromPage = sessionStorage.getItem('fromPage');
-        if (fromPage) {
-            setPreviousPage(fromPage);
-        }
-    }, []);
+    // useEffect(() => {
+    //     const fromPage = sessionStorage.getItem('fromPage');
+    //     if (fromPage) {
+    //         setPreviousPage(fromPage);
+    //     }
+    // }, []);
 
     const handleBackClick = () => {
-        if (previousPage) {
-            router.push(previousPage);
-        } else {
-            router.push(`${defaultPath}?email=${email}`);
+        const token = localStorage.getItem('token');
+        if (token) {
+            if (email && userId) {
+                router.push(`${previousPage}?email=${email}&userID=${userId}`);
+            } else {
+                router.push(`${defaultPath}?email=${email}&userID=${userId}`);
+            }
         }
     };
 
