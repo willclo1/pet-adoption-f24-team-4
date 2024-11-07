@@ -2,19 +2,14 @@ package petadoption.api.endpoint;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
-import petadoption.api.message.AdoptionMessageService;
 import petadoption.api.message.UserMessage;
 import petadoption.api.message.UserMessageService;
-import petadoption.api.user.User;
 import petadoption.api.user.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user-messages")
