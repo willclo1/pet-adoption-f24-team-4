@@ -1,5 +1,7 @@
 package petadoption.api.pet.criteria.breed;
 
+import lombok.Getter;
+
 public enum CatBreed implements AnimalBreed {
     // For unsure / unknown breed
     MIX_BREED("Mix-Breed"),
@@ -94,15 +96,11 @@ public enum CatBreed implements AnimalBreed {
     TURKISH_VAN("Turkish Van");
 
 
-    private String breedName;
+    @Getter
+    private final String breedName;
 
     CatBreed(String breedName) {
         this.breedName = breedName;
-    }
-
-    @Override
-    public String getBreedName() {
-        return breedName;
     }
 
     @Override

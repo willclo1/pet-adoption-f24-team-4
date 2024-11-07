@@ -1,6 +1,12 @@
 package petadoption.api.pet.criteria;
 
 public enum Species {
-    DOG,
-    CAT
+    DOG("Dog"),
+    CAT("Cat");
+
+    private final String displayName;
+
+    Species(final String speciesType) {
+        this.displayName = speciesType;
+    }
 }

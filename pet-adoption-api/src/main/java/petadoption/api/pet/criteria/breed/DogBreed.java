@@ -1,5 +1,7 @@
 package petadoption.api.pet.criteria.breed;
 
+import lombok.Getter;
+
 public enum DogBreed implements AnimalBreed {
     // For unsure / unknown breed
     MIX_BREED("Mix-Breed"),
@@ -341,15 +343,11 @@ public enum DogBreed implements AnimalBreed {
     YORKSHIRE_TERRIER("Yorkshire Terrier");
 
 
-    private String breedName;
+    @Getter
+    private final String breedName;
 
     DogBreed(String breedName) {
         this.breedName = breedName;
-    }
-
-    @Override
-    public String getBreedName() {
-        return breedName;
     }
 
     @Override
