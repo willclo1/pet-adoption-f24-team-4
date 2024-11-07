@@ -97,11 +97,15 @@ export default function RecommendationEnginePage() {
     if (profilePictureFile) {
       const formData = new FormData();
       formData.append('image', profilePictureFile);
+      const token = localStorage.getItem('token');
 
       try {
         const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
           method: 'POST',
           body: formData,
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
         if (!response.ok) throw new Error('Failed to upload image');
         const updatedUser = await response.json();

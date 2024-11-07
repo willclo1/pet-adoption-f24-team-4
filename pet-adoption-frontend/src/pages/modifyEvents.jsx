@@ -15,14 +15,10 @@ import {
   List,
   ListItem,
   ListItemText,
-  Select,
   Avatar,
-  Snackbar,
-  MenuItem
+  Snackbar
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { ContactlessOutlined } from '@mui/icons-material';
-import { PetAdoptionThemeProvider } from '@/utils/theme';
 
 export default function ModifyEvent() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -35,20 +31,29 @@ export default function ModifyEvent() {
   const { adoptionID, email } = router.query;
   const [openDialog, setOpenDialog] = useState(false);
 
+  // Retrieve the Bearer token (assuming it's stored in localStorage or context)
+
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        const token = localStorage.getItem('token');
         console.log(`${apiUrl}/events/adoption-center/${adoptionID}`);
-        const response = await fetch(`${apiUrl}/events/adoption-center/${adoptionID}`);
+        const response = await fetch(`${apiUrl}/events/adoption-center/${adoptionID}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Include Bearer token here
+            'Content-Type': 'application/json'
+          }
+        });
         if (!response.ok) {
-          throw new error("Failed to fetch events")
+          throw new Error("Failed to fetch events");
         }
         const data = await response.json();
         setEvents(data);
         console.log("Successfully fetched events");
       } catch (error) {
-        console.error("Failed to fecth events");
-        setError("Failed to fecth events");
+        console.error("Failed to fetch events");
+        setError("Failed to fetch events");
       } finally {
         setLoading(false);
       }
@@ -60,10 +65,12 @@ export default function ModifyEvent() {
   const handleDelete = async (eventID) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/events/deleteEvent/${eventID}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type' : 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ id: eventID })
         });
@@ -72,7 +79,7 @@ export default function ModifyEvent() {
           throw new Error("Failed to delete the event.");
         }
 
-        setEvents((prevEvents) => prevEvents.filter(event => event.eventID != eventID));
+        setEvents((prevEvents) => prevEvents.filter(event => event.eventID !== eventID));
       } catch (error) {
         console.error("Error deleting event: ", error);
         setError("Failed to delete the event.");
@@ -95,8 +102,12 @@ export default function ModifyEvent() {
     formData.append('image', eventPicture);
     console.log(`Event id: ${eventID}`);
     try {
-      response = await fetch(`${apiUrl}/event/event-image/${eventID}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/event/event-image/${eventID}`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}` // Include Bearer token here
+        },
         body: formData
       });
 
@@ -105,11 +116,18 @@ export default function ModifyEvent() {
       } else {
         console.log("Event image saved successfully");
       }
-      response = await fetch(`${apiUrl}/events/adoption-center/${adoptionID}`);
-      const updatedEvents = await response.json();
+
+      const updatedResponse = await fetch(`${apiUrl}/events/adoption-center/${adoptionID}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include Bearer token here
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const updatedEvents = await updatedResponse.json();
       console.log("Received updated list of events");
 
-      if (response.ok) {
+      if (updatedResponse.ok) {
         setEvents(updatedEvents);
       } else {
         console.log("Failure to get list of events");
@@ -117,14 +135,16 @@ export default function ModifyEvent() {
     } catch (error) {
       console.error("Failed to upload Event picture: ", error);
     }
-  }
+  };
 
   const handleModifyEvent = async () => {
     if (window.confirm("Are you sure you want to modify this event?")) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${apiUrl}/events/updateEvent`, {
           method: 'PUT',
           headers: {
+            'Authorization': `Bearer ${token}`, // Include Bearer token here
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(selectedEvent)
@@ -136,7 +156,7 @@ export default function ModifyEvent() {
 
         setEvents((prevEvents) =>
           prevEvents.map((event) => 
-            (event.id == selectedEvent.eventID ? 
+            (event.id === selectedEvent.eventID ? 
               { ...event, ...selectedEvent } : event))
         );
         setOpenDialog(false);
@@ -177,7 +197,7 @@ export default function ModifyEvent() {
         {/* List of events */}
         <List>
           {
-            events != null && events.length > 0 ? (
+            events && events.length > 0 ? (
               events.map((event) => (
                 <React.Fragment key={event.eventID}>
                   <ListItem sx={{ padding: 2 }}>
@@ -328,10 +348,6 @@ export default function ModifyEvent() {
             variant="outlined"
             color="primary"
           />
-
-          {/* startDateTime / endDateTime */}
-
-
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>

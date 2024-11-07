@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid, Butt
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-export default function centerPublicProfile() {
+export default function CenterPublicProfile() {
     const router = useRouter();
     const { adoptionID } = router.query;
     const [adoptionCenter, setAdoptionCenter] = useState(null);
@@ -13,12 +13,13 @@ export default function centerPublicProfile() {
     const [error, setError] = useState(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+
     // Fetch Adoption Center details
     useEffect(() => {
         const fetchAdoptionCenter = async () => {
-            if (adoptionID) {
                 try {
-                    const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`);
+                    const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`, {
+                    });
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -30,7 +31,6 @@ export default function centerPublicProfile() {
                 } finally {
                     setLoading(false);
                 }
-            }
         };
         fetchAdoptionCenter();
     }, [adoptionID, apiUrl]);
@@ -38,9 +38,9 @@ export default function centerPublicProfile() {
     // Fetch Pets for the Adoption Center
     useEffect(() => {
         const fetchPets = async () => {
-            if (adoptionID) {
                 try {
-                    const response = await fetch(`${apiUrl}/pets/${adoptionID}`);
+                    const response = await fetch(`${apiUrl}/pets/${adoptionID}`, {
+                    });
                     if (!response.ok) {
                         throw new Error("Failed to fetch Pets");
                     }
@@ -52,7 +52,6 @@ export default function centerPublicProfile() {
                 } finally {
                     setLoading(false);
                 }
-            }
         };
         fetchPets();
     }, [adoptionID, apiUrl]);
@@ -100,19 +99,17 @@ export default function centerPublicProfile() {
                     {adoptionCenter?.buildingAddress}
                 </Typography>
 
-                
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                        <b>About:</b>
-                    </Typography>
-                    <Typography sx={{ 
-                                    display: 'inline-block', // Changed to 'inline-block'
-                                    marginBottom: 3,
-                                    width: 400, // Set a specific width
-                                    wordBreak: 'break-all' // Breaks the line at any character to prevent overflow
-                                    }}>
-                        {adoptionCenter?.description}
-                    </Typography>
-        
+                    <b>About:</b>
+                </Typography>
+                <Typography sx={{ 
+                                display: 'inline-block',
+                                marginBottom: 3,
+                                width: 400,
+                                wordBreak: 'break-all'
+                                }}>
+                    {adoptionCenter?.description}
+                </Typography>
 
                 <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                     Pets Available for Adoption
@@ -126,16 +123,11 @@ export default function centerPublicProfile() {
                     <Grid container spacing={3}>
                         {pets.map((pet) => (
                             <Grid item xs={12} sm={6} md={4} key={pet.id}>
-                                
                                 <Card sx={{ borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }}>
-                                <Avatar
-                                     src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null} // Use the uploaded profile picture here
-                                    sx={{ 
-                                    width: 200,
-                                    height: 200,
-                                    borderRadius: 0}}
-
-                                     />
+                                    <Avatar
+                                        src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
+                                        sx={{ width: 200, height: 200, borderRadius: 0 }}
+                                    />
                                     <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                                         <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
                                             <PetsIcon />
@@ -143,9 +135,7 @@ export default function centerPublicProfile() {
                                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                                             {pet.firstName} {pet.lastName}
                                         </Typography>
-                                        
                                     </Box>
-                                      
 
                                     <Typography variant="body2" color="textSecondary">
                                         Type: {pet.petType}
@@ -156,7 +146,6 @@ export default function centerPublicProfile() {
                                     <Typography variant="body2" color="textSecondary">
                                         Fur Type: {pet.furType}
                                     </Typography>
-                                     
                                 </Card>
                             </Grid>
                         ))}
