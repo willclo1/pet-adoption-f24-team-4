@@ -74,6 +74,13 @@ public class UserPreferences {
     Map<FurColor, Double> furColor;
 
     @ElementCollection
+    @MapKeyColumn(name = "fur_type")
+    @Column(name = "fur_type_rating")
+    @CollectionTable(name = "user_preferences_fur_type",
+            joinColumns=@JoinColumn(name = "user_preferences_id"))
+    Map<FurType, Double> furType;
+
+    @ElementCollection
     @MapKeyColumn(name = "coat_length")
     @Column(name = "coat_length_rating")
     @CollectionTable(name = "user_preferences_coat_length",
@@ -227,6 +234,25 @@ public class UserPreferences {
             furColor.put(fc, (furColor.get(fc) + value));
         } else {
             furColor.put(fc, value);
+        }
+    }
+
+    public Double getFurTypeRating(FurType ft) {
+        if (furType.containsKey(ft)) {
+            return furType.get(ft);
+        }
+        return 0.0;
+    }
+
+    public void setFurTypeRating(FurType ft, Double rating) {
+        furType.put(ft, rating);
+    }
+
+    public void updateFurTypeRating(FurType ft, Double value) {
+        if (furType.containsKey(ft)) {
+            furType.put(ft, (furType.get(ft) + value));
+        } else {
+            furType.put(ft, value);
         }
     }
 
