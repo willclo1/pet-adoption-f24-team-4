@@ -1,7 +1,8 @@
-package petadoption.api.pet;
+package petadoption.api.pet.criteria;
 
 
 public enum Size {
+    EXTRA_SMALL,
     SMALL,
     MEDIUM,
     LARGE,

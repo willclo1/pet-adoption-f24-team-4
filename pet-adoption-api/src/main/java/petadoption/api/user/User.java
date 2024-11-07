@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.recommendationEngine.UserPreferences;
 
 import java.util.prefs.Preferences;
 
@@ -42,6 +43,12 @@ public class User {
     @JoinColumn(name = "USER_PREFERENCE_ID", referencedColumnName = "id")
     private UserPreference userPreference;
 
+    /*
+    @OneToOne(optional = false)
+    @JoinColumn(name = "USER_PREFERENCES_ID", unique = true, nullable = false, updatable = false) */
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_PREFERENCES_ID", referencedColumnName = "user_preferences_id")
+    private UserPreferences userPreferences;
 
 
     public Image getProfilePicture() {

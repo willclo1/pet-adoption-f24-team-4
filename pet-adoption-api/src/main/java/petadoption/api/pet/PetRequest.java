@@ -1,9 +1,8 @@
 package petadoption.api.pet;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Data;
+import petadoption.api.pet.criteria.Size;
+import petadoption.api.pet.criteria.Temperament;
 
 @Data
 public class PetRequest {

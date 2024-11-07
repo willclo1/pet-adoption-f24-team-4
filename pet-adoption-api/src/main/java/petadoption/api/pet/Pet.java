@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.pet.criteria.Size;
+import petadoption.api.pet.criteria.Temperament;
 
 @Data
 @Entity
