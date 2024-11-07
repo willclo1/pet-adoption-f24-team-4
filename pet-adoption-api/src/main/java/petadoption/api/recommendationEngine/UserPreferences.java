@@ -3,6 +3,8 @@ package petadoption.api.recommendationEngine;
 import jakarta.persistence.*;
 import lombok.Getter;
 import petadoption.api.pet.criteria.*;
+import petadoption.api.pet.criteria.breed.CatBreed;
+import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.user.User;
 
 import java.util.HashMap;
@@ -34,12 +36,28 @@ public class UserPreferences {
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<Species, Double> species;
 
+    /*
     @ElementCollection
     @MapKeyColumn(name = "breed")
     @Column(name = "breed_rating")
     @CollectionTable(name = "user_preferences_breed",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<Breed, Double> breed;
+     */
+
+    @ElementCollection
+    @MapKeyColumn(name = "cat_breed")
+    @Column(name = "cat_breed_rating")
+    @CollectionTable(name = "user_preferences_cat_breed",
+            joinColumns=@JoinColumn(name = "user_preferences_id"))
+    Map<CatBreed, Double> catBreed;
+
+    @ElementCollection
+    @MapKeyColumn(name = "dog_breed")
+    @Column(name = "dog_breed_rating")
+    @CollectionTable(name = "user_preferences_dog_breed",
+            joinColumns=@JoinColumn(name = "user_preferences_id"))
+    Map<DogBreed, Double> dogBreed;
 
     @ElementCollection
     @MapKeyColumn(name = "size")
@@ -85,7 +103,9 @@ public class UserPreferences {
 
     public UserPreferences() {
         species = new HashMap<>();
-        breed = new HashMap<>();
+        //breed = new HashMap<>();
+        catBreed = new HashMap<>();
+        dogBreed = new HashMap<>();
         size = new HashMap<>();
         furColor = new HashMap<>();
         coatLength = new HashMap<>();
@@ -113,6 +133,45 @@ public class UserPreferences {
         }
     }
 
+    public Double getCatBreedRating(CatBreed c) {
+        if (catBreed.containsKey(c)) {
+            return catBreed.get(c);
+        }
+        return 0.0;
+    }
+
+    public void setCatBreedRating(CatBreed c, Double rating) {
+        catBreed.put(c, rating);
+    }
+
+    public void updateCatBreedRating(CatBreed c, Double value) {
+        if (catBreed.containsKey(c)) {
+            catBreed.put(c, (catBreed.get(c) + value));
+        } else {
+            catBreed.put(c, value);
+        }
+    }
+
+    public Double getDogBreedRating(DogBreed d) {
+        if (dogBreed.containsKey(d)) {
+            return dogBreed.get(d);
+        }
+        return 0.0;
+    }
+
+    public void setDogBreedRating(DogBreed d, Double rating) {
+        dogBreed.put(d, rating);
+    }
+
+    public void updateDogBreedRating(DogBreed d, Double value) {
+        if (dogBreed.containsKey(d)) {
+            dogBreed.put(d, (dogBreed.get(d) + value));
+        } else {
+            dogBreed.put(d, value);
+        }
+    }
+
+    /*
     public Double getBreedRating(Breed b) {
         if (breed.containsKey(b)) {
             return breed.get(b);
@@ -131,6 +190,7 @@ public class UserPreferences {
             breed.put(b, value);
         }
     }
+     */
 
     public Double getSizeRating(Size s) {
         if (size.containsKey(s)) {
