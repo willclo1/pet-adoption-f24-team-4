@@ -350,8 +350,6 @@ public enum DogBreed implements AnimalBreed {
         this.breedName = breedName;
     }
 
-    DogBreed() {}
-
     @Override
     public String getAnimalType() {
         return "Dog";
