@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum CatBreed implements AnimalBreed {
     // For unsure / unknown breed
-    MIX_BREED("Mix-Breed"),
+    MIX_BREED("Mix Breed"),
 
     // "A"
     ABYSSINIAN("Abyssinian"),
@@ -108,5 +108,9 @@ public enum CatBreed implements AnimalBreed {
     @Override
     public String getAnimalType() {
         return "Cat";
+    }
+
+    public String getDisplayName() {
+        return breedName;
     }
 }

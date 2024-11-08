@@ -7,7 +7,7 @@ public enum FurColor {
     BLACK("black"),
     BROWN("brown"),
     GRAY("gray"),
-    MIXEDCOLOR("mixed color"),
+    MIXED_COLOR("mixed color"),
     ;
     @Getter
     private final String displayName;

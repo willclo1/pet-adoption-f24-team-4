@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum DogBreed implements AnimalBreed {
     // For unsure / unknown breed
-    MIX_BREED("Mix-Breed"),
+    MIX_BREED("Mix Breed"),
 
     // "A"
     AFFENPINSCHER("Affenpinscher"),
@@ -357,5 +357,9 @@ public enum DogBreed implements AnimalBreed {
     @Override
     public String getAnimalType() {
         return "Dog";
+    }
+
+    public String getDisplayName() {
+        return breedName;
     }
 }
