@@ -15,9 +15,7 @@ import petadoption.api.Utility.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PetService {
@@ -67,6 +65,11 @@ public class PetService {
         List<Pet> samplePets = new ArrayList<>();
         Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter((long)(1));
         File imageFile = new File("PetImages/GreyHound.jpg");
+        Set<DogBreed> dogBreeds = new HashSet<>();
+        dogBreeds.add(DogBreed.GREYHOUND);
+        Set<CatBreed> catBreeds = new HashSet<>();
+        Set<Temperament> temperaments = new HashSet<>();
+        temperaments.add(Temperament.ACTIVE);
 
         Image image = new Image();
         image.setType("image/jpeg");
@@ -75,7 +78,7 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        Pet pet = new Pet("wilson",Species.DOG,50,CoatLength.MEDIUM, FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(), DogBreed.GREYHOUND, Size.LARGE,4, Temperament.ACTIVE, Health.GOOD);
+        Pet pet = new Pet("wilson",Species.DOG,50,CoatLength.MEDIUM, FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(), dogBreeds, catBreeds, Size.LARGE,4,temperaments, Health.GOOD);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 

@@ -9,6 +9,8 @@ import petadoption.api.pet.criteria.breed.AnimalBreed;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = Pet.TABLE_NAME)
@@ -54,8 +56,12 @@ public class Pet {
     private AdoptionCenter center;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "BREED") // Added breed column
-    private DogBreed breed;
+    @Column(name = "DOG_BREED") // Added breed column
+    private Set<DogBreed> dogBreed;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "CAT_BREED") // Added breed column
+    private Set<CatBreed> catBreed;
 
     @Enumerated(EnumType.STRING) // Use this annotation if petSize is an enum
     @Column(name = "PET_SIZE") // Added petSize column
@@ -66,13 +72,13 @@ public class Pet {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TEMPERAMENT") // Added temperament column
-    private Temperament temperament;
+    private Set<Temperament> temperament;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "HEALTH_STATUS") // Added healthStatus column
     private Health healthStatus;
 
-    public Pet(String firstName, Species species, int weight, CoatLength coatLength, FurType furType, FurColor furColor, AdoptionCenter center , DogBreed breed, Size petSize, int age, Temperament temperament, Health healthStatus ) {
+    public Pet(String firstName, Species species, int weight, CoatLength coatLength, FurType furType, FurColor furColor, AdoptionCenter center , Set<DogBreed> dogBreeds, Set<CatBreed> catBreeds, Size petSize, int age, Set<Temperament> temperament, Health healthStatus ) {
         this.name = firstName;
         this.species = species;
         this.weight = weight;
@@ -80,7 +86,8 @@ public class Pet {
         this.furType = furType;
         this.furColor = furColor;
         this.center = center;
-        this.breed = breed;
+        this.dogBreed = dogBreeds;
+        this.catBreed = catBreeds;
         this.petSize = petSize;
         this.age = age;
         this.temperament = temperament;
