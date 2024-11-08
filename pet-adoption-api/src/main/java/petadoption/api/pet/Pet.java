@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.pet.criteria.Size;
-import petadoption.api.pet.criteria.Temperament;
+import petadoption.api.pet.criteria.*;
+import petadoption.api.pet.criteria.breed.AnimalBreed;
+import petadoption.api.pet.criteria.breed.CatBreed;
+import petadoption.api.pet.criteria.breed.DogBreed;
 
 @Data
 @Entity
@@ -21,20 +23,27 @@ public class Pet {
     @Column(name = "petID")
     Long id;
 
-    @Column(name = "FIRST_NAME")
-    String firstName;
+    @Column(name = "name")
+    String name;
 
-    @Column(name = "LAST_NAME")
-    String lastName;
-
-    @Column(name = "PET_TYPE")
-    String petType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SPECIES")
+    Species species;
 
     @Column(name = "WEIGHT")
     int weight;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "COAT_LENGTH")
+    CoatLength coatLength;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "FUR_TYPE")
-    String furType;
+    FurType furType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "FUR_COLOR")
+    FurColor furColor;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
@@ -44,9 +53,9 @@ public class Pet {
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
     private AdoptionCenter center;
 
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "BREED") // Added breed column
-    private String breed;
+    private DogBreed breed;
 
     @Enumerated(EnumType.STRING) // Use this annotation if petSize is an enum
     @Column(name = "PET_SIZE") // Added petSize column
@@ -59,14 +68,17 @@ public class Pet {
     @Column(name = "TEMPERAMENT") // Added temperament column
     private Temperament temperament;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "HEALTH_STATUS") // Added healthStatus column
-    private String healthStatus;
+    private Health healthStatus;
 
-    public Pet(String firstName, String lastName, String petType, int weight,String furType,AdoptionCenter center ,String breed,Size petSize, int age, Temperament temperament, String healthStatus ) {
-        this.firstName = firstName;
-        this.petType = petType;
+    public Pet(String firstName, Species species, int weight, CoatLength coatLength, FurType furType, FurColor furColor, AdoptionCenter center , DogBreed breed, Size petSize, int age, Temperament temperament, Health healthStatus ) {
+        this.name = firstName;
+        this.species = species;
         this.weight = weight;
+        this.coatLength = coatLength;
         this.furType = furType;
+        this.furColor = furColor;
         this.center = center;
         this.breed = breed;
         this.petSize = petSize;

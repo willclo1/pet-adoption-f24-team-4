@@ -101,7 +101,7 @@ export default function CustomerHomePage() {
       if (email) {
         setLoading(true);
         console.log("Fetching user with email:", email);
-
+        
         try {
           const token = localStorage.getItem('token');
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
@@ -109,6 +109,7 @@ export default function CustomerHomePage() {
               'Authorization': `Bearer ${token}` // Add token to headers
             }
           });
+          console.log('Authorization'+ `Bearer ${token}`);
           if (!response.ok) {
             if (response.status === 404) {
               setError('User not found.');

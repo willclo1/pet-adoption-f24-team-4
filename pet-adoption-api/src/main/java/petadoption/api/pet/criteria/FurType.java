@@ -2,6 +2,7 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+
 public enum FurType {
     SMOOTH("Smooth"),
     SILKY("Silky"),
@@ -12,7 +13,6 @@ public enum FurType {
     WAVY("Wavy"),
     CORDED("Corded"),
     ;
-
     @Getter
     private final String displayName;
 
