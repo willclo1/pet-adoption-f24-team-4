@@ -11,6 +11,10 @@ import petadoption.api.pet.Pet;
 import petadoption.api.pet.PetRequest;
 import petadoption.api.pet.PetService;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,16 +37,15 @@ public class PetEndpoint {
             }
 
             Pet pet = new Pet();
-            pet.setFirstName(petRequest.getFirstName());
-            pet.setLastName(petRequest.getLastName());
-            pet.setPetType(petRequest.getPetType());
+            pet.setName(petRequest.getFirstName());
+            //pet.setPetType(petRequest.getPetType());
             pet.setWeight(petRequest.getWeight());
-            pet.setFurType(petRequest.getFurType());
-            pet.setBreed(petRequest.getBreed());
+            //pet.setFurType(petRequest.getFurType());
+            //pet.setBreed(petRequest.getBreed());
             pet.setAge(petRequest.getAge()); // Set the age
             pet.setTemperament(petRequest.getTemperament()); // Set the temperament enum
             pet.setPetSize(petRequest.getPetSize()); // Set the size enum
-            pet.setHealthStatus(petRequest.getHealthStatus()); // Set health status
+            //pet.setHealthStatus(petRequest.getHealthStatus()); // Set health status
             pet.setCenter(adoptionCenter.get());
 
             petService.savePet(pet, adoptionCenter.get().getAdoptionID());
@@ -55,6 +58,7 @@ public class PetEndpoint {
     }
     @GetMapping("/pets")
     public ResponseEntity<?> getAllPets() {
+        System.out.println("hello");
         try {
             List<Pet> pets = petService.getAllPets();
             return ResponseEntity.ok(pets);
@@ -62,6 +66,17 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
+
+    @GetMapping("/samplePets")
+    public String addSampleCenters() throws IOException {
+        System.out.println("1");
+
+        petService.addSamplePets(adoptionCenterService);
+        return "Sample pets added successfully.";
+    }
+
+
+
     @GetMapping("/pets/{adoptionID}")
     public ResponseEntity<?> getAdoptionCenterPets(@PathVariable Long adoptionID) {
         try {
@@ -91,21 +106,20 @@ public class PetEndpoint {
             }
             Pet existingPet = existingPetOpt.get();
 
-            existingPet.setFirstName(petRequest.getFirstName());
-            existingPet.setLastName(petRequest.getLastName());
-            existingPet.setPetType(petRequest.getPetType());
+            existingPet.setName(petRequest.getFirstName());
+            //existingPet.setPetType(petRequest.getPetType());
             existingPet.setWeight(petRequest.getWeight());
-            existingPet.setFurType(petRequest.getFurType());
+            //existingPet.setFurType(petRequest.getFurType());
             existingPet.setPetSize(petRequest.getPetSize());
-            existingPet.setBreed(petRequest.getBreed());
+            //existingPet.setBreed(petRequest.getBreed());
             existingPet.setAge(petRequest.getAge());
             existingPet.setTemperament(petRequest.getTemperament());
-            existingPet.setHealthStatus(petRequest.getHealthStatus());
+            //existingPet.setHealthStatus(petRequest.getHealthStatus());
 
 
             petService.savePet(existingPet, existingPet.getCenter().getAdoptionID());
 
-            log.info("Pet updated successfully: " + existingPet.getFirstName() + " " + existingPet.getLastName());
+            log.info("Pet updated successfully: " + existingPet.getName());
             return ResponseEntity.ok(existingPet);
         }
         catch (Exception e) {
