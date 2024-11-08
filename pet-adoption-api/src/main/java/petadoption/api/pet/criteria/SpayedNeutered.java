@@ -3,8 +3,8 @@ package petadoption.api.pet.criteria;
 import lombok.Getter;
 
 public enum SpayedNeutered {
-    SPAYED("Spayed"),
-    NEUTERED("Neutered"),;
+    SPAYED_NEUTERED("Spayed / Neutered"),
+    NOT_SPAYED_NEUTERED("Not Spayed / Neutered"),;
 
     @Getter
     private final String displayName;
