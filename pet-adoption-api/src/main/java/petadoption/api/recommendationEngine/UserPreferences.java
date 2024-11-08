@@ -36,15 +36,6 @@ public class UserPreferences {
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<Species, Double> species;
 
-    /*
-    @ElementCollection
-    @MapKeyColumn(name = "breed")
-    @Column(name = "breed_rating")
-    @CollectionTable(name = "user_preferences_breed",
-            joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Breed, Double> breed;
-     */
-
     @ElementCollection
     @MapKeyColumn(name = "cat_breed")
     @Column(name = "cat_breed_rating")
@@ -110,7 +101,6 @@ public class UserPreferences {
 
     public UserPreferences() {
         species = new HashMap<>();
-        //breed = new HashMap<>();
         catBreed = new HashMap<>();
         dogBreed = new HashMap<>();
         size = new HashMap<>();
