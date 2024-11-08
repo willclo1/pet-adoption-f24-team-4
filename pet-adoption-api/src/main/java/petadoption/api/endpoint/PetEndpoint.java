@@ -62,6 +62,16 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
+
+    @GetMapping("/samplePets")
+    public String addSampleCenters() {
+        System.out.println("1");
+        petService.addSamplePets(adoptionCenterService);
+        return "Sample adoption centers added successfully.";
+    }
+
+
+
     @GetMapping("/pets/{adoptionID}")
     public ResponseEntity<?> getAdoptionCenterPets(@PathVariable Long adoptionID) {
         try {

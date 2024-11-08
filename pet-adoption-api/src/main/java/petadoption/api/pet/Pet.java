@@ -61,4 +61,24 @@ public class Pet {
 
     @Column(name = "HEALTH_STATUS") // Added healthStatus column
     private String healthStatus;
+
+    public Pet(String firstName, String lastName, String petType, int weight,String furType,AdoptionCenter center ,String breed,Size petSize, int age, Temperament temperament, String healthStatus ) {
+        this.firstName = firstName;
+        this.petType = petType;
+        this.weight = weight;
+        this.furType = furType;
+        this.center = center;
+        this.breed = breed;
+        this.petSize = petSize;
+        this.age = age;
+        this.temperament = temperament;
+        this.healthStatus = healthStatus;
+
+
+    }
+    public Pet(){
+
+
+    }
+
 }

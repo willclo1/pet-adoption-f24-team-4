@@ -6,6 +6,7 @@ import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,4 +52,17 @@ public class PetService {
     public void deletePet(long petID){
         repository.deleteById(petID);
     }
+
+
+    public void addSamplePets(AdoptionCenterService adoptionCenterService) {
+        List<Pet> samplePets = new ArrayList<>();
+        Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter((long)(1));
+        //samplePets.add(new Pet("wilson", "Garcia","Dog",50, "fluffy", ));
+
+
+
+
+        repository.saveAll(samplePets);
+    }
+
 }
