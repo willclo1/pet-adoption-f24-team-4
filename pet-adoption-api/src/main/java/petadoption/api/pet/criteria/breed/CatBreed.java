@@ -33,6 +33,8 @@ public enum CatBreed implements AnimalBreed {
     // "D"
     DEVON_REX("Devon Rex"),
     DONSKOY("Donskoy"),
+    DOMESTIC_SHORTHAIR("Domestic Shorthair"),
+    DOMESTIC_LONGHAIR("Domestic Longhair"),
 
     // "E"
     EGYPTIAN_MAU("Egyptian Mau"),
@@ -62,7 +64,7 @@ public enum CatBreed implements AnimalBreed {
 
     // "N"
     NEBELUNG("Nebelung"),
-    NORWEGIAN_FOREST("Norwegian Forest"),
+    NORWEGIAN_FOREST_CAT("Norwegian Forest Cat"),
 
     // "O"
     OCICAT("Ocicat"),

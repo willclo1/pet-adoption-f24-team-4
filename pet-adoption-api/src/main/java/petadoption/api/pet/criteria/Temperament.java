@@ -47,7 +47,19 @@ public enum Temperament {
     BOSSY("Bossy"),
     AGILE("Agile"),
     KID_FRIENDLY("Kid Friendly"),
-    PET_FRIENDLY("Pet Friendly"),;
+    PET_FRIENDLY("Pet Friendly"),
+    CAT_FRIENDLY("Cat Friendly"),
+    DOG_FRIENDLY("Dog Friendly"),
+    DOMINANT("Dominant"),
+    SUBMISSIVE("Submissive"),
+    EASILY_TRAINED("Easily Trained"),
+    POTTY_TRAINED("Potty Trained"),
+    CUDDLY("Cuddly"),
+    ALOOF("Aloof"),
+    GOOD_ON_LEASH("Good on Leash"),
+    STRONG("Strong"),
+    HYPER("Hyper"),
+    ;
 
     @Getter
     private final String displayName;
