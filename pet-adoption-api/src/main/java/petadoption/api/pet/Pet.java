@@ -83,6 +83,7 @@ public class Pet {
     private SpayedNeutered spayedNeutered;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "SEX")
     private Sex sex;
 
     public Pet(

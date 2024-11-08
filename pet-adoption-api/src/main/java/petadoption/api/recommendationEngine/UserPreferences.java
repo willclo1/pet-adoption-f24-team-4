@@ -100,16 +100,16 @@ public class UserPreferences {
     Map<Health, Double> health;
 
     @ElementCollection
-    @MapKeyColumn(name = "health")
-    @Column(name = "health_rating")
-    @CollectionTable(name = "user_preferences_health",
+    @MapKeyColumn(name = "spayed_neutered")
+    @Column(name = "spayed_neutered_rating")
+    @CollectionTable(name = "user_preferences_spayed_neutered",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<SpayedNeutered, Double> spayedNeutered;
 
     @ElementCollection
-    @MapKeyColumn(name = "health")
-    @Column(name = "health_rating")
-    @CollectionTable(name = "user_preferences_health",
+    @MapKeyColumn(name = "sex")
+    @Column(name = "sex_rating")
+    @CollectionTable(name = "user_preferences_sex",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<Sex, Double> sex;
 
