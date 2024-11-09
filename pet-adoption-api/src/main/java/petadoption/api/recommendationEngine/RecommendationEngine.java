@@ -1,32 +1,46 @@
 package petadoption.api.recommendationEngine;
 
+import lombok.extern.log4j.Log4j2;
 import petadoption.api.pet.Pet;
+import petadoption.api.pet.criteria.FurColor;
+import petadoption.api.pet.criteria.Temperament;
+import petadoption.api.pet.criteria.breed.CatBreed;
+import petadoption.api.pet.criteria.breed.DogBreed;
 
+@Log4j2
 public class RecommendationEngine {
     public double calculateBreedRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
-        /*
-        for (Map.Entry<Breed, Double> entry : p.getBreed()) {
-            if (up.breed.containsKey(entry.getKey())) {
-                rating += entry.getValue()
-            }
+        switch(p.getSpecies()) {
+            case CAT:
+                for (CatBreed cb : p.getCatBreed()) {
+                    rating += up.getCatBreedRating(cb);
+                }
+                break;
+            case DOG:
+                for (DogBreed db : p.getDogBreed()) {
+                    rating += up.getDogBreedRating(db);
+                }
+                break;
+            default:
+                log.error(
+                        "Unknown species encountered: {}",
+                        p.getSpecies());
+                throw new RuntimeException(
+                        "Unknown species encountered: " + p.getSpecies()
+                );
         }
-        */
 
         return rating;
     }
 
-    public double calculateFurRating(UserPreferences up, Pet p) {
+    public double calculateFurColorRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
-        /*
-        for (Map.Entry<FurColor, Double> entry : p.getFurColor()) {
-            if (up.furColor.containsKey(entry.getKey())) {
-                rating += entry.getValue();
-            }
+        for (FurColor fc : p.getFurColor()) {
+            rating += up.getFurColorRating(fc);
         }
-        */
 
         return rating;
     }
@@ -34,49 +48,27 @@ public class RecommendationEngine {
     public double calculateTemperamentRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
-        /*
-        for (Map.Entry<Temperament, Double> entry : p.getTemperament()) {
-            if (up.temperament.containsKey(entry.getKey())) {
-                rating += entry.getValue();
-            }
+        for (Temperament t : p.getTemperament()) {
+            rating += up.getTemperamentRating(t);
         }
-        */
 
         return rating;
     }
 
-    public double calculateTotalRating(UserPreferences up, Pet p) {
+    public double calculatePetRating(UserPreferences up, Pet p) {
         double totalRating = 0.0;
 
-        /*
-        totalRating += up.getSpeciesRating(p.Species);
-        totalRating += calculateBreedRating(up, p);
-        totalRating += up.getSizeRating(p.size);
-        totalRating += calculateFurColorRating(up, p);
-        totalRating += up.getCoatLengthRating(p.coatLength);
-        totalRating += up.getAgeRating(p.age);
-        totalRating += calculateTemperamentRating(up, p);
-        totalRating += up.getHealthRating(p.health);
-        */
-
-        /*
-        for (int i = 0; i < Criteria.numCriteria; i++) {
-            /*
-            for (Map.Entry<Criteria, Double> entry
-                    : up.preferences.get(i).entrySet()) {
-
-            }
-            */
-
-            // ! Pet Criteria as List<List<Criteria>> / List<Set<Criteria>>
-            /*
-            for (Criteria petC : p.criteria.get(i)) {
-                if (up.preferences.get(i).ContainsKey(petC)) {
-                    totalRating += up.preferences.getRating(petC);
-                }
-            }
-        }
-        */
+        totalRating += up.getSpeciesRating(p.getSpecies());               // Species
+        totalRating += calculateBreedRating(up, p);                       // Breed
+        totalRating += up.getSizeRating(p.getPetSize());                  // Size
+        totalRating += calculateFurColorRating(up, p);                    // Fur Color
+        totalRating += up.getFurTypeRating(p.getFurType());               // Fur Type
+        totalRating += up.getCoatLengthRating(p.getCoatLength());         // Coat Length
+        totalRating += up.getAgeRating(p.getAge());                       // Age
+        totalRating += calculateTemperamentRating(up, p);                 // Temperament
+        totalRating += up.getHealthRating(p.getHealthStatus());           // Health
+        totalRating += up.getSpayedNeuteredRating(p.getSpayedNeutered()); // Spayed / Neutered
+        totalRating += up.getSexRating(p.getSex());                       // Sex
 
         return totalRating;
     }
