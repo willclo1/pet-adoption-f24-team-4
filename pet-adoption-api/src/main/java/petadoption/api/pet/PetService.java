@@ -1156,11 +1156,10 @@ public class PetService {
         colors.add(FurColor.GRAY);
         colors.add(FurColor.WHITE);
 
-
-        imageFile = new File("PetImages/Collie.webp");
+        imageFile = new File("PetImages/Collie.jpg");
         image = new Image();
-        image.setType("image/jpeg");
-        image.setName("Collie.webp");
+        image.setType("image/jpg");
+        image.setName("Collie.jpg");
 
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
