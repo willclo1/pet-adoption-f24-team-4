@@ -2,16 +2,14 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
-public enum Size {
-    SMALL("Small"),
-    MEDIUM("Medium"),
-    LARGE("Large"),
-    EXTRA_LARGE("Extra Large");
+public enum Sex {
+    MALE("Male"),
+    FEMALE("Female");
 
     @Getter
     private final String displayName;
 
-    Size(String displayName) {
+    Sex(String displayName) {
         this.displayName = displayName;
     }
 }

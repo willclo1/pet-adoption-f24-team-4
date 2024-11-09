@@ -2,16 +2,14 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
-public enum Size {
-    SMALL("Small"),
-    MEDIUM("Medium"),
-    LARGE("Large"),
-    EXTRA_LARGE("Extra Large");
+public enum SpayedNeutered {
+    SPAYED_NEUTERED("Spayed Neutered"),
+    NOT_SPAYED_NEUTERED("Not Spayed Neutered"),;
 
     @Getter
     private final String displayName;
 
-    Size(String displayName) {
+    SpayedNeutered(String displayName) {
         this.displayName = displayName;
     }
 }

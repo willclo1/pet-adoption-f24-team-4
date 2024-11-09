@@ -99,6 +99,20 @@ public class UserPreferences {
             joinColumns=@JoinColumn(name = "user_preferences_id"))
     Map<Health, Double> health;
 
+    @ElementCollection
+    @MapKeyColumn(name = "spayed_neutered")
+    @Column(name = "spayed_neutered_rating")
+    @CollectionTable(name = "user_preferences_spayed_neutered",
+            joinColumns=@JoinColumn(name = "user_preferences_id"))
+    Map<SpayedNeutered, Double> spayedNeutered;
+
+    @ElementCollection
+    @MapKeyColumn(name = "sex")
+    @Column(name = "sex_rating")
+    @CollectionTable(name = "user_preferences_sex",
+            joinColumns=@JoinColumn(name = "user_preferences_id"))
+    Map<Sex, Double> sex;
+
     public UserPreferences() {
         species = new HashMap<>();
         catBreed = new HashMap<>();
@@ -109,6 +123,37 @@ public class UserPreferences {
         age = new HashMap<>();
         temperament = new HashMap<>();
         health = new HashMap<>();
+        spayedNeutered = new HashMap<>();
+        sex = new HashMap<>();
+    }
+
+    public UserPreferences(
+            User u,
+            Map<Species, Double> spe,
+            Map<CatBreed, Double> cb,
+            Map<DogBreed, Double> db,
+            Map<Size, Double> si,
+            Map<FurColor, Double> fc,
+            Map<FurType, Double> ft,
+            Map<CoatLength, Double> cl,
+            Map<Integer, Double> a,
+            Map<Temperament, Double> t,
+            Map<Health, Double> h,
+            Map<SpayedNeutered, Double> spa,
+            Map<Sex, Double> se) {
+        this.user = u;
+        this.species = spe;
+        this.catBreed = cb;
+        this.dogBreed = db;
+        this.size = si;
+        this.furColor = fc;
+        this.furType = ft;
+        this.coatLength = cl;
+        this.age = a;
+        this.temperament = t;
+        this.health = h;
+        this.spayedNeutered = spa;
+        this.sex = se;
     }
 
     public Double getSpeciesRating(Species s) {
@@ -319,6 +364,44 @@ public class UserPreferences {
             health.put(h, (health.get(h) + value));
         } else {
             health.put(h, value);
+        }
+    }
+
+    public Double getSpayedNeuteredRating(SpayedNeutered sn) {
+        if (spayedNeutered.containsKey(sn)) {
+            return spayedNeutered.get(sn);
+        }
+        return 0.0;
+    }
+
+    public void setSpayedNeuteredRating(SpayedNeutered sn, Double rating) {
+        spayedNeutered.put(sn, rating);
+    }
+
+    public void updateSpayedNeuteredRating(SpayedNeutered sn, Double value) {
+        if (spayedNeutered.containsKey(sn)) {
+            spayedNeutered.put(sn, (spayedNeutered.get(sn) + value));
+        } else {
+            spayedNeutered.put(sn, value);
+        }
+    }
+
+    public Double getSexRating(Sex s) {
+        if (sex.containsKey(s)) {
+            return sex.get(s);
+        }
+        return 0.0;
+    }
+
+    public void setSexRating(Sex s, Double rating) {
+        sex.put(s, rating);
+    }
+
+    public void updateSexRating(Sex s, Double value) {
+        if (sex.containsKey(s)) {
+            sex.put(s, (sex.get(s) + value));
+        } else {
+            sex.put(s, value);
         }
     }
 }

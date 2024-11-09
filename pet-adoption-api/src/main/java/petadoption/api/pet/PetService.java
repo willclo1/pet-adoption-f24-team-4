@@ -1981,5 +1981,66 @@ public class PetService {
 
         repository.saveAll(samplePets);
     }
+  
+//
+//    public Pet generatePet(String name, Species species, int weight,
+//                           CoatLength coatLength, FurType furType, FurColor furColor,
+//                           AdoptionCenter adoptionCenter,Set<DogBreed> dogBreeds,
+//                           Set<CatBreed> catBreeds, Size size,int age,
+//                           Set<Temperament> temperaments, Health health) throws IOException {
+//
+//        Pet pet = new Pet(name,species,weight,coatLength,furType,furColor,adoptionCenter,dogBreeds,catBreeds,size,age,temperaments,health);
+//        return pet;
+//    }
+//    public void addSamplePets(AdoptionCenterService adoptionCenterService) throws IOException {
+//
+//        List<Pet> samplePets = new ArrayList<>();
+//        Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter((long)(1));
+//
+//        Set<DogBreed> dogBreeds = new HashSet<>();
+//        dogBreeds.add(DogBreed.GREYHOUND);
+//        Set<CatBreed> catBreeds = new HashSet<>();
+//        Set<Temperament> temperaments = new HashSet<>();
+//        temperaments.add(Temperament.ACTIVE);
+//
+//
+//        File imageFile = new File("PetImages/GreyHound.jpg");
+//        Image image = new Image();
+//        image.setType("image/jpeg");
+//        image.setName("GreyHound.jpg");
+//
+//        image.setImageData(Files.readAllBytes(imageFile.toPath()));
+//
+//
+//        Pet pet = new Pet("wilson",Species.DOG,50,CoatLength.MEDIUM, FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(), dogBreeds, catBreeds, Size.LARGE,4,temperaments, Health.GOOD);
+//        pet.setProfilePicture(image);
+//        samplePets.add(pet);
+//
+//
+//        adoptionCenter = adoptionCenterService.getCenter((long)(1));
+//
+//        dogBreeds = new HashSet<>();
+//        dogBreeds.add(DogBreed.GERMAN_SHEPHERD_DOG);
+//        catBreeds = new HashSet<>();
+//        temperaments = new HashSet<>();
+//        temperaments.add(Temperament.ACTIVE);
+//
+//        imageFile = new File("PetImages/german-shepherd-dog.jpeg");
+//        image = new Image();
+//        image.setType("image/jpeg");
+//        image.setName("german-shepherd-dog.jpg");
+//        image.setImageData(Files.readAllBytes(imageFile.toPath()));
+//
+//        pet = generatePet("Axel",Species.DOG,52,CoatLength.MEDIUM,
+//                                    FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+//                                    dogBreeds, catBreeds, Size.LARGE,4,temperaments,
+//                                    Health.EXCELLENT);
+//        pet.setProfilePicture(image);
+//        samplePets.add(pet);
+//
+//        samplePets.add(pet);
+//
+//        repository.saveAll(samplePets);
+//    }
 
 }
