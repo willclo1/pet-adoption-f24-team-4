@@ -29,89 +29,101 @@ public class UserPreferences {
     @OneToOne(optional = false, mappedBy = "userPreferences")
     private User user;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "species")
     @Column(name = "species_rating")
     @CollectionTable(name = "user_preferences_species",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Species, Double> species;
+    private Map<Species, Double> species;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "cat_breed")
     @Column(name = "cat_breed_rating")
     @CollectionTable(name = "user_preferences_cat_breed",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<CatBreed, Double> catBreed;
+    private Map<CatBreed, Double> catBreed;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "dog_breed")
     @Column(name = "dog_breed_rating")
     @CollectionTable(name = "user_preferences_dog_breed",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<DogBreed, Double> dogBreed;
+    private Map<DogBreed, Double> dogBreed;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "size")
     @Column(name = "size_rating")
     @CollectionTable(name = "user_preferences_size",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Size, Double> size;
+    private Map<Size, Double> size;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "fur_color")
     @Column(name = "fur_color_rating")
     @CollectionTable(name = "user_preferences_fur_color",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<FurColor, Double> furColor;
+    private Map<FurColor, Double> furColor;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "fur_type")
     @Column(name = "fur_type_rating")
     @CollectionTable(name = "user_preferences_fur_type",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<FurType, Double> furType;
+    private Map<FurType, Double> furType;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "coat_length")
     @Column(name = "coat_length_rating")
     @CollectionTable(name = "user_preferences_coat_length",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<CoatLength, Double> coatLength;
+    private Map<CoatLength, Double> coatLength;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "age")
     @Column(name = "age_rating")
     @CollectionTable(name = "user_preferences_age",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Integer, Double> age;
+    private Map<Integer, Double> age;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "temperament")
     @Column(name = "temperament_rating")
     @CollectionTable(name = "user_preferences_temperament",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Temperament, Double> temperament;
+    private Map<Temperament, Double> temperament;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "health")
     @Column(name = "health_rating")
     @CollectionTable(name = "user_preferences_health",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Health, Double> health;
+    private Map<Health, Double> health;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "spayed_neutered")
     @Column(name = "spayed_neutered_rating")
     @CollectionTable(name = "user_preferences_spayed_neutered",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<SpayedNeutered, Double> spayedNeutered;
+    private Map<SpayedNeutered, Double> spayedNeutered;
 
+    @Getter
     @ElementCollection
     @MapKeyColumn(name = "sex")
     @Column(name = "sex_rating")
     @CollectionTable(name = "user_preferences_sex",
             joinColumns=@JoinColumn(name = "user_preferences_id"))
-    Map<Sex, Double> sex;
+    private Map<Sex, Double> sex;
 
     public UserPreferences() {
         species = new HashMap<>();
