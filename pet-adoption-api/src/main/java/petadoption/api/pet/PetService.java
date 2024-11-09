@@ -61,12 +61,13 @@ public class PetService {
     }
 
     public Pet generatePet(String name, Species species, int weight,
-                           CoatLength coatLength, FurType furType, FurColor furColor,
+                           CoatLength coatLength, FurType furType, Set<FurColor> furColors,
                            AdoptionCenter adoptionCenter,Set<DogBreed> dogBreeds,
                            Set<CatBreed> catBreeds, Size size,int age,
-                           Set<Temperament> temperaments, Health health) throws IOException {
+                           Set<Temperament> temperaments, Health health,SpayedNeutered spayedNeutered,
+                           Sex sex) throws IOException {
 
-        Pet pet = new Pet(name,species,weight,coatLength,furType,furColor,adoptionCenter,dogBreeds,catBreeds,size,age,temperaments,health);
+        Pet pet = new Pet(name,species,weight,coatLength,furType,furColors,adoptionCenter,dogBreeds,catBreeds,size,age,temperaments,health,spayedNeutered,sex);
         return pet;
     }
     public void addSamplePets(AdoptionCenterService adoptionCenterService) throws IOException {
@@ -81,6 +82,10 @@ public class PetService {
         Set<CatBreed> catBreeds = new HashSet<>();
         Set<Temperament> temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        Set<FurColor> colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.WHITE);
 
 
         File imageFile = new File("PetImages/GreyHound.jpg");
@@ -91,7 +96,11 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        Pet pet = new Pet("wilson",Species.DOG,50,CoatLength.MEDIUM, FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(), dogBreeds, catBreeds, Size.LARGE,4,temperaments, Health.GOOD);
+        Pet pet = generatePet("wilson",Species.DOG,50,
+                                    CoatLength.MEDIUM, FurType.SMOOTH,
+                                    colors, adoptionCenter.get(),
+                                    dogBreeds, catBreeds, Size.LARGE,4,
+                                    temperaments, Health.GOOD,SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -103,6 +112,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/german-shepherd-dog.jpeg");
         image = new Image();
@@ -111,9 +123,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Axel",Species.DOG,52,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -128,6 +140,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/CESKYTERRIER.webp");
         image = new Image();
@@ -136,9 +151,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("jake",Species.DOG,20,CoatLength.MEDIUM,
-                FurType.DOUBLE, FurColor.WHITE, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -150,6 +165,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ADAPTABLE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
 
         imageFile = new File("PetImages/GIANTSCHNAUZER.webp");
         image = new Image();
@@ -158,9 +175,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("jake",Species.DOG,80,CoatLength.LONG,
-                FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -172,6 +189,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/Doberman.jpeg");
         image = new Image();
@@ -180,9 +200,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Jackson",Species.DOG,45,CoatLength.SHORT,
-                FurType.SILKY, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -195,6 +215,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/poodle.webp");
         image = new Image();
@@ -203,9 +225,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("rolex",Species.DOG,20,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -219,6 +241,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/Boxer.webp");
         image = new Image();
@@ -227,9 +252,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Waller",Species.DOG,55,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -243,6 +268,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGILE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/CATAHOULALEOPARDDOG.webp");
         image = new Image();
@@ -251,9 +279,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Bart",Species.DOG,20,CoatLength.SHORT,
-                FurType.SILKY, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -268,6 +296,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+
 
         imageFile = new File("PetImages/GoldenRetreiver.webp");
         image = new Image();
@@ -276,9 +307,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Monke",Species.DOG,70,CoatLength.LONG,
-                FurType.DOUBLE, FurColor.BROWN, adoptionCenter.get(),
+                FurType.DOUBLE,colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -293,6 +324,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/tosa.webp");
         image = new Image();
@@ -301,9 +335,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Cola",Species.DOG,50,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -316,6 +350,9 @@ public class PetService {
         catBreeds.add(CatBreed.SIAMESE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
 
         imageFile = new File("PetImages/Siamese.webp");
@@ -326,10 +363,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("WilburForce",Species.CAT,25,CoatLength.SHORT,
-                FurType.SILKY, FurColor.WHITE, adoptionCenter.get(),
+        pet = generatePet("WilburForce",Species.CAT,25,CoatLength.SHORT,
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,8,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -341,6 +378,9 @@ public class PetService {
         catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/cat1.jpg");
         image = new Image();
@@ -349,9 +389,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Jerome",Species.CAT,52,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -366,6 +406,9 @@ public class PetService {
         catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+
 
         imageFile = new File("PetImages/cat2.jpg");
         image = new Image();
@@ -374,9 +417,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("jake",Species.CAT,18,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -388,6 +431,9 @@ public class PetService {
         catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AFFECTIONATE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/cat3.jpeg");
         image = new Image();
@@ -396,9 +442,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("jake",Species.CAT,23,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -410,6 +456,9 @@ public class PetService {
         catBreeds.add(CatBreed.AMERICAN_BOBTAIL);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+
 
         imageFile = new File("PetImages/Bobtail.webp");
         image = new Image();
@@ -418,9 +467,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("stewie",Species.CAT,34,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -433,6 +482,9 @@ public class PetService {
         catBreeds.add(CatBreed.AMERICAN_CURL);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+
 
         imageFile = new File("PetImages/curl.webp");
         image = new Image();
@@ -441,9 +493,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("SETH",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.WHITE, adoptionCenter.get(),
+                FurType.SMOOTH,colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -457,6 +509,9 @@ public class PetService {
         catBreeds.add(CatBreed.DEVON_REX);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/REX.webp");
         image = new Image();
@@ -465,9 +520,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Wizard",Species.CAT,15,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.WHITE, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -481,6 +536,9 @@ public class PetService {
         catBreeds.add(CatBreed.MAINE_COON);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGILE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+
 
         imageFile = new File("PetImages/maine.webp");
         image = new Image();
@@ -489,9 +547,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("UltimateDestroyerOfWorlds",Species.CAT,35,CoatLength.LONG,
-                FurType.DOUBLE, FurColor.BROWN, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -506,6 +564,9 @@ public class PetService {
         catBreeds.add(CatBreed.SIAMESE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.POSSESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+
 
         imageFile = new File("PetImages/persian.webp");
         image = new Image();
@@ -514,9 +575,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("John",Species.CAT,30,CoatLength.MEDIUM,
-                FurType.DOUBLE, FurColor.WHITE, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -531,6 +592,9 @@ public class PetService {
         catBreeds.add(CatBreed.TURKISH_ANGORA);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ALOOF);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+
 
         imageFile = new File("PetImages/Angora.webp");
         image = new Image();
@@ -539,9 +603,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Servine",Species.CAT,50,CoatLength.SHORT,
-                FurType.SILKY, FurColor.WHITE, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -556,6 +620,10 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.GREY);
 
 
         imageFile = new File("PetImages/afghan.webp");
@@ -566,10 +634,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("Robert",Species.DOG,80,CoatLength.LONG,
-                FurType.SILKY, FurColor.BROWN, adoptionCenter.get(),
+        pet = generatePet("Robert",Species.DOG,80,CoatLength.LONG,
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
 
         pet.setProfilePicture(image);
         samplePets.add(pet);
@@ -582,6 +650,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AFFECTIONATE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/alaskan.jpg");
         image = new Image();
@@ -590,9 +661,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Vic",Species.DOG,52,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,9,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -607,6 +678,10 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.IMPULSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/akita.webp");
         image = new Image();
@@ -615,9 +690,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("RandyOrton",Species.DOG,24,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -629,6 +704,10 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ADAPTABLE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/foxhound.webp");
         image = new Image();
@@ -637,9 +716,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("MrStealYoGirl",Species.DOG,60,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -651,6 +730,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ALOOF);
+        colors = new HashSet<>();
+
 
         imageFile = new File("PetImages/hairless.webp");
         image = new Image();
@@ -659,9 +740,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Quagmire",Species.DOG,22,CoatLength.HAIRLESS,
-                FurType.HAIRLESS, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.HAIRLESS, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -674,6 +755,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/AmericanBulldog.webp");
         image = new Image();
@@ -682,9 +765,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("George",Species.DOG,49,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.WHITE, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -698,6 +781,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/water.webp");
         image = new Image();
@@ -706,9 +791,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Lex",Species.DOG,65,CoatLength.LONG,
-                FurType.DOUBLE, FurColor.BROWN, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -722,6 +807,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGILE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/Kelpie.webp");
         image = new Image();
@@ -730,9 +817,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Tyler",Species.DOG,70,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -747,6 +834,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.POSSESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/Cattle.webp");
         image = new Image();
@@ -755,9 +845,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Terrence",Species.DOG,68,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,9,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -772,6 +862,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/basset.webp");
         image = new Image();
@@ -780,9 +873,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Darrel",Species.DOG,29,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -795,6 +888,9 @@ public class PetService {
         catBreeds.add(CatBreed.NORWEGIAN_FOREST_CAT);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
 
         imageFile = new File("PetImages/forest.webp");
@@ -805,10 +901,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("Lux",Species.CAT,35,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+        pet = generatePet("Lux",Species.CAT,35,CoatLength.MEDIUM,
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -820,6 +916,8 @@ public class PetService {
         catBreeds.add(CatBreed.SCOTTISH_FOLD);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ANXIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/fold.webp");
         image = new Image();
@@ -828,9 +926,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Lucifer",Species.CAT,20,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -845,6 +943,8 @@ public class PetService {
         catBreeds.add(CatBreed.SPHYNX);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ANXIOUS);
+        colors = new HashSet<>();
+
 
         imageFile = new File("PetImages/sphynx.webp");
         image = new Image();
@@ -853,9 +953,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Dory",Species.CAT,16,CoatLength.HAIRLESS,
-                FurType.HAIRLESS, FurColor.WHITE, adoptionCenter.get(),
+                FurType.HAIRLESS, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,6,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -867,6 +967,9 @@ public class PetService {
         catBreeds.add(CatBreed.SINGAPURA);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AFFECTIONATE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/siberia.webp");
         image = new Image();
@@ -875,9 +978,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Serb",Species.CAT,29,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -889,6 +992,8 @@ public class PetService {
         catBreeds.add(CatBreed.RUSSIAN_BLUE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ATHLETIC);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLUE);
 
         imageFile = new File("PetImages/BLue.webp");
         image = new Image();
@@ -897,9 +1002,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("blue",Species.CAT,18,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -912,6 +1017,9 @@ public class PetService {
         catBreeds.add(CatBreed.BRITISH_SHORTHAIR);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.BOLD);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/british.webp");
         image = new Image();
@@ -920,9 +1028,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("THAM",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -936,6 +1044,9 @@ public class PetService {
         catBreeds.add(CatBreed.BOMBAY);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+
 
         imageFile = new File("PetImages/bombay.webp");
         image = new Image();
@@ -944,9 +1055,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("thebomb",Species.CAT,24,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -960,6 +1071,9 @@ public class PetService {
         catBreeds.add(CatBreed.BENGAL);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/bengal.webp");
         image = new Image();
@@ -968,9 +1082,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Alex",Species.CAT,23,CoatLength.SHORT,
-                FurType.WIRY, FurColor.BROWN, adoptionCenter.get(),
+                FurType.WIRY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,2,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -985,6 +1099,8 @@ public class PetService {
         catBreeds.add(CatBreed.CHAUSIE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.POSSESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/Chausie.webp");
         image = new Image();
@@ -993,9 +1109,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Antonio",Species.CAT,45,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1010,6 +1126,9 @@ public class PetService {
         catBreeds.add(CatBreed.EGYPTIAN_MAU);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.SUBMISSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/egypt.webp");
         image = new Image();
@@ -1017,10 +1136,10 @@ public class PetService {
         image.setName("egypt.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
-        pet = generatePet("Skyler",Species.CAT,26,CoatLength.SHORT,
-                FurType.SILKY, FurColor.WHITE, adoptionCenter.get(),
+        pet = generatePet("SkylerWhiteYo",Species.CAT,26,CoatLength.SHORT,
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1033,6 +1152,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GRAY);
+        colors.add(FurColor.WHITE);
 
 
         imageFile = new File("PetImages/Collie.webp");
@@ -1043,10 +1165,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("Dexter",Species.DOG,50,CoatLength.LONG,
-                                FurType.SILKY, FurColor.GRAY, adoptionCenter.get(),
+        pet = generatePet("Dexter",Species.DOG,50,CoatLength.LONG,
+                                FurType.SILKY, colors, adoptionCenter.get(),
                                 dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                                Health.EXCELLENT);
+                                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1058,6 +1180,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ATHLETIC);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/basenji.webp");
         image = new Image();
@@ -1066,9 +1191,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Steph",Species.DOG,62,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1083,6 +1208,11 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.GRAY);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/aush.webp");
         image = new Image();
@@ -1091,9 +1221,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Po",Species.DOG,65,CoatLength.LONG,
-                FurType.DOUBLE, FurColor.WHITE, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,5,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1105,6 +1235,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GRAY);
 
         imageFile = new File("PetImages/bedlington.webp");
         image = new Image();
@@ -1113,9 +1245,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("ellington",Species.DOG,72,CoatLength.SHORT,
-                FurType.WAVY, FurColor.GRAY, adoptionCenter.get(),
+                FurType.WAVY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1127,6 +1259,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.DARK);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/Beluga.webp");
         image = new Image();
@@ -1135,9 +1270,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("beluga",Species.DOG,85,CoatLength.LONG,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1150,6 +1285,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PASSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+
 
         imageFile = new File("PetImages/bichon.webp");
         image = new Image();
@@ -1158,9 +1296,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Tea",Species.DOG,23,CoatLength.MEDIUM,
-                FurType.WAVY, FurColor.WHITE, adoptionCenter.get(),
+                FurType.WAVY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1174,6 +1312,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/bloodhound.webp");
         image = new Image();
@@ -1182,9 +1323,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("AndrewTate",Species.DOG,90,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1198,6 +1339,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ATHLETIC);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/bluetick.webp");
         image = new Image();
@@ -1206,9 +1350,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Harry",Species.DOG,49,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1223,6 +1367,10 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.FRIENDLY);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
+
 
         imageFile = new File("PetImages/Mountain.webp");
         image = new Image();
@@ -1231,9 +1379,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("SLimShady",Species.DOG,91,CoatLength.MEDIUM,
-                FurType.DOUBLE, FurColor.BLACK, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1248,6 +1396,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/beauceron.webp");
         image = new Image();
@@ -1256,9 +1407,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Usman",Species.DOG,70,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1271,6 +1422,9 @@ public class PetService {
         catBreeds.add(CatBreed.KORAT);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ANXIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+
 
 
         imageFile = new File("PetImages/Korat.webp");
@@ -1281,10 +1435,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("kora",Species.CAT,25,CoatLength.SHORT,
-                FurType.SMOOTH, FurColor.GRAY, adoptionCenter.get(),
+        pet = generatePet("kora",Species.CAT,25,CoatLength.SHORT,
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,8,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1296,6 +1450,9 @@ public class PetService {
         catBreeds.add(CatBreed.HIMALAYAN);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ALOOF);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/him.webp");
         image = new Image();
@@ -1304,9 +1461,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Bot",Species.CAT,35,CoatLength.MEDIUM,
-                FurType.DOUBLE, FurColor.WHITE, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1321,6 +1478,9 @@ public class PetService {
         catBreeds.add(CatBreed.HAVANA_BROWN);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ALOOF);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+
 
         imageFile = new File("PetImages/havana.webp");
         image = new Image();
@@ -1329,9 +1489,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Wormwood",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1343,6 +1503,9 @@ public class PetService {
         catBreeds.add(CatBreed.DOMESTIC_LONGHAIR);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/DomesticLongHairCat.webp");
         image = new Image();
@@ -1351,9 +1514,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Dominic",Species.CAT,29,CoatLength.LONG,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1365,6 +1528,9 @@ public class PetService {
         catBreeds.add(CatBreed.MANX);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PLAYFUL);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/manx.webp");
         image = new Image();
@@ -1373,9 +1539,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Michael",Species.CAT,30,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1388,6 +1554,9 @@ public class PetService {
         catBreeds.add(CatBreed.OCICAT);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/ocicat.webp");
         image = new Image();
@@ -1396,9 +1565,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Max",Species.CAT,24,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1412,6 +1581,8 @@ public class PetService {
         catBreeds.add(CatBreed.PIXIE_BOB);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CURIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/pixiebob.webp");
         image = new Image();
@@ -1420,9 +1591,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Gandalf",Species.CAT,27,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1436,6 +1607,9 @@ public class PetService {
         catBreeds.add(CatBreed.RAGAMUFFIN);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+        colors.add(FurColor.BLACK);
 
         imageFile = new File("PetImages/ragamuffin.webp");
         image = new Image();
@@ -1444,9 +1618,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("girl",Species.CAT,25,CoatLength.LONG,
-                FurType.DOUBLE, FurColor.BROWN, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1461,6 +1635,10 @@ public class PetService {
         catBreeds.add(CatBreed.SNOWSHOE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.BOLD);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/snowshoe.webp");
         image = new Image();
@@ -1469,9 +1647,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Snape",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1486,6 +1664,8 @@ public class PetService {
         catBreeds.add(CatBreed.SINGAPURA);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.DEPENDENT);
+        colors = new HashSet<>();
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/singapura.webp");
         image = new Image();
@@ -1494,9 +1674,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("kittycat",Species.CAT,12,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.WHITE, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_SMALL,3,temperaments,
-                Health.EXCELLENT);
+                FurType.ROUGH, colors, adoptionCenter.get(),
+                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1511,6 +1691,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
 
 
         imageFile = new File("PetImages/Boerboel.webp");
@@ -1521,10 +1703,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("GeorgeFloyd",Species.DOG,80,CoatLength.SHORT,
-                FurType.SILKY, FurColor.BROWN, adoptionCenter.get(),
+        pet = generatePet("GeorgeFloyd",Species.DOG,80,CoatLength.SHORT,
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,8,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
 
         pet.setProfilePicture(image);
         samplePets.add(pet);
@@ -1537,6 +1719,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AFFECTIONATE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/borzoi.webp");
         image = new Image();
@@ -1545,9 +1730,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("TRAVIS",Species.DOG,102,CoatLength.MEDIUM,
-                FurType.DOUBLE, FurColor.BROWN, adoptionCenter.get(),
+                FurType.DOUBLE, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.EXTRA_LARGE,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1562,6 +1747,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.EVEN_TEMPERED);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/boykin-spaniel.webp");
         image = new Image();
@@ -1570,9 +1757,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("BIGBOY",Species.DOG,34,CoatLength.MEDIUM,
-                FurType.SILKY, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1584,6 +1771,8 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.PLAYFUL);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/briard.webp");
         image = new Image();
@@ -1592,9 +1781,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Griffin",Species.DOG,62,CoatLength.LONG,
-                FurType.SILKY, FurColor.GRAY, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,10,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1606,6 +1795,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CURIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/brittany.webp");
         image = new Image();
@@ -1614,9 +1806,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Optimus",Species.DOG,56,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1629,6 +1821,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.REACTIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.LIGHT);
 
         imageFile = new File("PetImages/Carolina.webp");
         image = new Image();
@@ -1637,9 +1832,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Austin",Species.DOG,64,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1653,6 +1848,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AFFECTIONATE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/Caucasian.webp");
         image = new Image();
@@ -1661,9 +1859,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Whitaker",Species.DOG,75,CoatLength.MEDIUM,
-                FurType.CURLY, FurColor.BROWN, adoptionCenter.get(),
+                FurType.CURLY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1677,6 +1875,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.BOSSY);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/cavalier.webp");
         image = new Image();
@@ -1685,9 +1886,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Diana",Species.DOG,30,CoatLength.LONG,
-                FurType.SILKY, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.SILKY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,7,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1702,6 +1903,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.FRIENDLY);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/chihuahua.webp");
         image = new Image();
@@ -1710,9 +1914,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Sneako",Species.DOG,29,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,9,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1727,6 +1931,9 @@ public class PetService {
         catBreeds = new HashSet<>();
         temperaments = new HashSet<>();
         temperaments.add(Temperament.FRIENDLY);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/canaan.webp");
         image = new Image();
@@ -1735,9 +1942,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("DAX",Species.DOG,49,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1750,6 +1957,9 @@ public class PetService {
         catBreeds.add(CatBreed.SELKIRK_REX);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.BOLD);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
+        colors.add(FurColor.WHITE);
 
 
         imageFile = new File("PetImages/Selkirk.webp");
@@ -1760,10 +1970,10 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
 
-        pet = new Pet("Bob",Species.CAT,28,CoatLength.MEDIUM,
-                FurType.WAVY, FurColor.MIXED_COLOR, adoptionCenter.get(),
+        pet = generatePet("Bob",Species.CAT,28,CoatLength.MEDIUM,
+                FurType.WAVY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1775,6 +1985,8 @@ public class PetService {
         catBreeds.add(CatBreed.TONKINESE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ANXIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
 
         imageFile = new File("PetImages/tonkinese.webp");
         image = new Image();
@@ -1783,9 +1995,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Olive",Species.CAT,26,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1800,6 +2012,9 @@ public class PetService {
         catBreeds.add(CatBreed.TURKISH_VAN);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/turkish.webp");
         image = new Image();
@@ -1808,9 +2023,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Cindy",Species.CAT,26,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.WHITE, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1822,6 +2037,8 @@ public class PetService {
         catBreeds.add(CatBreed.SOMALI);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.ANXIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/somali.webp");
         image = new Image();
@@ -1830,9 +2047,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Yamcha",Species.CAT,29,CoatLength.MEDIUM,
-                FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
+                FurType.SMOOTH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD);
+                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1844,6 +2061,9 @@ public class PetService {
         catBreeds.add(CatBreed.TOYGER);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.DEPENDENT);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.BRONZE);
 
         imageFile = new File("PetImages/Toyger.jpg");
         image = new Image();
@@ -1852,9 +2072,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Sam",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1867,6 +2087,9 @@ public class PetService {
         catBreeds.add(CatBreed.TUXEDO);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.SOCIABLE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BLACK);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/Tux.webp");
         image = new Image();
@@ -1875,9 +2098,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Tuc",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1891,6 +2114,8 @@ public class PetService {
         catBreeds.add(CatBreed.LYKOI);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.AGGRESSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/lykoi.webp");
         image = new Image();
@@ -1899,9 +2124,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Ember",Species.CAT,23,CoatLength.MEDIUM,
-                FurType.ROUGH, FurColor.GRAY, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR);
+                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1915,6 +2140,9 @@ public class PetService {
         catBreeds.add(CatBreed.EUROPEAN_BURMERSE);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CURIOUS);
+        colors = new HashSet<>();
+        colors.add(FurColor.BRONZE);
+
 
         imageFile = new File("PetImages/Burmese.webp");
         image = new Image();
@@ -1923,9 +2151,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Oscar",Species.CAT,30,CoatLength.SHORT,
-                FurType.WIRY, FurColor.BROWN, adoptionCenter.get(),
+                FurType.WIRY, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.MEDIUM,9,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1940,6 +2168,8 @@ public class PetService {
         catBreeds.add(CatBreed.NEBELUNG);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.CALM);
+        colors = new HashSet<>();
+        colors.add(FurColor.GREY);
 
         imageFile = new File("PetImages/NEBELUNG.webp");
         image = new Image();
@@ -1948,9 +2178,9 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Timothy",Species.CAT,15,CoatLength.LONG,
-                FurType.SMOOTH, FurColor.GRAY, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_SMALL,6,temperaments,
-                Health.EXCELLENT);
+                FurType.SMOOTH, colors, adoptionCenter.get(),
+                dogBreeds, catBreeds, Size.SMALL,6,temperaments,
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
@@ -1965,6 +2195,9 @@ public class PetService {
         catBreeds.add(CatBreed.ORIENTAL);
         temperaments = new HashSet<>();
         temperaments.add(Temperament.SUBMISSIVE);
+        colors = new HashSet<>();
+        colors.add(FurColor.BROWN);
+        colors.add(FurColor.WHITE);
 
         imageFile = new File("PetImages/Oriental.jpg");
         image = new Image();
@@ -1973,74 +2206,15 @@ public class PetService {
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
         pet = generatePet("Airy",Species.CAT,18,CoatLength.SHORT,
-                FurType.ROUGH, FurColor.MIXED_COLOR, adoptionCenter.get(),
+                FurType.ROUGH, colors, adoptionCenter.get(),
                 dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT);
+                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
         samplePets.add(pet);
 
         repository.saveAll(samplePets);
     }
-  
-//
-//    public Pet generatePet(String name, Species species, int weight,
-//                           CoatLength coatLength, FurType furType, FurColor furColor,
-//                           AdoptionCenter adoptionCenter,Set<DogBreed> dogBreeds,
-//                           Set<CatBreed> catBreeds, Size size,int age,
-//                           Set<Temperament> temperaments, Health health) throws IOException {
-//
-//        Pet pet = new Pet(name,species,weight,coatLength,furType,furColor,adoptionCenter,dogBreeds,catBreeds,size,age,temperaments,health);
-//        return pet;
-//    }
-//    public void addSamplePets(AdoptionCenterService adoptionCenterService) throws IOException {
-//
-//        List<Pet> samplePets = new ArrayList<>();
-//        Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter((long)(1));
-//
-//        Set<DogBreed> dogBreeds = new HashSet<>();
-//        dogBreeds.add(DogBreed.GREYHOUND);
-//        Set<CatBreed> catBreeds = new HashSet<>();
-//        Set<Temperament> temperaments = new HashSet<>();
-//        temperaments.add(Temperament.ACTIVE);
-//
-//
-//        File imageFile = new File("PetImages/GreyHound.jpg");
-//        Image image = new Image();
-//        image.setType("image/jpeg");
-//        image.setName("GreyHound.jpg");
-//
-//        image.setImageData(Files.readAllBytes(imageFile.toPath()));
-//
-//
-//        Pet pet = new Pet("wilson",Species.DOG,50,CoatLength.MEDIUM, FurType.SMOOTH, FurColor.BLACK, adoptionCenter.get(), dogBreeds, catBreeds, Size.LARGE,4,temperaments, Health.GOOD);
-//        pet.setProfilePicture(image);
-//        samplePets.add(pet);
-//
-//
-//        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-//
-//        dogBreeds = new HashSet<>();
-//        dogBreeds.add(DogBreed.GERMAN_SHEPHERD_DOG);
-//        catBreeds = new HashSet<>();
-//        temperaments = new HashSet<>();
-//        temperaments.add(Temperament.ACTIVE);
-//
-//        imageFile = new File("PetImages/german-shepherd-dog.jpeg");
-//        image = new Image();
-//        image.setType("image/jpeg");
-//        image.setName("german-shepherd-dog.jpg");
-//        image.setImageData(Files.readAllBytes(imageFile.toPath()));
-//
-//        pet = generatePet("Axel",Species.DOG,52,CoatLength.MEDIUM,
-//                                    FurType.SMOOTH, FurColor.BROWN, adoptionCenter.get(),
-//                                    dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-//                                    Health.EXCELLENT);
-//        pet.setProfilePicture(image);
-//        samplePets.add(pet);
-//
-//        samplePets.add(pet);
-//
-//        repository.saveAll(samplePets);
-//    }
+
+
 
 }

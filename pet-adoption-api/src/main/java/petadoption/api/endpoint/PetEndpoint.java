@@ -88,13 +88,13 @@ public class PetEndpoint {
         }
     }
 
-//    @GetMapping("/samplePets")
-//    public String addSampleCenters() throws IOException {
-//        System.out.println("1");
-//
-//        petService.addSamplePets(adoptionCenterService);
-//        return "Sample pets added successfully.";
-//    }
+    @GetMapping("/samplePets")
+    public String addSampleCenters() throws IOException {
+        System.out.println("1");
+
+        petService.addSamplePets(adoptionCenterService);
+        return "Sample pets added successfully.";
+    }
 
 
     @GetMapping("/pets/{adoptionID}")
