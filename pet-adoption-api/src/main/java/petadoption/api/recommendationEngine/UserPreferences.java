@@ -168,6 +168,21 @@ public class UserPreferences {
         this.sex = se;
     }
 
+    public void resetRatings() {
+        species.clear();
+        catBreed.clear();
+        dogBreed.clear();
+        size.clear();
+        furColor.clear();
+        furType.clear();
+        coatLength.clear();
+        age.clear();
+        temperament.clear();
+        health.clear();
+        spayedNeutered.clear();
+        sex.clear();
+    }
+
     public Double getSpeciesRating(Species s) {
         if (species.containsKey(s)) {
             return species.get(s);
@@ -186,6 +201,8 @@ public class UserPreferences {
             species.put(s, value);
         }
     }
+
+    public void clearSpeciesRating() { species.clear(); }
 
     public Double getCatBreedRating(CatBreed c) {
         if (catBreed.containsKey(c)) {
@@ -206,6 +223,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearCatBreedRating() { catBreed.clear(); }
+
     public Double getDogBreedRating(DogBreed d) {
         if (dogBreed.containsKey(d)) {
             return dogBreed.get(d);
@@ -225,26 +244,7 @@ public class UserPreferences {
         }
     }
 
-    /*
-    public Double getBreedRating(Breed b) {
-        if (breed.containsKey(b)) {
-            return breed.get(b);
-        }
-        return 0.0;
-    }
-
-    public void setBreedRating(Breed b, Double rating) {
-        breed.put(b, rating);
-    }
-
-    public void updateBreedRating(Breed b, Double value) {
-        if (breed.containsKey(b)) {
-            breed.put(b, (breed.get(b) + value));
-        } else {
-            breed.put(b, value);
-        }
-    }
-     */
+    public void clearDogBreedRating() { dogBreed.clear(); }
 
     public Double getSizeRating(Size s) {
         if (size.containsKey(s)) {
@@ -265,6 +265,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearSizeRating() { size.clear(); }
+
     public Double getFurColorRating(FurColor fc) {
         if (furColor.containsKey(fc)) {
             return furColor.get(fc);
@@ -283,6 +285,8 @@ public class UserPreferences {
             furColor.put(fc, value);
         }
     }
+
+    public void clearFurColorRating() { furColor.clear(); }
 
     public Double getFurTypeRating(FurType ft) {
         if (furType.containsKey(ft)) {
@@ -303,6 +307,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearFurTypeRating() { furType.clear(); }
+
     public Double getCoatLengthRating(CoatLength cl) {
         if (coatLength.containsKey(cl)) {
             return coatLength.get(cl);
@@ -321,6 +327,8 @@ public class UserPreferences {
             coatLength.put(cl, value);
         }
     }
+
+    public void clearCoatLengthRating() { coatLength.clear(); }
 
     public Double getAgeRating(int a) {
         if (age.containsKey(a)) {
@@ -341,6 +349,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearAgeRating() { age.clear(); }
+
     public Double getTemperamentRating(Temperament t) {
         if (temperament.containsKey(t)) {
             return temperament.get(t);
@@ -359,6 +369,8 @@ public class UserPreferences {
             temperament.put(t, value);
         }
     }
+
+    public void clearTemperamentRating() { temperament.clear(); }
 
     public Double getHealthRating(Health h) {
         if (health.containsKey(h)) {
@@ -379,6 +391,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearHealthRating() { health.clear(); }
+
     public Double getSpayedNeuteredRating(SpayedNeutered sn) {
         if (spayedNeutered.containsKey(sn)) {
             return spayedNeutered.get(sn);
@@ -398,6 +412,8 @@ public class UserPreferences {
         }
     }
 
+    public void clearSpayedNeuteredRating() { spayedNeutered.clear(); }
+
     public Double getSexRating(Sex s) {
         if (sex.containsKey(s)) {
             return sex.get(s);
@@ -416,4 +432,6 @@ public class UserPreferences {
             sex.put(s, value);
         }
     }
+
+    public void clearSexRating() { sex.clear(); }
 }
