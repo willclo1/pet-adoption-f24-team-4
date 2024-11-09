@@ -10,6 +10,22 @@ import petadoption.api.user.User;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Rafe Loya
+ *
+ * @see User
+ * @see Species
+ * @see CatBreed
+ * @see DogBreed
+ * @see Size
+ * @see FurColor
+ * @see FurType
+ * @see CoatLength
+ * @see Temperament
+ * @see Health
+ * @see SpayedNeutered
+ * @see Sex
+ */
 @Getter
 @Entity
 @Table(name = UserPreferences.TABLE_NAME)
