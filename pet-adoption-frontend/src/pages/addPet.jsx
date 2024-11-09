@@ -5,20 +5,22 @@ import { useRouter } from 'next/router';
 const AddPet = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
-    const { adoptionID } = router.query;
+    const { adoptionID, email } = router.query;
     const [petData, setPetData] = useState({
         name: '',
         species: '',
         weight: '',
         coatLength: '',
         furType: '',
-        furColor: '',
+        furColor: [],
         dogBreed: [],
         catBreed: [],
         petSize: '',
         age: '',
         temperament: [],
         healthStatus: '',
+        sex: '',
+        spayedNeutered: '',
         adoptionId: null,
     });
 
@@ -32,6 +34,8 @@ const AddPet = () => {
         size: [],
         temperament: [],
         healthStatus: [],
+        sex: [],
+        spayedNeutered: [],
     });
 
     // Fetch the enum options from the backend
@@ -94,6 +98,9 @@ const AddPet = () => {
                 // Clear the form or add any success feedback here
             })
             .catch(error => console.error('Error adding pet:', error));
+    };
+    const handleBack = () => {
+      router.push(`/adoptionHome?email=${email}`)
     };
 
     return (
@@ -252,15 +259,42 @@ const AddPet = () => {
                         </TextField>
                     </Grid>
                     <Grid item xs={6}>
+                        <Autocomplete
+                            multiple
+                            options={options.furColor}
+                            getOptionLabel={(option) => option}
+                            onChange={(e, newValue) => handleArrayChange('furColor', newValue)}
+                            renderInput={(params) => <TextField {...params} label="Fur Color" fullWidth />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={6}>
                         <TextField
                             select
-                            label="Fur Color"
-                            name="furColor"
-                            value={petData.furColor}
+                            label="Sex"
+                            name="sex"
+                            value={petData.sex}
                             onChange={handleChange}
                             fullWidth
                         >
-                            {options.furColor.map((option) => (
+                            {options.sex.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <TextField
+                            select
+                            label="Spayed/Neutered"
+                            name="spayedNeutered"
+                            value={petData.spayedNeutered}
+                            onChange={handleChange}
+                            fullWidth
+                        >
+                            {options.spayedNeutered.map((option) => (
                                 <MenuItem key={option} value={option}>
                                     {option}
                                 </MenuItem>
@@ -272,6 +306,9 @@ const AddPet = () => {
                     Add Pet
                 </Button>
             </Box>
+            <Button variant="outlined" sx={{ mt: 2 }} onClick={handleBack}>
+              Back
+            </Button>
         </Paper>
     );
 };
