@@ -51,6 +51,7 @@ public enum FurColor {
     CHOCOLATE("Chocolate"),
     LILAC("Lilac"),
     SABLE("Sable"),
+    YELLOW("Yellow")
     ;
 
 
