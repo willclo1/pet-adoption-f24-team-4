@@ -10,8 +10,7 @@ import petadoption.api.pet.criteria.Temperament;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * @author Rafe Loya
@@ -41,6 +40,92 @@ public class RecommendationEngine {
 
     RecommendationEngine() {
         recommendations = new PriorityQueue<>(new PetComparator());
+    }
+
+    /**
+     * <code>toString()</code> method to print the following:
+     * <ul>
+     *     <li>pet's ranking</li>
+     *     <li>pet's name</li>
+     *     <li>pet's rating</li>
+     * </ul>
+     * for each <code>Pet</code> in the recommendation priority queue
+     *
+     * @return simple information about pets in recommendation
+     */
+    public String toStringSimple() {
+        StringBuilder builder = new StringBuilder();
+        SortedSet<Map.Entry<Pet, Double>> entries = new TreeSet<>(new PetComparator());
+        int i = 1;
+
+        entries.addAll(recommendations);
+
+        for (Map.Entry<Pet, Double> entry : entries) {
+            builder.append(
+                    "[" + i + "] "
+                    + entry.getKey().getName()
+                    + " : "
+                    + entry.getValue()
+            );
+            ++i;
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * <code>toString()</code> method to print the following:
+     * <ul>
+     *     <li>pet's ranking</li>
+     *     <li>pet's id</li>
+     *     <li>pet's name</li>
+     *     <li>all of a pet's information (<code>toString()</code> of pet)</li>
+     * </ul>
+     * for each <code>Pet</code> in the recommendation priority queue
+     *
+     * @return detailed information about pets in recommendations
+     */
+    public String toStringDetailed() {
+        StringBuilder builder = new StringBuilder();
+        SortedSet<Map.Entry<Pet, Double>> entries = new TreeSet<>(new PetComparator());
+        int i = 1;
+
+        entries.addAll(recommendations);
+
+        for (Map.Entry<Pet, Double> entry : entries) {
+            builder.append(
+                    "[" + i + "] "
+                    + "[" + entry.getKey().getId() + "] : "
+                    + entry.getKey().getName() + "\n"
+                    + "========================================\n"
+                    + entry.getKey()
+                    + "========================================\n\n"
+            );
+            ++i;
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * <code>toString()</code> method with two options:
+     * <ul>
+     *     <li>Simple : pet's ranking, name, and rating</li>
+     *     <li>Detailed : pet's ranking, id, name, and all of
+     *                    it's information
+     *                    (<code>Pet</code>'s
+     *                    <code>toString()</code> method)</li>
+     * </ul>
+     *
+     * @param moreDetail whether to display simple or detailed information
+     * @return recommended pets by their ranking
+     */
+    public String toString(boolean moreDetail) {
+        if (!moreDetail) {
+            return toStringSimple();
+        } else {
+            return toStringDetailed();
+        }
     }
 
     /**
