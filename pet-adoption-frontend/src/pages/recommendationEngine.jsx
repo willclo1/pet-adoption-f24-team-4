@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
