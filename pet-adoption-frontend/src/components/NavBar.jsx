@@ -107,7 +107,7 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
     return (
       <AppBar position="static">
         <Toolbar>
-          
+          <img src="/Friends_Logo.png" alt="Logo" onClick={() => handleNavigation('/customer-home')} style={{ width: 54, height: 54, cursor: 'pointer'}}/>
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
