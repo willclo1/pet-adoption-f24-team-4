@@ -14,6 +14,7 @@ import {
   InputLabel,
   Snackbar
 } from '@mui/material';
+import NavBar from '@/components/NavBar';
 import { useRouter } from 'next/router';
 
 export default function Message() {
@@ -163,65 +164,69 @@ export default function Message() {
   };
 
   return (
-    <Box p={3} display="flex" flexDirection="column" alignItems="center">
-      <Paper elevation={3} style={{ maxWidth: 500, width: '100%', padding: 16 }}>
-        <Typography variant="h6" gutterBottom>
-          Messages with Adoption Center
-        </Typography>
-        
-        {/* Adoption Center Selection */}
-        <FormControl fullWidth style={{ marginBottom: 16 }}>
-          <InputLabel>Select Adoption Center</InputLabel>
-          <Select
-            value={selectedCenter}
-            onChange={(e) => handleCenterSelect(e.target.value)}
-            fullWidth
-          >
-            {adoptionCenters.map((center) => (
-              <MenuItem key={center.adoptionID} value={center.adoptionID}>
-                {center.centerName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    <main>
+      <NavBar/>
+      
+      <Box p={3} display="flex" flexDirection="column" alignItems="center">
+        <Paper elevation={3} style={{ maxWidth: 500, width: '100%', padding: 16 }}>
+          <Typography variant="h6" gutterBottom>
+            Messages with Adoption Center
+          </Typography>
+          
+          {/* Adoption Center Selection */}
+          <FormControl fullWidth style={{ marginBottom: 16 }}>
+            <InputLabel>Select Adoption Center</InputLabel>
+            <Select
+              value={selectedCenter}
+              onChange={(e) => handleCenterSelect(e.target.value)}
+              fullWidth
+            >
+              {adoptionCenters.map((center) => (
+                <MenuItem key={center.adoptionID} value={center.adoptionID}>
+                  {center.centerName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        {/* Messages from the selected center */}
-        <List style={{ maxHeight: 300, overflow: 'auto' }}>
-          {centerMessages.map((message) => {
-            const isFromUser = message.senderID === userID;
-            return (
-              <ListItem key={message.id}>
-                <ListItemText
-                  primary={<strong>{isFromUser ? 'You' : 'Adoption Center'}</strong>}
-                  secondary={message.content}
-                />
-              </ListItem>
-            );
-          })}
-        </List>
+          {/* Messages from the selected center */}
+          <List style={{ maxHeight: 300, overflow: 'auto' }}>
+            {centerMessages.map((message) => {
+              const isFromUser = message.senderID === userID;
+              return (
+                <ListItem key={message.id}>
+                  <ListItemText
+                    primary={<strong>{isFromUser ? 'You' : 'Adoption Center'}</strong>}
+                    secondary={message.content}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
 
-        {/* Message Input and Send Button */}
-        <Box mt={2} display="flex" alignItems="center">
-          <TextField
-            variant="outlined"
-            fullWidth
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-          />
-          <Button variant="contained" color="primary" onClick={handleSendMessage} style={{ marginLeft: 8 }}>
-            Send
-          </Button>
-        </Box>
-      </Paper>
+          {/* Message Input and Send Button */}
+          <Box mt={2} display="flex" alignItems="center">
+            <TextField
+              variant="outlined"
+              fullWidth
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+            />
+            <Button variant="contained" color="primary" onClick={handleSendMessage} style={{ marginLeft: 8 }}>
+              Send
+            </Button>
+          </Box>
+        </Paper>
 
-      {/* Notification Snackbar */}
-      <Snackbar
-        open={!!notification}
-        autoHideDuration={4000}
-        onClose={handleCloseNotification}
-        message={notification}
-      />
-    </Box>
+        {/* Notification Snackbar */}
+        <Snackbar
+          open={!!notification}
+          autoHideDuration={4000}
+          onClose={handleCloseNotification}
+          message={notification}
+        />
+      </Box>
+    </main>
   );
 }
