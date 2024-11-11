@@ -158,7 +158,7 @@ function NavBar () {
       >
         <List>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/recommendationEngine')}>
+            <ListItemButton onClick={() => handleNavigation('/viewUserPets')}>
               <ListItemIcon>
                 <PetsIcon />
               </ListItemIcon>
