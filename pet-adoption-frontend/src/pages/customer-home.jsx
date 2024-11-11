@@ -150,7 +150,7 @@ export default function CustomerHomePage() {
         // For example: sessionStorage.setItem('token', token);
         
         // Redirect to the recommendation engine page with the email in the URL
-        router.push(`/recommendationEngine?email=${email}`);
+        router.push(`/recommendationEngine?email=${email}&userID=${user.id}`);
     } else {
         console.error('No token found in local storage.'); // Handle the case where no token is found
         // Optionally, redirect to the login page or show an error message

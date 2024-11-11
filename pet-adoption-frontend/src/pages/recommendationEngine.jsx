@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer } from '@mui/material';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
+import LikeDislikeButtons from '@/components/likeDislikeButtons';
 
 export default function RecommendationEnginePage() {
   //const [state, setState] = useState({ left: false });
@@ -34,8 +35,10 @@ export default function RecommendationEnginePage() {
     '/petImages/dog5.jpg'
   ]; 
   const petDetails = [
-
-  ]
+    { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
+    { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
+    { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
+  ]; 
   const currentPet = pets[currentIndex]
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -92,6 +95,16 @@ export default function RecommendationEnginePage() {
     }
   };
 
+  // Handle snackbar close
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  }
+
+  const handleLogout = () => {
+    localStorage.setItem('validUser',JSON.stringify(null));
+    router.push(`/`);
+  };
+
   // Save the profile picture to the backend
   const handleSave = async () => {
     if (profilePictureFile) {
@@ -118,35 +131,46 @@ export default function RecommendationEnginePage() {
     handleCloseDialog();
   };
 
+  const handleNavigation = (path) => {
+    router.push(`${path}?email=${email}&userID=${user.id}`);
+    handleCloseMenu();
+  };  
+
   // Handle like or dislike button
   const handleYes = () => {
     setIsLiked(true);
-    handleNextPet();
+    setSnackbarOpen(true);
+    //handleNextPet();
 
     setTimeout(() => {
-      setIsLiked(null);
-    }, 250);
+      //setIsLiked(null);
+      handleNextPet();
+    }, 1000);
   }
   const handleNo = () => {
     setIsLiked(false);
-    handleNextPet();
+    setSnackbarOpen(true);
+    //handleNextPet();
 
     setTimeout(() => {
-      setIsLiked(null);
-    }, 250);
+      //setIsLiked(null);
+      handleNextPet();
+    }, 1000);
   }
 
   const handleNextPet = () => {
     setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
   }
 
-  const handlePreviousPet = () => {
-    setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
-  }
+  // const handlePreviousPet = () => {
+  //   setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
+  // }
+
+  const currentPetDetail = petDetails[currentIndex] || {};
 
   return (
     <main>
-      <NavBar user={user} profilePicture={profilePicture} email={email} />
+      <NavBar handleNavigation={handleNavigation} handleLogout={handleLogout} />
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
@@ -158,44 +182,52 @@ export default function RecommendationEnginePage() {
             src={pets[currentIndex]}  // Replace with real image URL
             sx={{ objectFit: 'cover' }} />
             <CardActions sx={{ justifyContent: 'space-between' }}>
-              <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
-              <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} />
+              {/* <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
+              <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} /> */}
+              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo}/>
             </CardActions>
 
             <Box sx={{ padding: 3}}>
               <Typography variant="h6" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-                {petDetails.name}
+                {currentPetDetail.name}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Breed:</strong> {petDetails.breed}
+                <strong>Breed:</strong> {currentPetDetail.breed}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Type:</strong> {petDetails.type}
+                <strong>Type:</strong> {currentPetDetail.type}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Weight:</strong> {petDetails.weight}
+                <strong>Weight:</strong> {currentPetDetail.weight}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Age:</strong> {petDetails.age}
+                <strong>Age:</strong> {currentPetDetail.age}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Temperament:</strong> {petDetails.temperament}
+                <strong>Temperament:</strong> {currentPetDetail.temperament}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Health Status:</strong> {petDetails.healthStatus}
+                <strong>Health Status:</strong> {currentPetDetail.healthStatus}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Adoption Center:</strong> {petDetails.adoptionCenter}
+                <strong>Adoption Center:</strong> {currentPetDetail.adoptionCenter}
               </Typography>
             </Box>
           </Card>
         </Box>
 
-        {isLiked !== null && (
-          <Typography variant="h5" sx={{ marginTop:  2 }}>
+        {/* {isLiked !== null && (
+          <Typography variant="h5" sx={{ marginTop: 2 }}>
             {isLiked ? "You liked this pet!" : "You disliked this pet."}
           </Typography>
-        )}
+        )} */}
+
+        <Snackbar
+          open={snackbarOpen}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={2000}
+          message={isLiked ? "You liked this pet!" : "You disliked this pet."}
+        />
       </Stack>
     </main>
   );
