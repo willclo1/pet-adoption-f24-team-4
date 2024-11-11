@@ -11,6 +11,8 @@ import petadoption.api.pet.criteria.breed.DogBreed;
 
 import java.util.Set;
 
+import static petadoption.api.pet.criteria.Species.CAT;
+
 @Data
 @Entity
 @Table(name = Pet.TABLE_NAME)
@@ -117,9 +119,44 @@ public class Pet {
         this.spayedNeutered = spayedNeutered;
         this.sex = sex;
     }
-    public Pet(){
 
+    public Pet() {}
 
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        // [id] : name
+        str.append("[" + id + "] : " + name + "\n");
+        str.append("adoption center: " + center.getCenterName() + "\n");
+        str.append("species: " + species.getDisplayName() + "\n");
+        str.append("sex: " + sex.getDisplayName() + "\n");
+        if (species.ordinal() == 0) {
+            str.append("dog breed(s):\n");
+            for (DogBreed db : dogBreed) {
+                str.append("\t" + db.getDisplayName() + "\n");
+            }
+        } else {
+            str.append("cat breed(s):\n");
+            for (CatBreed cb : catBreed) {
+                str.append("\t" + cb.getDisplayName() + "\n");
+            }
+        }
+        str.append("weight: " + weight + "\n");
+        str.append("size: " + petSize + "\n");
+        str.append("fur type: " + furType + "\n");
+        str.append("coat length: " + coatLength + "\n");
+        str.append("fur color(s):\n");
+        for (FurColor fc : furColor) {
+            str.append("\t" + fc + "\n");
+        }
+        str.append("temperament(s):\n");
+        for (Temperament t : temperament) {
+            str.append("\t" + t.getDisplayName() + "\n");
+        }
+        str.append("health status: " + healthStatus + "\n");
+        str.append("spayed / neutered?: " + (spayedNeutered.ordinal() == 0 ? "Y" : "N") + "\n");
+
+        return str.toString();
     }
 
 }
