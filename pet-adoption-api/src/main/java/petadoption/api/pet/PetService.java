@@ -25,6 +25,8 @@ public class PetService {
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
 
+    private static final long DEFAULT_RAND_PETS = 500;
+
     public Optional<Pet> savePet(Long petID){
         return repository.findById(petID);
     }
@@ -51,10 +53,14 @@ public class PetService {
     public List<Pet> getAllPets() {
         return repository.findAll();
     }
+
+    public List<Pet> getRandPets(long numPets) { return repository.getRandom(numPets); }
+
+    public List<Pet> getRandPets() { return repository.getRandom(DEFAULT_RAND_PETS); }
+
     public List<Pet> getAdoptionCenterPets(long adoptionID) {
         return repository.findByCenter_adoptionID(adoptionID);
     }
-
 
     public void deletePet(long petID){
         repository.deleteById(petID);
@@ -70,6 +76,7 @@ public class PetService {
         Pet pet = new Pet(name,species,weight,coatLength,furType,furColors,adoptionCenter,dogBreeds,catBreeds,size,age,temperaments,health,spayedNeutered,sex);
         return pet;
     }
+
     public void addSamplePets(AdoptionCenterService adoptionCenterService) throws IOException {
 
         List<Pet> samplePets = new ArrayList<>();
