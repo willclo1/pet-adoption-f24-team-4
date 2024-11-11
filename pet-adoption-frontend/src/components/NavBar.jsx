@@ -9,7 +9,48 @@ import ProfileMenu from './ProfileMenu';
 
 const NavBar = ({ handleNavigation, handleLogout }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
-  
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [profilePictureFile, setProfilePictureFile] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    
+    //handles for pf picture
+    const handleClick = (event) => setAnchorEl(event.currentTarget);
+    const handleCloseMenu = () => setAnchorEl(null);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+        handleCloseMenu();
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setProfilePictureFile(null);
+    };
+    const handleFileChange = (event) => setProfilePictureFile(event.target.files[0]);
+
+    const handleSave = async () => {
+        if (profilePictureFile) {
+        const formData = new FormData();
+        formData.append('image', profilePictureFile);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to upload image');
+            const updatedUser = await response.json();
+            setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
+            setSnackbarOpen(true);
+        } catch (error) {
+            console.error('Error uploading profile picture:', error);
+        }
+        }
+        handleCloseDialog();
+    };
+
     const toggleDrawer = (open) => (event) => {
       if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
         return;
@@ -29,12 +70,12 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
               <ListItemIcon>
                 <PetsIcon />
               </ListItemIcon>
-              <ListItemText primary="Adopt" />
+              <ListItemText primary="Your Pets" />
             </ListItemButton>
           </ListItem>
   
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/editPreferences')}>
+            <ListItemButton onClick={() => handleNavigation('/EditPreferences')}>
               <ListItemIcon>
                 <GroupsIcon />
               </ListItemIcon>
@@ -66,6 +107,7 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
     return (
       <AppBar position="static">
         <Toolbar>
+          
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
@@ -75,7 +117,7 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
           <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
             {list('left')}
           </Drawer>
-          <ProfileMenu />
+          {/* <ProfileMenu /> */}
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button color="inherit" onClick={handleLogout}>Logout</Button>
           </Box>
