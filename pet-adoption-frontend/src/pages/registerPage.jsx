@@ -23,9 +23,7 @@ export default function RegisterPage() {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const apiUrl = process.env.NEXT_PUBLIC_API_URL; 
 
-    const handleRegister = async () => {
-        if (!validateFields()) return;
-        
+    const handleRegister = () => {
         router.push('/loginPage');
     };
 
@@ -281,7 +279,7 @@ export default function RegisterPage() {
                             color="primary"
                             fullWidth
                             sx={{ marginTop: 2, textDecoration: 'underline' }}
-                            onClick={() => handleRegister()}
+                            onClick={() => router.push('/loginPage')}
                         >
                             Already Registered?
                         </Button>
