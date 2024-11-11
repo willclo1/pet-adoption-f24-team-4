@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { MarkEmailUnread } from '@mui/icons-material';
+import NavBar from '@/components/NavBar'
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -256,14 +257,7 @@ export default function Profile() {
 
   return (
     <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Profile Page
-          </Typography>
-          <Button color="inherit" onClick={() => router.push(`/customer-home?email=${email}`)} >Home</Button>
-        </Toolbar>
-      </AppBar>
+      <NavBar />
       <Stack sx={{ paddingTop: 0 }} gap={2}>
       <Typography variant="h3">Welcome, {user.firstName}</Typography>
         <Typography variant="body1" color="text.secondary">

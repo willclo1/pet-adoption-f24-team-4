@@ -1,55 +1,60 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Box, Button, Avatar, MenuItem, Menu, Dialog, DialogTitle, DialogContent, Stack, DialogActions, Snackbar, TextField } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ProfileMenu from './ProfileMenu';
+import { useRouter } from 'next/router';
 
-const NavBar = ({ handleNavigation, handleLogout }) => {
+function NavBar () {
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [profilePictureFile, setProfilePictureFile] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    
-    //handles for pf picture
-    const handleClick = (event) => setAnchorEl(event.currentTarget);
-    const handleCloseMenu = () => setAnchorEl(null);
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-        handleCloseMenu();
-    };
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setProfilePictureFile(null);
-    };
-    const handleFileChange = (event) => setProfilePictureFile(event.target.files[0]);
+    const router = useRouter();
+    const { email } = router.query;
+    const [user, setUser] = useState(null);
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    const handleSave = async () => {
-        if (profilePictureFile) {
-        const formData = new FormData();
-        formData.append('image', profilePictureFile);
-
-        try {
+    useEffect(() => {
+      const fetchUser = async () => {
+        if (email) {
+          setLoading(true);
+          try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Authorization': `Bearer ${token}` }
+            const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             });
-
-            if (!response.ok) throw new Error('Failed to upload image');
-            const updatedUser = await response.json();
-            setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-            setSnackbarOpen(true);
-        } catch (error) {
-            console.error('Error uploading profile picture:', error);
+            if (!response.ok) {
+              if (response.status === 404) {
+                setError('User not found.');
+                return;
+              }
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setUser(data);
+            if (data.profilePicture && data.profilePicture.imageData) {
+              setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
+            }
+          } catch (error) {
+            console.error('Error fetching user:', error);
+            setError('User not found.');
+          } finally {
+            setLoading(false);
+          }
         }
-        }
-        handleCloseDialog();
-    };
+      };
+      fetchUser();
+    }, [email]);
 
     const toggleDrawer = (open) => (event) => {
       if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -57,6 +62,93 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
       }
       setDrawerOpen(open);
     };
+
+    const handleAvatarClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleCloseMenu = () => {
+      setAnchorEl(null);
+    };
+  
+    const handleOpenDialog = () => {
+      setOpenDialog(true);
+      handleCloseMenu();
+    };
+  
+    const handleCloseDialog = () => {
+      setOpenDialog(false);
+      setProfilePictureFile(null);
+    };
+  
+    const handleFileChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        setProfilePictureFile(file);
+      }
+    };
+
+    const handleSave = async () => {
+      if (profilePictureFile) {
+        const formData = new FormData();
+        formData.append('image', profilePictureFile);
+  
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile-image/${email}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error('Failed to upload image');
+          }
+  
+          const updatedUser = await response.json();
+          if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
+            setSnackbarOpen(true);
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Error uploading profile picture:', error);
+        }
+      }
+      handleCloseDialog();
+    };
+
+    const handleLoginInfo = () => {
+      // Retrieve the token from local storage
+      const token = localStorage.getItem('token'); // Get the token from local storage
+
+      // Check if the token exists before redirecting
+      if (token) {
+          // Redirect to the Profile page, only passing the email
+          router.push(`/Profile?email=${email}`);
+      } else {
+          console.error('No token found in local storage.'); // Handle the case where no token is found
+          // Optionally, you could show an error message to the user or redirect them to the login page
+      }
+    };
+
+    const handleNavigation = (path) => {
+      router.push(`${path}?email=${email}&userID=${user.id}`);
+      handleCloseMenu();
+    };  
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+  
+    if (error) {
+      return <div>{error}</div>;
+    }
+  
+    if (!user) {
+      return <div>User not found.</div>;
+    }
   
     const list = (anchor) => (
       <Box
@@ -105,26 +197,51 @@ const NavBar = ({ handleNavigation, handleLogout }) => {
     );
   
     return (
-      <AppBar position="static">
-        <Toolbar>
-          <img src="/Friends_Logo.png" alt="Logo" onClick={() => handleNavigation('/customer-home')} style={{ width: 54, height: 54, cursor: 'pointer'}}/>
-          <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Whisker Works
-          </Typography>
-          <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-            {list('left')}
-          </Drawer>
-          {/* <ProfileMenu /> */}
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button color="inherit" onClick={handleLogout}>Logout</Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <main>
+        <AppBar position="static" sx={{ padding: 2 }}>
+          <Toolbar>
+            <img src="/Friends_Logo.png" alt="Logo" onClick={() => handleNavigation('/customer-home')} style={{ width: 60, height: 60, cursor: 'pointer', marginRight: 25, marginLeft: -10}}/>
+
+            <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
+              <MenuIcon sx={{ fontSize: 30 }}/>
+            </IconButton>
+
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: 24}}>
+              Whisker Works
+            </Typography>
+            
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ marginRight: 2, fontSize: 15}}
+              onClick={() => handleNavigation('/recommendationEngine')}>
+              Start Matching
+            </Button>
+
+            <Avatar
+              alt={user?.firstName || "User"}
+              src={profilePicture}
+              sx={{ marginLeft: 2, width: 65, height: 65 }}
+              onClick={handleAvatarClick}
+            />
+
+            <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+              {list('left')}
+            </Drawer>
+            
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
+              <MenuItem onClick={handleLoginInfo}>Edit Account Information</MenuItem>
+              <MenuItem onClick={() => { localStorage.removeItem('token'); handleNavigation('/'); }}>Logout</MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+      </main>
     );
-  };
+  }
   
   export default NavBar;
   

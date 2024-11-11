@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid } from '@mui/material';
 import { useRouter } from 'next/router';
-import NavBar from '../components/NavBar';
+import NavBar from '@/components/NavBar';
 
 export default function ViewCenters() {
     const [adoptionCenters, setAdoptionCenters] = useState([]);
@@ -46,6 +46,7 @@ export default function ViewCenters() {
         <main>
             
             <NavBar />
+            
             <Box sx={{ padding: 4, backgroundColor: '#f4f6f8' }}> {/* Light greyish background for contrast */}
             
                 <Typography variant="h4" gutterBottom sx={{ color: '#000', marginBottom: 3, fontWeight: 'bold'}}>

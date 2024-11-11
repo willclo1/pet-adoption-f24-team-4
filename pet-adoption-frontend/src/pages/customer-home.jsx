@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import NavBar from '@/components/NavBar';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
@@ -186,22 +187,7 @@ export default function CustomerHomePage() {
 
   return (
     <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Whisker Works
-          </Typography>
-          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
-          <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
-          <Button color="inherit">Adopt a Pet</Button>
-          <Avatar
-            alt={user.firstName}
-            src={profilePicture}
-            sx={{ marginLeft: 2, width: 56, height: 56 }}
-            onClick={handleClick}
-          />
-        </Toolbar>
-      </AppBar>
+      <NavBar />
 
       <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
         <Typography variant="h3">Welcome, {user.firstName}</Typography>
@@ -225,7 +211,7 @@ export default function CustomerHomePage() {
         </Button>
       </Box>
       </Stack>
-
+{/* 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -301,7 +287,7 @@ export default function CustomerHomePage() {
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
         message="Profile picture updated successfully"
-      />
+      /> */}
     </main>
   );
 }

@@ -170,7 +170,8 @@ export default function RecommendationEnginePage() {
 
   return (
     <main>
-      <NavBar handleNavigation={handleNavigation} handleLogout={handleLogout} />
+      <NavBar />
+
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
