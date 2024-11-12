@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
 import { red } from '@mui/material/colors';
-import { MarkEmailUnread } from '@mui/icons-material';
+import { ClosedCaptionDisabledSharp, MarkEmailUnread } from '@mui/icons-material';
 import NavBar from '@/components/NavBar'
 
 export default function Profile() {
@@ -220,6 +220,7 @@ export default function Profile() {
                         'Content-Type': 'application/json',
                     },
                 });
+                console.log(`Bearer ${token}`);
                 console.log(`${apiUrl}/profile`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -259,9 +260,17 @@ export default function Profile() {
     <main>
       <NavBar />
       <Stack sx={{ paddingTop: 0 }} gap={2}>
-      <Typography variant="h3">Welcome, {user.firstName}</Typography>
-        <Typography variant="body1" color="text.secondary">
-          This is your profile page!
+      <Typography variant="h6" component='span' gutterBottom sx={{ fontWeight: 'bold', color: '#black' }}>
+        Account Info
+        </Typography>
+        <Typography variant="h6" component='span' gutterBottom sx={{  color: '#Black' }}>
+        First name: {user.firstName} 
+        </Typography>
+        <Typography variant="h6" component='span' gutterBottom sx={{ color: '#Black' }}>
+        Last name: {user.lastName} 
+        </Typography>
+      <Typography variant="h6" component='span' gutterBottom sx={{  color: 'black' }}>
+        Email Address: {user.emailAddress}
         </Typography>
       </Stack>
       <Stack>
