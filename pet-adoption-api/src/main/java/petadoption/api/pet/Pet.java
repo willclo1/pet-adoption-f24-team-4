@@ -5,13 +5,10 @@ import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.pet.criteria.*;
-import petadoption.api.pet.criteria.breed.AnimalBreed;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 
 import java.util.Set;
-
-import static petadoption.api.pet.criteria.Species.CAT;
 
 @Data
 @Entity
