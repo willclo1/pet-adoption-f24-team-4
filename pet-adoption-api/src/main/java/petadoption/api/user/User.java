@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.recommendationEngine.UserPreferences;
-
-import java.util.prefs.Preferences;
+import petadoption.api.userPreferences.UserPreferences;
 
 @Data
 @Entity

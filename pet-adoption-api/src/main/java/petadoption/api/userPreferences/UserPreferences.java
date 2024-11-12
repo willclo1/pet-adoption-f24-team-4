@@ -1,4 +1,4 @@
-package petadoption.api.recommendationEngine;
+package petadoption.api.userPreferences;
 
 import jakarta.persistence.*;
 import lombok.Getter;

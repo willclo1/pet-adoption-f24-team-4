@@ -9,6 +9,7 @@ import petadoption.api.pet.criteria.Species;
 import petadoption.api.pet.criteria.Temperament;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
+import petadoption.api.userPreferences.UserPreferences;
 
 import java.util.*;
 
@@ -38,7 +39,7 @@ public class RecommendationEngine {
     @Setter
     private PriorityQueue<Map.Entry<Pet, Double>> recommendations;
 
-    RecommendationEngine() {
+    public RecommendationEngine() {
         recommendations = new PriorityQueue<>(new PetComparator());
     }
 
