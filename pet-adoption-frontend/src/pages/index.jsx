@@ -25,7 +25,7 @@ export default function HomePage() {
         router.push("/registerPage");
         break;
       case 'View Centers':
-        router.push("/ViewCenters");
+        router.push("/viewCenters");
         break;
       case 'Register Center':
         router.push("/addAdoptionCenter");
@@ -44,7 +44,9 @@ export default function HomePage() {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
+    console.log(anchor);
     setState({ ...state, [anchor]: open });
+    console.log(state);
   };
 
   const list = (anchor) => (

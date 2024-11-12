@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import NavBar from '@/components/NavBar';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
@@ -15,18 +16,24 @@ export default function CustomerHomePage() {
   const [error, setError] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleLoginInformation = () => {
-    const token = localStorage.getItem('token');
+    // Retrieve the token from local storage
+    const token = localStorage.getItem('token'); // Get the token from local storage
+
+    // Check if the token exists before redirecting
     if (token) {
-      router.push(`/Profile?email=${email}`);
+        // Redirect to the Profile page, only passing the email
+        router.push(`/Profile?email=${email}`);
     } else {
-      console.error('No token found in local storage.');
+        console.error('No token found in local storage.'); // Handle the case where no token is found
+        // Optionally, you could show an error message to the user or redirect them to the login page
     }
-  };
+};
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -39,7 +46,7 @@ export default function CustomerHomePage() {
 
   const logoutAction = () => {
     setUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem('token'); // Remove the token from local storage on logout
     router.push(`/loginPage`);
   };
 
@@ -61,12 +68,12 @@ export default function CustomerHomePage() {
       formData.append('image', profilePictureFile);
 
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token'); // Get the token from local storage
         const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
           method: 'POST',
           body: formData,
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}` // Add token to headers
           }
         });
 
@@ -94,11 +101,13 @@ export default function CustomerHomePage() {
     const fetchUser = async () => {
       if (email) {
         setLoading(true);
+        console.log("Fetching user with email:", email);
+
         try {
           const token = localStorage.getItem('token');
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
-              'Authorization': `Bearer ${token}`
+              'Authorization': `Bearer ${token}` // Add token to headers
             }
           });
           if (!response.ok) {
@@ -110,6 +119,7 @@ export default function CustomerHomePage() {
           }
 
           const data = await response.json();
+          console.log("Fetched user data:", data);
           setUser(data);
 
           if (data.profilePicture && data.profilePicture.imageData) {
@@ -132,32 +142,21 @@ export default function CustomerHomePage() {
   };
 
   const handleStartMatching = () => {
-    const token = localStorage.getItem('token');
+    // Retrieve the token from local storage
+    const token = localStorage.getItem('token'); // Get the token from local storage
+
+    // Check if the token exists before redirecting
     if (token) {
-      router.push(`/recommendationEngine?email=${email}`);
+        // Store the token in session storage or a context if needed
+        // For example: sessionStorage.setItem('token', token);
+        
+        // Redirect to the recommendation engine page with the email in the URL
+        router.push(`/recommendationEngine?email=${email}&userID=${user.id}`);
     } else {
-      console.error('No token found in local storage.');
+        console.error('No token found in local storage.'); // Handle the case where no token is found
+        // Optionally, redirect to the login page or show an error message
     }
-  };
-
-  const handleEditPreferences = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push(`/EditPreferences?email=${email}&userID=${user.id}`);
-    }
-  };
-
-  const handleMessage = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push(`/message?email=${email}&userID=${user.id}`);
-    }
-  };
-
-  // Function to route to view events page
-  const handleViewEvents = () => {
-    router.push(`/viewEvents?email=${email}`);
-  };
+};
 
   if (loading) {
     return <div>Loading...</div>;
@@ -170,69 +169,49 @@ export default function CustomerHomePage() {
   if (!user) {
     return <div>User not found.</div>;
   }
+  const handleEditPreferences = () => {
+    const token = localStorage.getItem('token'); 
+    if(token){
+      router.push(`/EditPreferences?email=${email}&userID=${user.id}`)
+    }
+
+  }
+    const handleMessage = () => {
+      const token = localStorage.getItem('token'); 
+      if(token){
+        router.push(`/message?email=${email}&userID=${user.id}`)
+      }
+
+  }
+
 
   return (
     <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Whisker Works
-          </Typography>
-          <Button color="inherit" onClick={handleEditPreferences}>Edit Preferences</Button>
-          <Button color="inherit" onClick={handleStartMatching}>Start Matching</Button>
-          <Button color="inherit">Adopt a Pet</Button>
-          <Avatar
-            alt={user.firstName}
-            src={profilePicture}
-            sx={{ marginLeft: 2, width: 56, height: 56 }}
-            onClick={handleClick}
-          />
-        </Toolbar>
-      </AppBar>
+      <NavBar />
 
       <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
         <Typography variant="h3">Welcome, {user.firstName}</Typography>
         <Typography variant="body1" color="text.secondary">
           Check out the home page!
         </Typography>
-
-        {/* Message Box */}
         <Box sx={{
-          position: 'absolute',
-          top: 100,
-          left: 20,
-          width: 300,
-          padding: 2,
-          boxShadow: 3,
-          borderRadius: 2,
-          textAlign: 'center',
-          backgroundColor: 'white',
-        }}>
-          <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
-          <Button variant="contained" color="primary" onClick={handleMessage}>
-            Send/View Messages
-          </Button>
-        </Box>
-
-        {/* New Events Box */}
-        <Box sx={{
-          position: 'absolute',
-          top: 220, // Positioned below the message box
-          left: 20,
-          width: 300,
-          padding: 2,
-          boxShadow: 3,
-          borderRadius: 2,
-          textAlign: 'center',
-          backgroundColor: 'white',
-        }}>
-          <Typography variant="h6" gutterBottom>Check out events near you!</Typography>
-          <Button variant="contained" color="primary" onClick={handleViewEvents}>
-            View Events
-          </Button>
-        </Box>
+        position: 'absolute',
+        top: 100,
+        left: 20,
+        width: 300,
+        padding: 2,
+        boxShadow: 3,
+        borderRadius: 2,
+        textAlign: 'center',
+        backgroundColor: 'white',
+      }}>
+        <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
+        <Button variant="contained" color="primary" onClick={handleMessage}>
+          Send/View Messages
+        </Button>
+      </Box>
       </Stack>
-
+{/* 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -308,7 +287,7 @@ export default function CustomerHomePage() {
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
         message="Profile picture updated successfully"
-      />
+      /> */}
     </main>
   );
 }

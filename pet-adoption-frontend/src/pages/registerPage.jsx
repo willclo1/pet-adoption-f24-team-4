@@ -1,37 +1,97 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, Stack, Snackbar } from "@mui/material";
 import { useRouter } from 'next/router'; 
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [firstName, setFirst] = useState('');
     const [lastName, setLast] = useState('');
     const [emailAddress, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [userType, setUserType] = useState('User');
+    const [userType, setUserType] = useState('');
     const [selectedCenter, setSelectedCenter] = useState('');
     const [adoptionCenters, setAdoptionCenters] = useState([]); 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL; 
 
-    const router = useRouter(); 
-
-    const handleRegistered = () => {
+    const handleRegister = () => {
         router.push('/loginPage');
-    }
+    };
 
-    useEffect(()=> {
-        const fetchAdoptionCenters = async() => {
-            try{
-                const respose = await fetch(`${apiUrl}/adoption-centers`);
-                if(!respose.ok){
-                    throw new Error("Failed to fetch Adoption Centers")
+    const validateFields = () => {
+        let valid = true;
+
+        // First Name Validation
+        if (firstName.length < 2 || firstName.length > 50) {
+            setFirstNameError('First name must be between 2 and 50 characters.');
+            valid = false;
+        } else if (!/^[a-zA-Z]+$/.test(firstName)) {
+            setFirstNameError('First name can only contain alphabetic characters.');
+            valid = false;
+        } else {
+            setFirstNameError('');
+        }
+
+        // Last Name Validation
+        if (lastName.length < 2 || lastName.length > 50) {
+            setLastNameError('Last name must be between 2 and 50 characters.');
+            valid = false;
+        } else if (!/^[a-zA-Z]+$/.test(lastName)) {
+            setLastNameError('Last name can only contain alphabetic characters.');
+            valid = false;
+        } else {
+            setLastNameError('');
+        }
+
+        // Email Validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress)) {
+            setEmailError('Please enter a valid email address.');
+            valid = false;
+        } else {
+            setEmailError('');
+        }
+
+        // Password Validation
+        if (password.length < 8) {
+            setPasswordError('Password must be at least 8 characters long.');
+            valid = false;
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(password)) {
+            setPasswordError('Password must contain uppercase, lowercase, number, and special character.');
+            valid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        // Confirm Password Validation
+        if (password !== confirmPassword) {
+            setConfirmPasswordError('Passwords do not match.');
+            valid = false;
+        } else {
+            setConfirmPasswordError('');
+        }
+
+        return valid;
+    };
+
+    useEffect(() => {
+        const fetchAdoptionCenters = async () => {
+            try {
+                const response = await fetch(`${apiUrl}/adoption-centers`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch Adoption Centers");
                 }
-                const data = await respose.json();
+                const data = await response.json();
                 setAdoptionCenters(data);
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Error fetching adoption centers:", error);
                 setMessage("Failed to load adoption centers.");
             } finally {
@@ -41,16 +101,17 @@ export default function RegisterPage() {
 
         fetchAdoptionCenters();
     }, []);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateFields()) return;
         try {
             const response = await fetch(`${apiUrl}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({firstName, lastName, emailAddress, password, userType,
-                    adoptionId: selectedCenter}),
+                body: JSON.stringify({ firstName, lastName, emailAddress, password, userType, adoptionId: selectedCenter }),
             });
 
             if (!response.ok) {
@@ -59,16 +120,16 @@ export default function RegisterPage() {
             const result = await response.json();
             console.log(result);
             setMessage(result.message);
-            if(response.status == 200){
+            if (response.status === 200) {
                 router.push(`/loginPage`);
             }
         } catch (error) {
-            console.error("Error logging in: ", error);
+            console.error("Error registering: ", error);
             setMessage("Register failed. Please try again.");
         }
     };
 
-      return (
+    return (
         <Box
             sx={{
                 display: 'flex',
@@ -102,7 +163,7 @@ export default function RegisterPage() {
                         Register
                     </Typography>
                     <form onSubmit={handleSubmit}>
-                    <TextField
+                        <TextField
                             label="First Name"
                             variant="outlined"
                             fullWidth
@@ -111,6 +172,8 @@ export default function RegisterPage() {
                             onChange={(e) => setFirst(e.target.value)}
                             required
                             sx={{ borderRadius: 2 }}
+                            error={!!firstNameError}
+                            helperText={firstNameError}
                         />
                         <TextField
                             label="Last Name"
@@ -121,6 +184,8 @@ export default function RegisterPage() {
                             onChange={(e) => setLast(e.target.value)}
                             required
                             sx={{ borderRadius: 2 }}
+                            error={!!lastNameError}
+                            helperText={lastNameError}
                         />
                         <TextField
                             label="Email"
@@ -131,6 +196,8 @@ export default function RegisterPage() {
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             sx={{ borderRadius: 2 }}
+                            error={!!emailError}
+                            helperText={emailError}
                         />
                         <TextField
                             label="Password"
@@ -142,6 +209,21 @@ export default function RegisterPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             sx={{ borderRadius: 2 }}
+                            error={!!passwordError}
+                            helperText={passwordError}
+                        />
+                        <TextField
+                            label="Confirm Password"
+                            variant="outlined"
+                            type="password"
+                            fullWidth
+                            margin="normal"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            sx={{ borderRadius: 2 }}
+                            error={!!confirmPasswordError}
+                            helperText={confirmPasswordError}
                         />
                        <FormControl fullWidth margin="normal">
                             <InputLabel id="account-type-label">Account Type</InputLabel>
@@ -155,7 +237,7 @@ export default function RegisterPage() {
                                 required
                             >
                                 <MenuItem value="User">User</MenuItem>
-                                <MenuItem value="adoptionCenter">adoptionCenter</MenuItem>
+                                <MenuItem value="adoptionCenter">Adoption Center</MenuItem>
                             </Select>
                         </FormControl>
                         {userType === 'adoptionCenter' && (
@@ -197,7 +279,7 @@ export default function RegisterPage() {
                             color="primary"
                             fullWidth
                             sx={{ marginTop: 2, textDecoration: 'underline' }}
-                            onClick={() => handleRegistered()}
+                            onClick={() => router.push('/loginPage')}
                         >
                             Already Registered?
                         </Button>
@@ -214,6 +296,12 @@ export default function RegisterPage() {
                     )}
                 </CardContent>
             </Card>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={4000}
+                onClose={() => setSnackbarOpen(false)}
+                message={message}
+            />
         </Box>
     );
 }

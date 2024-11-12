@@ -1,30 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, AppBar, Toolbar, Button, Drawer, ListItem, List, ListItemText, ListItemButton, Box, ListItemIcon, Card, CardMedia, CardActions, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Snackbar } from '@mui/material';
-import HouseIcon from '@mui/icons-material/House';
-import GroupsIcon from '@mui/icons-material/Groups';
-import ContactsIcon from '@mui/icons-material/Contacts';
-import MenuIcon from '@mui/icons-material/Menu';
-import PetsIcon from '@mui/icons-material/Pets';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/router';
+import NavBar from '@/components/NavBar';
+import LikeDislikeButtons from '@/components/likeDislikeButtons';
 
 export default function RecommendationEnginePage() {
-  const [state, setState] = useState({ left: false });
+  //const [state, setState] = useState({ left: false });
   const router = useRouter();
+  const { email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  //const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
+  const [error, setError] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const pets = [
+    '/petImages/cat1.jpg',
+    '/petImages/cat2.jpg',
+    '/petImages/cat3.jpg',
+    '/petImages/cat4.jpg',
+    '/petImages/cat5.jpg',
+    '/petImages/cat6.jpg',
+    '/petImages/dog1.jpg',
+    '/petImages/dog2.jpg',
+    '/petImages/dog3.jpg',
+    '/petImages/dog4.jpg',
+    '/petImages/dog5.jpg'
+  ]; 
+  const petDetails = [
+    { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
+    { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
+    { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
+  ]; 
+  const currentPet = pets[currentIndex]
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     if (router.isReady) {
-      const { email } = router.query;
       if (email) {
         setUserEmail(email);
         fetchUserData(email);
@@ -76,6 +95,16 @@ export default function RecommendationEnginePage() {
     }
   };
 
+  // Handle snackbar close
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  }
+
+  const handleLogout = () => {
+    localStorage.setItem('validUser',JSON.stringify(null));
+    router.push(`/`);
+  };
+
   // Save the profile picture to the backend
   const handleSave = async () => {
     if (profilePictureFile) {
@@ -102,98 +131,104 @@ export default function RecommendationEnginePage() {
     handleCloseDialog();
   };
 
+  const handleNavigation = (path) => {
+    router.push(`${path}?email=${email}&userID=${user.id}`);
+    handleCloseMenu();
+  };  
+
   // Handle like or dislike button
-  const handleYes = () => setIsLiked(true);
-  const handleNo = () => setIsLiked(false);
+  const handleYes = () => {
+    setIsLiked(true);
+    setSnackbarOpen(true);
+    //handleNextPet();
 
-  // Drawer toggle logic
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event.type === 'keydown' && (event.keyCode === 'Tab' || event.keyCode === 'Shift')) {
-      return;
-    }
-    setState({ ...state, [anchor]: open });
-  };
+    setTimeout(() => {
+      //setIsLiked(null);
+      handleNextPet();
+    }, 1000);
+  }
+  const handleNo = () => {
+    setIsLiked(false);
+    setSnackbarOpen(true);
+    //handleNextPet();
 
-  // List items for the drawer
-  const list = (anchor) => (
-    <Box sx={{ width: 250 }} onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
-      <List>
-        {['Home', 'Adopt', 'Meeting', 'Contact'].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton onClick={() => {
-              const path = text === 'Home' ? '/customer-home' : '/recommendation-engine';
-              router.push({ pathname: path, query: { email: userEmail || '' } });
-            }}>
-              <ListItemIcon>
-                {text === 'Home' && <HouseIcon />}
-                {text === 'Adopt' && <PetsIcon />}
-                {text === 'Meeting' && <GroupsIcon />}
-                {text === 'Contact' && <ContactsIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
+    setTimeout(() => {
+      //setIsLiked(null);
+      handleNextPet();
+    }, 1000);
+  }
+
+  const handleNextPet = () => {
+    setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
+  }
+
+  // const handlePreviousPet = () => {
+  //   setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
+  // }
+
+  const currentPetDetail = petDetails[currentIndex] || {};
 
   return (
     <main>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color='inherit' onClick={toggleDrawer('left', true)}> <MenuIcon /> </Button>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>Whisker Works</Typography>
-          <Avatar alt={user?.firstName} src={profilePicture} onClick={handleAvatarClick} sx={{ marginLeft: 2, width: 56, height: 56 }} />
-        </Toolbar>
-      </AppBar>
+      <NavBar />
 
-      <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}> {list('left')} </Drawer>
-
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-        <MenuItem onClick={() => router.push('/loginPage')}>Logout</MenuItem>
-      </Menu>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Personal Information</DialogTitle>
-        <DialogContent>
-          <TextField margin="dense" label="First Name" fullWidth variant="outlined" defaultValue={user?.firstName} />
-          <TextField margin="dense" label="Last Name" fullWidth variant="outlined" defaultValue={user?.lastName} />
-          <Stack marginTop={2}>
-            <Typography variant="body1">Profile Picture</Typography>
-            <input accept="image/*" id="profile-picture-upload" type="file" style={{ display: 'none' }} onChange={handlePfFile} />
-            <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">Upload Profile Picture</Button>
-            </label>
-            {profilePicture && <Avatar src={profilePicture} sx={{ width: 56, height: 56, marginTop: 1 }} />}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">Cancel</Button>
-          <Button onClick={handleSave} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)} message="Profile picture updated successfully" />
-
-      <Stack sx={{ paddingTop: 5 }} alignItems="center" gap={2}>
+      <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
-        <Typography variant="body1" color="text.secondary">Adopt Now :D</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
+          <Card sx={{ maxWidth: 600 }}>
+            <CardMedia 
+            component="img" 
+            alt="Pet Image" 
+            height="500" width="400" 
+            src={pets[currentIndex]}  // Replace with real image URL
+            sx={{ objectFit: 'cover' }} />
+            <CardActions sx={{ justifyContent: 'space-between' }}>
+              {/* <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
+              <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} /> */}
+              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo}/>
+            </CardActions>
 
-        <Card sx={{ maxWidth: 600 }}>
-          <CardMedia component="img" alt="Pet Image" height="500" width="400" sx={{ objectFit: 'cover' }} />
-          <CardActions sx={{ justifyContent: 'space-between' }}>
-            <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
-            <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} />
-          </CardActions>
-        </Card>
+            <Box sx={{ padding: 3}}>
+              <Typography variant="h6" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                {currentPetDetail.name}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Breed:</strong> {currentPetDetail.breed}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Type:</strong> {currentPetDetail.type}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Weight:</strong> {currentPetDetail.weight}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Age:</strong> {currentPetDetail.age}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Temperament:</strong> {currentPetDetail.temperament}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Health Status:</strong> {currentPetDetail.healthStatus}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Adoption Center:</strong> {currentPetDetail.adoptionCenter}
+              </Typography>
+            </Box>
+          </Card>
+        </Box>
 
-        {isLiked !== null && (
-          <Typography variant="h5" sx={{ marginTop:  2 }}>
+        {/* {isLiked !== null && (
+          <Typography variant="h5" sx={{ marginTop: 2 }}>
             {isLiked ? "You liked this pet!" : "You disliked this pet."}
           </Typography>
-        )}
+        )} */}
+
+        <Snackbar
+          open={snackbarOpen}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={2000}
+          message={isLiked ? "You liked this pet!" : "You disliked this pet."}
+        />
       </Stack>
     </main>
   );

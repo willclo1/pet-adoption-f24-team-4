@@ -118,6 +118,15 @@ export default function LoginPage() {
                         >
                             Login
                         </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            fullWidth
+                            sx={{ marginTop: 2}}
+                            onClick={() => router.push('/')}
+                        >
+                            Go Back to Home
+                        </Button>
                     </form>
                     {message && (
                         <Typography
