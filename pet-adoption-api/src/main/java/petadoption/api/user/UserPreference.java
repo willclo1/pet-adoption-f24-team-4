@@ -2,8 +2,8 @@ package petadoption.api.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import petadoption.api.pet.Size;
-import petadoption.api.pet.Temperament;
+import petadoption.api.pet.criteria.Size;
+import petadoption.api.pet.criteria.Temperament;
 
 @Data
 @Entity

@@ -1,6 +1,8 @@
 package petadoption.api.endpoint;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Temporal;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,39 +12,59 @@ import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.Pet;
 import petadoption.api.pet.PetRequest;
 import petadoption.api.pet.PetService;
+import petadoption.api.pet.criteria.*;
+import petadoption.api.pet.criteria.breed.CatBreed;
+import petadoption.api.pet.criteria.breed.DogBreed;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
 public class PetEndpoint {
     private PetService petService;
-    private  AdoptionCenterService adoptionCenterService;
+    private AdoptionCenterService adoptionCenterService;
+
     public PetEndpoint(PetService petService, AdoptionCenterService adoptionCenterService) {
         this.petService = petService;
         this.adoptionCenterService = adoptionCenterService;
     }
+
     @PostMapping("/addPet")
     public ResponseEntity<?> addPet(@RequestBody PetRequest petRequest) {
         try {
-            Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter(petRequest.getAdoptionID());
+            Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter(petRequest.getAdoptionId());
 
             if (adoptionCenter.isEmpty()) {
                 return ResponseEntity.badRequest().body("Adoption center not found");
             }
 
             Pet pet = new Pet();
-            pet.setFirstName(petRequest.getFirstName());
-            pet.setLastName(petRequest.getLastName());
-            pet.setPetType(petRequest.getPetType());
+            pet.setName(petRequest.getName());
+            pet.setSpecies(petRequest.getSpecies());
+            pet.setPetSize(petRequest.getPetSize());
             pet.setWeight(petRequest.getWeight());
+            pet.setAge(petRequest.getAge());
+            pet.setTemperament(petRequest.getTemperament());
+            pet.setCoatLength(petRequest.getCoatLength());
             pet.setFurType(petRequest.getFurType());
-            pet.setBreed(petRequest.getBreed());
-            pet.setAge(petRequest.getAge()); // Set the age
-            pet.setTemperament(petRequest.getTemperament()); // Set the temperament enum
-            pet.setPetSize(petRequest.getPetSize()); // Set the size enum
-            pet.setHealthStatus(petRequest.getHealthStatus()); // Set health status
+            pet.setHealthStatus(petRequest.getHealthStatus());
+            pet.setFurColor(petRequest.getFurColor());
+            pet.setSpayedNeutered(petRequest.getSpayedNeutered());
+            log.info(petRequest.getSex());
+            pet.setSex(petRequest.getSex());
+            if (petRequest.getDogBreed() != null) {
+                pet.setDogBreed(petRequest.getDogBreed());
+            }
+            if (petRequest.getCatBreed() != null) {
+                pet.setCatBreed(petRequest.getCatBreed());
+            }
+
             pet.setCenter(adoptionCenter.get());
 
             petService.savePet(pet, adoptionCenter.get().getAdoptionID());
@@ -53,15 +75,28 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().build();
         }
     }
+
     @GetMapping("/pets")
     public ResponseEntity<?> getAllPets() {
+        System.out.println("hello");
         try {
             List<Pet> pets = petService.getAllPets();
+
             return ResponseEntity.ok(pets);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
+
+    @GetMapping("/samplePets")
+    public String addSampleCenters() throws IOException {
+        System.out.println("1");
+
+        petService.addSamplePets(adoptionCenterService);
+        return "Sample pets added successfully.";
+    }
+
+
     @GetMapping("/pets/{adoptionID}")
     public ResponseEntity<?> getAdoptionCenterPets(@PathVariable Long adoptionID) {
         try {
@@ -71,6 +106,7 @@ public class PetEndpoint {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
     }
+
     @DeleteMapping("/deletePet")
     public ResponseEntity<String> deletePet(@RequestBody Pet pet) {
         try {
@@ -82,40 +118,53 @@ public class PetEndpoint {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the pet.");
         }
     }
+
     @PutMapping("/updatePet")
-    public ResponseEntity<Pet> updatePet(@RequestBody PetRequest petRequest){
+    public ResponseEntity<Pet> updatePet(@RequestBody PetRequest petRequest) {
         try {
             Optional<Pet> existingPetOpt = petService.getPetById(petRequest.getId());
             if (!existingPetOpt.isPresent()) {
                 return ResponseEntity.notFound().build();
             }
-            Pet existingPet = existingPetOpt.get();
-
-            existingPet.setFirstName(petRequest.getFirstName());
-            existingPet.setLastName(petRequest.getLastName());
-            existingPet.setPetType(petRequest.getPetType());
-            existingPet.setWeight(petRequest.getWeight());
-            existingPet.setFurType(petRequest.getFurType());
-            existingPet.setPetSize(petRequest.getPetSize());
-            existingPet.setBreed(petRequest.getBreed());
-            existingPet.setAge(petRequest.getAge());
-            existingPet.setTemperament(petRequest.getTemperament());
-            existingPet.setHealthStatus(petRequest.getHealthStatus());
+            Pet pet = existingPetOpt.get();
 
 
-            petService.savePet(existingPet, existingPet.getCenter().getAdoptionID());
+            pet.setName(petRequest.getName());
+            pet.setSpecies(petRequest.getSpecies());
+            pet.setPetSize(petRequest.getPetSize());
+            pet.setWeight(petRequest.getWeight());
+            pet.setAge(petRequest.getAge());
+            pet.setTemperament(petRequest.getTemperament());
+            pet.setCoatLength(petRequest.getCoatLength());
+            pet.setFurType(petRequest.getFurType());
+            pet.setFurColor(petRequest.getFurColor());
 
-            log.info("Pet updated successfully: " + existingPet.getFirstName() + " " + existingPet.getLastName());
-            return ResponseEntity.ok(existingPet);
-        }
-        catch (Exception e) {
+
+            petService.savePet(pet, pet.getCenter().getAdoptionID());
+
+            log.info("Pet updated successfully: " + pet.getName());
+            return ResponseEntity.ok(pet);
+        } catch (Exception e) {
             log.error("Error updating pet: ", e);
             return ResponseEntity.badRequest().build();
         }
 
     }
-
-
-
+    @GetMapping("/getOptions")
+    public Map<String, List<String>> getPetEnumOptions() {
+        return Map.ofEntries(
+                Map.entry("species", Arrays.stream(Species.values()).map(Species::getDisplayName).collect(Collectors.toList())),
+                Map.entry("coatLength", Arrays.stream(CoatLength.values()).map(CoatLength::getDisplayName).collect(Collectors.toList())),
+                Map.entry("furType", Arrays.stream(FurType.values()).map(FurType::getDisplayName).collect(Collectors.toList())),
+                Map.entry("furColor", Arrays.stream(FurColor.values()).map(FurColor::getDisplayName).collect(Collectors.toList())),
+                Map.entry("dogBreed", Arrays.stream(DogBreed.values()).map(DogBreed::getDisplayName).collect(Collectors.toList())),
+                Map.entry("catBreed", Arrays.stream(CatBreed.values()).map(CatBreed::getDisplayName).collect(Collectors.toList())),
+                Map.entry("size", Arrays.stream(Size.values()).map(Size::getDisplayName).collect(Collectors.toList())),
+                Map.entry("temperament", Arrays.stream(Temperament.values()).map(Temperament::getDisplayName).collect(Collectors.toList())),
+                Map.entry("healthStatus", Arrays.stream(Health.values()).map(Health::getDisplayName).collect(Collectors.toList())),
+                Map.entry("sex", Arrays.stream(Sex.values()).map(Sex::getDisplayName).collect(Collectors.toList())),
+                Map.entry("spayedNeutered", Arrays.stream(SpayedNeutered.values()).map(SpayedNeutered::getDisplayName).collect(Collectors.toList()))
+        );
+    }
 
 }
