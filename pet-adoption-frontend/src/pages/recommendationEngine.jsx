@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar } from '@mui/material';
+import { keyframes } from '@emotion/react';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
 
+// Keyframe animations for sliding left and right
+const slideRight = keyframes`
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+`;
+
+const slideLeft = keyframes`
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-100%); opacity: 0; }
+`;
+
+const fadeIn = keyframes`
+  0% { transform: translateX(50%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+`;
+
 export default function RecommendationEnginePage() {
-  //const [state, setState] = useState({ left: false });
   const router = useRouter();
   const { email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
-  //const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -19,6 +34,9 @@ export default function RecommendationEnginePage() {
   const [isLiked, setIsLiked] = useState(null);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [animationDirection, setAnimationDirection] = useState(null);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+
   const pets = [
     '/petImages/cat1.jpg',
     '/petImages/cat2.jpg',
@@ -37,7 +55,7 @@ export default function RecommendationEnginePage() {
     { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
     { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
   ]; 
-  const currentPet = pets[currentIndex]
+  const currentPet = pets[currentIndex];
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
@@ -69,100 +87,39 @@ export default function RecommendationEnginePage() {
     }
   };
 
-  // Function to handle avatar click for menu
-  const handleAvatarClick = (event) => setAnchorEl(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl(null);
-
-  // Open dialog for editing personal information
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleCloseMenu();
-  };
-
-  // Close dialog for editing personal information
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProfilePictureFile(null);
-  };
-
-  // Handle file upload for profile picture
-  const handlePfFile = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePictureFile(file);
-    }
-  };
-
-  // Handle snackbar close
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  }
-
-  const handleLogout = () => {
-    localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/`);
-  };
-
-  // Save the profile picture to the backend
-  const handleSave = async () => {
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
-      const token = localStorage.getItem('token');
-
-      try {
-        const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) throw new Error('Failed to upload image');
-        const updatedUser = await response.json();
-        setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        setSnackbarOpen(true);
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
-    handleCloseDialog();
-  };
-
-  const handleNavigation = (path) => {
-    router.push(`${path}?email=${email}&userID=${user.id}`);
-    handleCloseMenu();
-  };  
-
   // Handle like or dislike button
   const handleYes = () => {
     setIsLiked(true);
+    setAnimationDirection('left');
     setSnackbarOpen(true);
     //handleNextPet();
 
     setTimeout(() => {
-      //setIsLiked(null);
       handleNextPet();
-    }, 1000);
+    }, 500);
   }
   const handleNo = () => {
     setIsLiked(false);
+    setAnimationDirection('right');
     setSnackbarOpen(true);
     //handleNextPet();
 
     setTimeout(() => {
-      //setIsLiked(null);
       handleNextPet();
-    }, 1000);
+    }, 500);
   }
+
+  const handleAdopt = () => {
+    setShowBackdrop(true)
+    setTimeout(() => {
+      setShowBackdrop(false);
+    }, 1000);
+  };
 
   const handleNextPet = () => {
+    setAnimationDirection(null);
     setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
   }
-
-  // const handlePreviousPet = () => {
-  //   setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
-  // }
 
   const currentPetDetail = petDetails[currentIndex] || {};
 
@@ -170,20 +127,32 @@ export default function RecommendationEnginePage() {
     <main>
       <NavBar />
 
+      <Backdrop
+        sx={{ backgroundColor: 'rgba(0,0,0,0.8)', color: 'green', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={showBackdrop}
+      >
+        <Typography variant="h3" color="primary">Congratulations on choosing to adopt!</Typography>
+      </Backdrop>
+
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
-          <Card sx={{ maxWidth: 600 }}>
+          <Card 
+            key={currentIndex}
+            sx={{ 
+              maxWidth: 600, 
+              animation: animationDirection === 'left' ? `${slideLeft} 0.5s forwards` : animationDirection === 'right' ? `${slideRight} 0.5s forwards` : `${fadeIn} 0.5s ease-in-out` 
+              }}
+          >
             <CardMedia 
-            component="img" 
-            alt="Pet Image" 
-            height="500" width="400" 
-            src={pets[currentIndex]}  // Replace with real image URL
-            sx={{ objectFit: 'cover' }} />
+              component="img" 
+              alt="Pet Image" 
+              height="500" width="400" 
+              src={pets[currentIndex]}  // Replace with real image URL
+              sx={{ objectFit: 'cover' }} 
+            />
             <CardActions sx={{ justifyContent: 'space-between' }}>
-              {/* <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
-              <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} /> */}
-              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo}/>
+              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo} handleAdopt={handleAdopt}/>
             </CardActions>
 
             <Box sx={{ padding: 3}}>
@@ -215,15 +184,9 @@ export default function RecommendationEnginePage() {
           </Card>
         </Box>
 
-        {/* {isLiked !== null && (
-          <Typography variant="h5" sx={{ marginTop: 2 }}>
-            {isLiked ? "You liked this pet!" : "You disliked this pet."}
-          </Typography>
-        )} */}
-
         <Snackbar
           open={snackbarOpen}
-          onClose={handleCloseSnackbar}
+          onClose={() => setSnackbarOpen(false)}
           autoHideDuration={2000}
           message={isLiked ? "You liked this pet!" : "You disliked this pet."}
         />

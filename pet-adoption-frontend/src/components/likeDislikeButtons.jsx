@@ -47,7 +47,7 @@ const adoptButtonStyles = {
   },
 };
 
-export default function LikeDislikeButtons({ handleLike, handleDislike }) {
+export default function LikeDislikeButtons({ handleLike, handleDislike, handleAdopt }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
       {/* Like Button */}
@@ -61,7 +61,7 @@ export default function LikeDislikeButtons({ handleLike, handleDislike }) {
       {/* Adopt Button */}
       <Button
         size="medium"
-        onClick={() => { /* Adopt functionality to be added later */ }}
+        onClick={handleAdopt}
         sx={adoptButtonStyles}
         startIcon={<FavoriteIcon sx={{ fontSize: 60 }} />}
       >
