@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes } from '@emotion/react';
-import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop } from '@mui/material';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop, LinearProgress } from '@mui/material';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
+import { ApiRounded } from '@mui/icons-material';
+import { current } from '@reduxjs/toolkit';
 
-// Keyframe animations for sliding left and right
+// Keyframes for sliding left and right
 const slideRight = keyframes`
   0% { transform: translateX(0); opacity: 1; }
   100% { transform: translateX(100%); opacity: 0; }
@@ -36,27 +38,31 @@ export default function RecommendationEnginePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationDirection, setAnimationDirection] = useState(null);
   const [showBackdrop, setShowBackdrop] = useState(false);
-
-  const pets = [
-    '/petImages/cat1.jpg',
-    '/petImages/cat2.jpg',
-    '/petImages/cat3.jpg',
-    '/petImages/cat4.jpg',
-    '/petImages/cat5.jpg',
-    '/petImages/cat6.jpg',
-    '/petImages/dog1.jpg',
-    '/petImages/dog2.jpg',
-    '/petImages/dog3.jpg',
-    '/petImages/dog4.jpg',
-    '/petImages/dog5.jpg'
-  ]; 
-  const petDetails = [
-    { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
-    { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
-    { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
-  ]; 
-  const currentPet = pets[currentIndex];
+  const [allPets, setAllPets] = useState([]);
+  const [allPetDetails, setAllPetDetails] = useState([]);
+  const [currentRound, setCurrentRound] = useState(0);
+  const petsPerRound = 10;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // const pets = [
+  //   '/petImages/cat1.jpg',
+  //   '/petImages/cat2.jpg',
+  //   '/petImages/cat3.jpg',
+  //   '/petImages/cat4.jpg',
+  //   '/petImages/cat5.jpg',
+  //   '/petImages/cat6.jpg',
+  //   '/petImages/dog1.jpg',
+  //   '/petImages/dog2.jpg',
+  //   '/petImages/dog3.jpg',
+  //   '/petImages/dog4.jpg',
+  //   '/petImages/dog5.jpg'
+  // ]; 
+  // const petDetails = [
+  //   { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
+  //   { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
+  //   { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
+  // ]; 
+  // const currentPet = pets[currentIndex];
 
   useEffect(() => {
     if (router.isReady) {
@@ -66,6 +72,41 @@ export default function RecommendationEnginePage() {
       }
     }
   }, [router.isReady, router.query]);
+
+  //get pets data for game
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/pets`);
+        
+        if (!response.ok) throw new Error('Failed to fetch pet data');
+
+        const data = await response.json();
+
+        setAllPets(data.map(pet => pet.imageUrl));
+        setAllPetDetails(data.map(pet => ({
+          name: pet.name,
+          breed: pet.breed,
+          type: pet.type,
+          weight: pet.weight,
+          age: pet.age,
+          temperament: pet.temperament,
+          healthStatus: pet.healthStatus,
+          adoptionCenter: pet.adoptionCenter,
+        })));
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading pets...', error);
+      }
+    };
+    fetchPets();
+  }, [apiUrl]);
+
+  //find what pets to display given the round
+  const startIndex = currentRound * petsPerRound;
+  const pets = allPets.slice(startIndex, startIndex+petsPerRound);
+  const petDetails = allPetDetails.slice(startIndex, startIndex+petsPerRound);
 
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
@@ -121,7 +162,12 @@ export default function RecommendationEnginePage() {
     setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
   }
 
+  const handleNextRound = () => {
+    setCurrentRound((prevRound) => (prevRound + 1) % (allPets.length / petsPerRound));
+  }
+
   const currentPetDetail = petDetails[currentIndex] || {};
+  const progressValue = ((currentIndex % petsPerRound) + 1) * (100 / petsPerRound);
 
   return (
     <main>
@@ -136,6 +182,9 @@ export default function RecommendationEnginePage() {
 
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
+        <Box>
+          <LinearProgress variant="determinate" value={progressValue} sx={{ marginBottom: 2 }} />
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
           <Card 
             key={currentIndex}
@@ -148,7 +197,7 @@ export default function RecommendationEnginePage() {
               component="img" 
               alt="Pet Image" 
               height="500" width="400" 
-              src={pets[currentIndex]}  // Replace with real image URL
+              src={pets[currentIndex % petsPerRound]}  // Replace with real image URL
               sx={{ objectFit: 'cover' }} 
             />
             <CardActions sx={{ justifyContent: 'space-between' }}>
