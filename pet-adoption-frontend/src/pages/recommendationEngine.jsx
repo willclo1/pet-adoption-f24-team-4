@@ -44,26 +44,6 @@ export default function RecommendationEnginePage() {
   const petsPerRound = 10;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  // const pets = [
-  //   '/petImages/cat1.jpg',
-  //   '/petImages/cat2.jpg',
-  //   '/petImages/cat3.jpg',
-  //   '/petImages/cat4.jpg',
-  //   '/petImages/cat5.jpg',
-  //   '/petImages/cat6.jpg',
-  //   '/petImages/dog1.jpg',
-  //   '/petImages/dog2.jpg',
-  //   '/petImages/dog3.jpg',
-  //   '/petImages/dog4.jpg',
-  //   '/petImages/dog5.jpg'
-  // ]; 
-  // const petDetails = [
-  //   { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
-  //   { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
-  //   { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
-  // ]; 
-  // const currentPet = pets[currentIndex];
-
   useEffect(() => {
     if (router.isReady) {
       if (email) {
@@ -82,18 +62,7 @@ export default function RecommendationEnginePage() {
         if (!response.ok) throw new Error('Failed to fetch pet data');
 
         const data = await response.json();
-
-        setAllPets(data.map(pet => pet.imageUrl));
-        setAllPetDetails(data.map(pet => ({
-          name: pet.name,
-          breed: pet.breed,
-          type: pet.type,
-          weight: pet.weight,
-          age: pet.age,
-          temperament: pet.temperament,
-          healthStatus: pet.healthStatus,
-          adoptionCenter: pet.adoptionCenter,
-        })));
+        setAllPets(data);
 
         setLoading(false);
       } catch (error) {
