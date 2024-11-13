@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { keyframes } from '@emotion/react';
-import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop, LinearProgress } from '@mui/material';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop, LinearProgress, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
@@ -40,6 +40,7 @@ export default function RecommendationEnginePage() {
   const [allPets, setAllPets] = useState([]);
   const [allPetDetails, setAllPetDetails] = useState([]);
   const [progressValue, setProgressValue] = useState(0); // Progress value from 0 to 10
+  const [nextRoundDialogOpen, setNextRoundDialogOpen] = useState(false); // Dialog state for next round
   const petsPerRound = 10;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -114,7 +115,7 @@ export default function RecommendationEnginePage() {
       console.error('No pet ID found for the current pet.');
       return;
     }
-
+    
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/RecEng/ratePet`, {
@@ -166,12 +167,27 @@ export default function RecommendationEnginePage() {
 
   // Increment the progress value
   const incrementProgress = () => {
-    setProgressValue((prevValue) => Math.min(prevValue + 1, 10)); // Increment up to 10
+    setProgressValue((prevValue) => {
+      const newValue = Math.min(prevValue + 1, 10);
+      if (newValue === 10) {
+        setNextRoundDialogOpen(true);
+      }
+      return newValue;
+    });
   };
 
   const handleNextPet = () => {
     setAnimationDirection(null);
     setCurrentIndex((prevIdx) => (prevIdx + 1) % allPets.length);
+  };
+
+  const handleDialogClose = () => {
+    setNextRoundDialogOpen(false);
+  };
+
+  const handleStartNextRound = () => {
+    setProgressValue(0);
+    setNextRoundDialogOpen(false);
   };
 
   // Function to fetch user data
@@ -310,14 +326,24 @@ export default function RecommendationEnginePage() {
           </Card>
         </Box>
 
-        <Button onClick={() => setProgressValue(0)}>Next Round</Button>
-
         <Snackbar
           open={snackbarOpen}
           onClose={() => setSnackbarOpen(false)}
           autoHideDuration={2000}
           message={isLiked ? "You liked this pet!" : "You disliked this pet."}
         />
+
+        <Dialog open={nextRoundDialogOpen} onClose={handleDialogClose}>
+          <DialogTitle>End of Round</DialogTitle>
+          <DialogContent>
+            <Typography>You've reached the end of this round of pet matching. Would you like to start a new round or view your liked pets?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose}>Cancel</Button>
+            <Button onClick={handleStartNextRound} color="primary">Next Round</Button>
+            <Button onClick={() => router.push(`/viewUserPets?email=${email}&userID=${userID}`)} color="secondary">View Liked Pets</Button>
+          </DialogActions>
+        </Dialog>
       </Stack>
     </main>
   );
