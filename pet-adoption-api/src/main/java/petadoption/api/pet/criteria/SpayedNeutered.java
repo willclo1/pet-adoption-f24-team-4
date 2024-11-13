@@ -2,6 +2,9 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ */
 public enum SpayedNeutered {
     SPAYED_NEUTERED("Spayed Neutered"),
     NOT_SPAYED_NEUTERED("Not Spayed Neutered"),;

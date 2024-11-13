@@ -2,6 +2,9 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ */
 public enum FurColor {
     WHITE("White"),
     BLACK("Black"),

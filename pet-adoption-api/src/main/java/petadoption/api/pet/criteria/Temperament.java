@@ -2,6 +2,10 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ * @author Will Clore
+ */
 public enum Temperament {
     CHILL("Chill"),      // willclo1
     NEEDY("Needy"),      // willclo1

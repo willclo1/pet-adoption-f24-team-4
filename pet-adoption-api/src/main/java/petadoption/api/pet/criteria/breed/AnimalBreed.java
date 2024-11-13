@@ -1,5 +1,8 @@
 package petadoption.api.pet.criteria.breed;
 
+/**
+ * @author Rafe Loya
+ */
 public interface AnimalBreed {
     String getAnimalType();
     //String getBreedName();

@@ -2,6 +2,10 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ * @author Will Clore
+ */
 public enum Health {
     EXCELLENT("Excellent", "This pet is in perfect health."),
     GOOD("Good", "This pet is in good health, no issues."),

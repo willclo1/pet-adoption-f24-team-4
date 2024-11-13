@@ -1,7 +1,12 @@
 package petadoption.api.Utility;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.pet.Pet;
+import petadoption.api.pet.PetService;
 import petadoption.api.pet.criteria.*;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
@@ -10,10 +15,15 @@ import java.util.*;
 
 import static petadoption.api.pet.criteria.Species.CAT;
 
+/**
+ * @author Harrison Hassler
+ * @author Rafe Loya
+ */
+@Component
 public class petGenerator {
-    public static final int MAX_BREED = 5;
-    public static final int MAX_FUR_COLOR = 4;
-    public static final int MAX_TEMPERAMENTS = 10;
+    public static final int MAX_BREED = 1;
+    public static final int MAX_FUR_COLOR = 1;
+    public static final int MAX_TEMPERAMENTS = 1;
     public static final String[] NAMES = {
             "Angel",
             "Popeye",
@@ -59,15 +69,16 @@ public class petGenerator {
             "Kate",
             "Mandarin"
     };
+    @Autowired
+    PetService petService;
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of pets to generate: ");
-        int numberOfPets = scanner.nextInt();
-        //generateRandomPets(numberOfPets);
-        for (Pet p : generateRandomPetsV2(null, numberOfPets)) {
-            System.out.println(p);
+    @EventListener(ApplicationReadyEvent.class)
+    public void generatePetsOnStartup() {
+        int numPets = 20;
+        for(Pet p: generateRandomPetsV2(null, numPets)){
+            petService.savePet(p);
         }
+
     }
 
     public static List<Pet> generateRandomPetsV2(List<AdoptionCenter> adoptionCenters, int numPets) {

@@ -2,6 +2,10 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ * @author Will Clore
+ */
 public enum Size {
     SMALL("Small"),
     MEDIUM("Medium"),
