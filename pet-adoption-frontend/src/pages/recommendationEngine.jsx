@@ -135,10 +135,46 @@ export default function RecommendationEnginePage() {
       console.error('Error during adoption rate fetch:', error);
     }
   };
-
+  
+  const addLikedPet = async () => {
+    // Get the pet ID of the currently viewed pet
+    const petID = allPetDetails[currentIndex]?.id;
+  
+    // Check if petID is available
+    if (!petID) {
+      console.error('No pet ID found for the current pet.');
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/likedPets/addPet`, {
+        method: 'PUT', // PUT request to add the pet to likePetRepository
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: Number(userID),
+          petId: Number(petID),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to add pet to likePetRepository. Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Pet added to likePetRepository successfully:", data);
+    } catch (error) {
+      console.error('Error adding pet to likePetRepository:', error);
+    }
+  };
+  
   // Function to handle yes or no button click
   const handleYes = () => {
     setIsLiked(true);
+    addLikedPet();
     fetchRate();
     setAnimationDirection('left');
     setSnackbarOpen(true);
@@ -243,6 +279,7 @@ export default function RecommendationEnginePage() {
       }
     };
   
+    addLikedPet();
     fetchAdoptRate();
   
     setTimeout(() => {
