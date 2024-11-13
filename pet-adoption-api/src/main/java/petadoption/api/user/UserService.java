@@ -123,4 +123,8 @@ public class UserService {
         }
         return nonAdoptionUsers;
     }
+
+    public void deleteAllUsers() {
+        userRepository.deleteAll();
+    }
 }

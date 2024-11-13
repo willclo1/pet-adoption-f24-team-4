@@ -22,4 +22,8 @@ public class UserPreferencesService {
     public void deleteUserPreferences(UserPreferences userPreferences) {
         userPreferencesRepository.delete(userPreferences);
     }
+
+    public void deleteAllUserPreferences() {
+        userPreferencesRepository.deleteAll();
+    }
 }
