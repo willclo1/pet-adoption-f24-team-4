@@ -31,6 +31,10 @@ public class PetService {
         return repository.findById(petID);
     }
 
+    public Pet savePet(Pet pet){
+        return repository.save(pet);
+    }
+
     public Pet savePet(Pet pet, Long adoptionID) {
         if(adoptionID != null) {
             Optional<AdoptionCenter> center = adoptionCenterRepository.findById(adoptionID);
