@@ -34,6 +34,7 @@ const EditPreferences = () => {
         });
     };
 
+    // Fetch the options for the preference categories
     const fetchOptions = async () => {
         try {
             const response = await fetchWithAuth(`${apiUrl}/getOptions`);
@@ -45,25 +46,9 @@ const EditPreferences = () => {
         }
     };
 
-    const fetchUserPreferences = async () => {
-        if (!userID) return;
-        try {
-            const response = await fetchWithAuth(`${apiUrl}/${userID}/preferences`);
-            if (response.ok) {
-                const data = await response.json();
-                setPreferences(data);
-            } else {
-                throw new Error('Failed to fetch preferences');
-            }
-        } catch (error) {
-            console.error('Error fetching preferences:', error);
-        }
-    };
-
     useEffect(() => {
         fetchOptions();
-        if (userID) fetchUserPreferences();
-    }, [userID]);
+    }, []);
 
     const togglePreference = (category, option) => {
         setPreferences((prev) => ({
@@ -99,14 +84,14 @@ const EditPreferences = () => {
 
         try {
             const response = await fetchWithAuth(`${apiUrl}/users/${userID}/preferences`, {
-                method: 'PUT',
+                method: 'PUT', // Use POST instead of PUT to add new preferences
                 body: JSON.stringify(structuredPreferences),
             });
-            if (response.ok) alert('Preferences updated successfully!');
-            else throw new Error('Failed to update preferences');
+            if (response.ok) alert('Preferences added successfully!');
+            else throw new Error('Failed to add preferences');
         } catch (error) {
-            console.error('Error updating preferences:', error);
-            alert('Failed to update preferences.');
+            console.error('Error adding preferences:', error);
+            alert('Failed to add preferences.');
         }
     };
 
@@ -159,7 +144,7 @@ const EditPreferences = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
-                                Update Preferences
+                                Add Preferences
                             </Button>
                         </Grid>
                     </Grid>
