@@ -20,7 +20,7 @@ import static petadoption.api.pet.criteria.Species.DOG;
 @Component
 public class petGenerator {
 
-    private static final int DEFAULT_NUM_PETS = 100;
+    private static final int DEFAULT_NUM_PETS = 50;
     private static final String[] NAMES = {
             "Angel", "Popeye", "Squishy", "Abigail", "Red", "Fern Lily", "Akiro", "Boots", "Swiper",
             "Dora", "McFluffin", "Iggy", "Waggs", "Samson", "Lucky", "Diamond", "Zeus", "Bella",
@@ -37,8 +37,12 @@ public class petGenerator {
 
     @EventListener(ApplicationReadyEvent.class)
     public void generatePetsOnStartup() {
+
         List<AdoptionCenter> adoptionCenters = createAndSaveAdoptionCenters();
-        generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
+        if(adoptionCenterService.getAllAdoptionCenters().isEmpty()){
+            generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
+        }
+
     }
 
     private List<AdoptionCenter> createAndSaveAdoptionCenters() {
