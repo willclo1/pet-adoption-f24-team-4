@@ -54,24 +54,29 @@ export default function RecommendationEnginePage() {
         if (!petsRes.ok) throw new Error('Failed to fetch pet data');
 
         const petsData = await petsRes.json();
-        const formattedPets = petsData.map(pet => ({
-          ...pet,
-          name: formatOption(pet.name),
-          species: formatOption(pet.species),
-          coatLength: formatOption(pet.coatLength),
-          furType: formatOption(pet.furType),
-          petSize: formatOption(pet.petSize),
-          healthStatus: formatOption(pet.healthStatus),
-          sex: formatOption(pet.sex),
-          furColor: pet.furColor.map(color => formatOption(color)),
-          temperament: pet.temperament.map(temp => formatOption(temp)),
-          dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
-          catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
-          profilePicture: pet.profilePicture ? `data:image/png;base64,${pet.profilePicture.imageData}` : '/petImages/DEFAULT_IMG-612x612.jpg'
-        }));
+        const formattedPets = petsData.map(pet => {
+          const imageUrl = pet.profilePicture 
+            ? `data:image/png;base64,${pet.profilePicture.imageData}` 
+            : '/petImages/DEFAULT_IMG-612x612.jpg'; // Fallback to default image if no profilePicture
+          return {
+            ...pet,
+            name: formatOption(pet.name),
+            species: formatOption(pet.species),
+            coatLength: formatOption(pet.coatLength),
+            furType: formatOption(pet.furType),
+            petSize: formatOption(pet.petSize),
+            healthStatus: formatOption(pet.healthStatus),
+            sex: formatOption(pet.sex),
+            furColor: pet.furColor.map(color => formatOption(color)),
+            temperament: pet.temperament.map(temp => formatOption(temp)),
+            dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
+            catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
+            profilePictureUrl: pet.profilePicture ? URL.createObjectURL(pet.profilePicture) : imageUrl // Create URL if it's a Blob
+          };
+        });
         console.log("Pets:", formattedPets);
 
-        setAllPets(formattedPets.map(pet => pet.profilePicture));
+        setAllPets(formattedPets.map(pet => pet.profilePictureUrl));
         setAllPetDetails(formattedPets);
       } catch (error) {
         console.error('Error fetching pets:', error);
@@ -80,7 +85,7 @@ export default function RecommendationEnginePage() {
         setLoading(false);
       }
     };
-    
+
     fetchPets();
   }, [apiUrl]);
 
@@ -91,7 +96,7 @@ export default function RecommendationEnginePage() {
         .split('_')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
-};
+  };
 
   // Function to handle yes or no button click
   const handleYes = () => {
@@ -180,7 +185,7 @@ export default function RecommendationEnginePage() {
               alt="Pet Image"
               height="500"
               width="400"
-              src={allPets[currentIndex]} // Replace with real image URL
+              src={allPets[currentIndex] || '/petImages/DEFAULT_IMG-612x612.jpg'} // Replace with real image URL
               sx={{ objectFit: 'cover' }}
             />
             <CardActions sx={{ justifyContent: 'space-between' }}>
@@ -188,11 +193,14 @@ export default function RecommendationEnginePage() {
             </CardActions>
 
             <Box sx={{ padding: 3 }}>
-            <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
                 <strong>Name:</strong> {allPetDetails[currentIndex]?.name}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
                 <strong>Species:</strong> {allPetDetails[currentIndex]?.species}
+              </Typography>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Breed:</strong> {allPetDetails[currentIndex]?.species === 'Dog' ? allPetDetails[currentIndex]?.dogBreed?.join(', ') : allPetDetails[currentIndex]?.catBreed?.join(', ')}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
                 <strong>Coat Length:</strong> {allPetDetails[currentIndex]?.coatLength}
@@ -207,7 +215,7 @@ export default function RecommendationEnginePage() {
                 <strong>Health Status:</strong> {allPetDetails[currentIndex]?.healthStatus}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Temperament:</strong> {allPetDetails[currentIndex]?.temperament?.join(', ')}
+                <strong>Temperament:</strong> {allPetDetails[currentIndex]?.temperament}
               </Typography>
             </Box>
           </Card>
