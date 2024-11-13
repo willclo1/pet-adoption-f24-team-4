@@ -33,6 +33,11 @@ public class LikedPet {
     private Pet pet;
 
     public LikedPet() {}
+
+    public LikedPet(User u, Pet p) {
+        this.user = u;
+        this.pet = p;
+    }
     /*
     @Getter
     @Setter
