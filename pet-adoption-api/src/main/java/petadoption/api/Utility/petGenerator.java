@@ -5,6 +5,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.Pet;
 import petadoption.api.pet.PetService;
 import petadoption.api.pet.criteria.*;
@@ -19,7 +20,7 @@ import static petadoption.api.pet.criteria.Species.DOG;
 @Component
 public class petGenerator {
 
-    private static final int DEFAULT_NUM_PETS = 10;
+    private static final int DEFAULT_NUM_PETS = 100;
     private static final String[] NAMES = {
             "Angel", "Popeye", "Squishy", "Abigail", "Red", "Fern Lily", "Akiro", "Boots", "Swiper",
             "Dora", "McFluffin", "Iggy", "Waggs", "Samson", "Lucky", "Diamond", "Zeus", "Bella",
@@ -31,9 +32,26 @@ public class petGenerator {
     @Autowired
     private PetService petService;
 
+    @Autowired
+    private AdoptionCenterService adoptionCenterService;
+
     @EventListener(ApplicationReadyEvent.class)
     public void generatePetsOnStartup() {
-        generateAndSavePets(DEFAULT_NUM_PETS, null);
+        List<AdoptionCenter> adoptionCenters = createAndSaveAdoptionCenters();
+        generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
+    }
+
+    private List<AdoptionCenter> createAndSaveAdoptionCenters() {
+        List<AdoptionCenter> adoptionCenters = Arrays.asList(
+                new AdoptionCenter("Happy Paws Adoption Center", "123 Main St, Houston, TX", "Providing loving homes to pets in need. Open 7 days a week!"),
+                new AdoptionCenter("Forever Friends Shelter", "456 Elm St, Austin, TX", "A no-kill shelter with a variety of pets ready for adoption."),
+                new AdoptionCenter("Houston Humane Society", "789 Oak St, Houston, TX", "Rescue, care, and adoption of homeless pets. Serving the community for over 50 years."),
+                new AdoptionCenter("Pet Haven", "1010 Birch St, Dallas, TX", "Specializing in pet rescues and providing forever homes to abandoned pets."),
+                new AdoptionCenter("Furry Friends Foundation", "111 Pine St, San Antonio, TX", "Dedicated to helping pets find loving families and supporting pet owners in need.")
+        );
+
+        adoptionCenters.forEach(adoptionCenterService::saveCenter); // Save each center to the database
+        return adoptionCenters;
     }
 
     public void generateAndSavePets(int numPets, List<AdoptionCenter> adoptionCenters) {
@@ -62,6 +80,7 @@ public class petGenerator {
             pet.setSex(randomEnum(Sex.class, random));
             pet.setSpayedNeutered(randomEnum(SpayedNeutered.class, random));
 
+            // Randomly assign an adoption center to the pet
             if (adoptionCenters != null && !adoptionCenters.isEmpty()) {
                 pet.setCenter(adoptionCenters.get(random.nextInt(adoptionCenters.size())));
             }

@@ -10,6 +10,7 @@ import petadoption.api.pet.Pet;
 import petadoption.api.user.User;
 
 import java.util.Set;
+import java.util.Stack;
 
 @Data
 @Entity
@@ -47,8 +48,11 @@ public class AdoptionCenter {
     @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
     private Set<Pet> pets;
 
-    public AdoptionCenter(String centerName) {
+    public AdoptionCenter(String centerName, String buildingAddress, String description) {
         this.centerName = centerName;
+        setBuildingAddress(buildingAddress);
+        this.description = description;
+
     }
     public AdoptionCenter() {
     }

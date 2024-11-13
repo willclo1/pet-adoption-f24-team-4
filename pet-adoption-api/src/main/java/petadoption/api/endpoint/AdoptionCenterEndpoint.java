@@ -28,12 +28,12 @@ public class AdoptionCenterEndpoint {
         return adoptionCenterService.getAllAdoptionCenters();
     }
 
-    @GetMapping("/sample")
-    public String addSampleCenters() {
-        System.out.println("1");
-        adoptionCenterService.addSampleAdoptionCenters();
-        return "Sample adoption centers added successfully.";
-    }
+//    @GetMapping("/sample")
+//    public String addSampleCenters() {
+//        System.out.println("1");
+//        adoptionCenterService.addSampleAdoptionCenters();
+//        return "Sample adoption centers added successfully.";
+//    }
     @PostMapping("/add")
     public ResponseEntity<AdoptionCenter> addAdoptionCenter(@RequestBody AdoptionCenterRequest request) {
         System.out.println("2");
