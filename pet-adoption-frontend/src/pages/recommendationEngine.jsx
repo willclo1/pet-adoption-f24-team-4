@@ -24,7 +24,7 @@ const fadeIn = keyframes`
 
 export default function RecommendationEnginePage() {
   const router = useRouter();
-  const { adoptionID, email } = router.query;
+  const { userID, email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
@@ -71,7 +71,8 @@ export default function RecommendationEnginePage() {
             temperament: pet.temperament.map(temp => formatOption(temp)),
             dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
             catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
-            profilePictureUrl: pet.profilePicture ? URL.createObjectURL(pet.profilePicture) : imageUrl // Create URL if it's a Blob
+            profilePictureUrl: pet.profilePicture ? URL.createObjectURL(pet.profilePicture) : imageUrl, // Create URL if it's a Blob
+            adoptionCenter: pet.center.centerName,
           };
         });
         console.log("Pets:", formattedPets);
@@ -98,9 +99,46 @@ export default function RecommendationEnginePage() {
         .join(' ');
   };
 
+  const fetchRate = async () => {
+    // Get the pet ID of the currently viewed pet
+    const petID = allPetDetails[currentIndex]?.id;
+    
+    // Check if petID is available
+    if (!petID) {
+      console.error('No pet ID found for the current pet.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/RecEng/ratePet`, {
+        method: 'PUT', // Ensure that the method matches your API
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: Number(userID),
+          petId: Number(petID),
+          like: Boolean(isLiked),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch adoption rate. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Adoption data fetched successfully:", data);
+    } catch (error) {
+      console.error('Error during adoption rate fetch:', error);
+    }
+  };
+
   // Function to handle yes or no button click
   const handleYes = () => {
     setIsLiked(true);
+    fetchRate();
     setAnimationDirection('left');
     setSnackbarOpen(true);
     setTimeout(() => {
@@ -111,6 +149,7 @@ export default function RecommendationEnginePage() {
 
   const handleNo = () => {
     setIsLiked(false);
+    fetchRate();
     setAnimationDirection('right');
     setSnackbarOpen(true);
     setTimeout(() => {
@@ -150,11 +189,52 @@ export default function RecommendationEnginePage() {
   };
 
   const handleAdopt = () => {
+    // Get the pet ID of the currently viewed pet
+    const petID = allPetDetails[currentIndex]?.id;
+    
+    // Check if petID is available
+    if (!petID) {
+      console.error('No pet ID found for the current pet.');
+      return;
+    }
+  
     setShowBackdrop(true);
+  
+    // Function to handle the adoption rate request
+    const fetchAdoptRate = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${apiUrl}/RecEng/rateAdoptedPet`, {
+          method: 'PUT', // Ensure that the method matches your API
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: Number(userID),
+            petId: Number(petID),
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Failed to fetch adoption rate. Status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        console.log("Adoption data fetched successfully:", data);
+      } catch (error) {
+        console.error('Error during adoption rate fetch:', error);
+      }
+    };
+  
+    fetchAdoptRate();
+  
     setTimeout(() => {
       setShowBackdrop(false);
+      router.push(`/message?email=${email}&userID=${userID}`);
     }, 1000);
   };
+  
 
   return (
     <main>
@@ -193,6 +273,9 @@ export default function RecommendationEnginePage() {
             </CardActions>
 
             <Box sx={{ padding: 3 }}>
+            <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Adoption Center:</strong> {allPetDetails[currentIndex]?.adoptionCenter}
+              </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
                 <strong>Name:</strong> {allPetDetails[currentIndex]?.name}
               </Typography>

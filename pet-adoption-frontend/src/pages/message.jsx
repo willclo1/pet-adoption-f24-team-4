@@ -14,6 +14,7 @@ import {
   InputLabel,
   Snackbar,
 } from '@mui/material';
+import NavBar from '@/components/NavBar';
 import { useRouter } from 'next/router';
 
 export default function Message() {
@@ -155,71 +156,74 @@ export default function Message() {
   };
 
   return (
-    <Box p={3} display="flex" flexDirection="column" alignItems="center">
-      <Paper elevation={3} sx={{ maxWidth: 500, width: '100%', p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Messages with Adoption Center
-        </Typography>
+    <main>
+      <NavBar/>
+      <Box p={3} display="flex" flexDirection="column" alignItems="center">
+        <Paper elevation={3} sx={{ maxWidth: 500, width: '100%', p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Messages with Adoption Center
+          </Typography>
 
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>Select Adoption Center</InputLabel>
-          <Select value={selectedCenter} onChange={(e) => handleCenterSelect(e.target.value)} fullWidth>
-            {adoptionCenters.map((center) => (
-              <MenuItem key={center.adoptionID} value={center.adoptionID}>
-                {center.centerName}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          <FormControl fullWidth sx={{ mb: 3 }}>
+            <InputLabel>Select Adoption Center</InputLabel>
+            <Select value={selectedCenter} onChange={(e) => handleCenterSelect(e.target.value)} fullWidth>
+              {adoptionCenters.map((center) => (
+                <MenuItem key={center.adoptionID} value={center.adoptionID}>
+                  {center.centerName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-        <List sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
-          {centerMessages.map((message) => {
-            const isFromUser = message.senderID === userID;
-            return (
-              <ListItem
-                key={message.id}
-                sx={{
-                  alignSelf: isFromUser ? 'flex-end' : 'flex-start',
-                  bgcolor: isFromUser ? 'primary.light' : 'grey.200',
-                  borderRadius: 2,
-                  mb: 1,
-                  px: 2,
-                  py: 1,
-                  maxWidth: '80%',
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <strong>
-                      {isFromUser ? 'User' : 'Adoption Center'}
-                    </strong>
-                  }
-                  secondary={message.content}
-                  primaryTypographyProps={{
-                    color: isFromUser ? 'primary.contrastText' : 'text.primary',
+          <List sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
+            {centerMessages.map((message) => {
+              const isFromUser = message.senderID === userID;
+              return (
+                <ListItem
+                  key={message.id}
+                  sx={{
+                    alignSelf: isFromUser ? 'flex-end' : 'flex-start',
+                    bgcolor: isFromUser ? 'primary.light' : 'grey.200',
+                    borderRadius: 2,
+                    mb: 1,
+                    px: 2,
+                    py: 1,
+                    maxWidth: '80%',
                   }}
-                />
-              </ListItem>
-            );
-          })}
-        </List>
+                >
+                  <ListItemText
+                    primary={
+                      <strong>
+                        {isFromUser ? 'User' : 'Adoption Center'}
+                      </strong>
+                    }
+                    secondary={message.content}
+                    primaryTypographyProps={{
+                      color: isFromUser ? 'primary.contrastText' : 'text.primary',
+                    }}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
 
-        <Box display="flex" alignItems="center">
-          <TextField
-            variant="outlined"
-            fullWidth
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            sx={{ mr: 1 }}
-          />
-          <Button variant="contained" color="primary" onClick={handleSendMessage}>
-            Send
-          </Button>
-        </Box>
-      </Paper>
+          <Box display="flex" alignItems="center">
+            <TextField
+              variant="outlined"
+              fullWidth
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+              sx={{ mr: 1 }}
+            />
+            <Button variant="contained" color="primary" onClick={handleSendMessage}>
+              Send
+            </Button>
+          </Box>
+        </Paper>
 
-      <Snackbar open={!!notification} autoHideDuration={4000} onClose={handleCloseNotification} message={notification} />
-    </Box>
+        <Snackbar open={!!notification} autoHideDuration={4000} onClose={handleCloseNotification} message={notification} />
+      </Box>
+    </main>
   );
 }
