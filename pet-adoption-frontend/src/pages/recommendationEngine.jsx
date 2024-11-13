@@ -4,6 +4,7 @@ import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, S
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
+import { format } from 'date-fns';
 
 // Keyframe animations for sliding left and right
 const slideRight = keyframes`
@@ -23,7 +24,7 @@ const fadeIn = keyframes`
 
 export default function RecommendationEnginePage() {
   const router = useRouter();
-  const { email } = router.query;
+  const { adoptionID, email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
@@ -38,38 +39,45 @@ export default function RecommendationEnginePage() {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [allPets, setAllPets] = useState([]);
   const [allPetDetails, setAllPetDetails] = useState([]);
-  const [currentRound, setCurrentRound] = useState(0);
+  const [progressValue, setProgressValue] = useState(0); // Progress value from 0 to 10
   const petsPerRound = 10;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const token = localStorage.getItem('token');
         const petsRes = await fetch(`${apiUrl}/RecEng/getSampleDefault`, {
-          headers: { 'Authorization': `Bearer ${token}` }, // Use the token for authorization
+          headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (!petsRes.ok) throw new Error('Failed to fetch pet data');
 
         const petsData = await petsRes.json();
-        const formattedPets = petsData.map(pet => ({
-          ...pet,
-          species: formatOption(pet.species),
-          coatLength: formatOption(pet.coatLength),
-          furType: formatOption(pet.furType),
-          petSize: formatOption(pet.petSize),
-          healthStatus: formatOption(pet.healthStatus),
-          sex: formatOption(pet.sex),
-          furColor: pet.furColor.map(color => formatOption(color)),
-          temperament: pet.temperament.map(temp => formatOption(temp)),
-          dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
-          catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
-        }));
+        const formattedPets = petsData.map(pet => {
+          const imageUrl = pet.profilePicture 
+            ? `data:image/png;base64,${pet.profilePicture.imageData}` 
+            : '/petImages/DEFAULT_IMG-612x612.jpg'; // Fallback to default image if no profilePicture
+          return {
+            ...pet,
+            name: formatOption(pet.name),
+            species: formatOption(pet.species),
+            coatLength: formatOption(pet.coatLength),
+            furType: formatOption(pet.furType),
+            petSize: formatOption(pet.petSize),
+            healthStatus: formatOption(pet.healthStatus),
+            sex: formatOption(pet.sex),
+            furColor: pet.furColor.map(color => formatOption(color)),
+            temperament: pet.temperament.map(temp => formatOption(temp)),
+            dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
+            catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
+            profilePictureUrl: pet.profilePicture ? URL.createObjectURL(pet.profilePicture) : imageUrl // Create URL if it's a Blob
+          };
+        });
+        console.log("Pets:", formattedPets);
 
-        setAllPets(formattedPets.map(pet => pet.imageUrl));
+        setAllPets(formattedPets.map(pet => pet.profilePictureUrl));
         setAllPetDetails(formattedPets);
-
       } catch (error) {
         console.error('Error fetching pets:', error);
         setError("Failed to load pets.");
@@ -81,18 +89,53 @@ export default function RecommendationEnginePage() {
     fetchPets();
   }, [apiUrl]);
 
-  // Calculate the pets to display for the current round
-  const startIndex = currentRound * petsPerRound;
-  const pets = allPets.slice(startIndex, startIndex + petsPerRound);
-  const petDetails = allPetDetails.slice(startIndex, startIndex + petsPerRound);
+  const formatOption = (str) => {
+    if (!str) return '';
+    return str
+        .toLowerCase()
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+  };
 
-  // Function to fetch user data (including profile picture)
+  // Function to handle yes or no button click
+  const handleYes = () => {
+    setIsLiked(true);
+    setAnimationDirection('left');
+    setSnackbarOpen(true);
+    setTimeout(() => {
+      incrementProgress();
+      handleNextPet();
+    }, 500);
+  };
+
+  const handleNo = () => {
+    setIsLiked(false);
+    setAnimationDirection('right');
+    setSnackbarOpen(true);
+    setTimeout(() => {
+      incrementProgress();
+      handleNextPet();
+    }, 500);
+  };
+
+  // Increment the progress value
+  const incrementProgress = () => {
+    setProgressValue((prevValue) => Math.min(prevValue + 1, 10)); // Increment up to 10
+  };
+
+  const handleNextPet = () => {
+    setAnimationDirection(null);
+    setCurrentIndex((prevIdx) => (prevIdx + 1) % allPets.length);
+  };
+
+  // Function to fetch user data
   const fetchUserData = async (email) => {
     try {
-      const token = localStorage.getItem('token'); // Retrieve the token from local storage
+      const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/users/email/${email}`, {
         headers: {
-          'Authorization': `Bearer ${token}`, // Include the token in the headers
+          'Authorization': `Bearer ${token}`,
         },
       });
       if (!response.ok) throw new Error('Failed to fetch user data');
@@ -106,45 +149,12 @@ export default function RecommendationEnginePage() {
     }
   };
 
-  // Handle like or dislike button
-  const handleYes = () => {
-    setIsLiked(true);
-    setAnimationDirection('left');
-    setSnackbarOpen(true);
-
-    setTimeout(() => {
-      handleNextPet();
-    }, 500);
-  }
-  const handleNo = () => {
-    setIsLiked(false);
-    setAnimationDirection('right');
-    setSnackbarOpen(true);
-
-    setTimeout(() => {
-      handleNextPet();
-    }, 500);
-  }
-
   const handleAdopt = () => {
-    setShowBackdrop(true)
+    setShowBackdrop(true);
     setTimeout(() => {
       setShowBackdrop(false);
     }, 1000);
   };
-
-  const handleNextPet = () => {
-    setAnimationDirection(null);
-    setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
-  }
-
-  const handleNextRound = () => {
-    // Increment the round, looping back to 0 if at the end
-    setCurrentRound((prevRound) => (prevRound + 1) % (allPets.length / petsPerRound));
-  };
-
-  const currentPetDetail = petDetails[currentIndex % petsPerRound] || {};
-  const progressValue = ((currentIndex % petsPerRound) + 1) * (100 / petsPerRound);
 
   return (
     <main>
@@ -160,57 +170,58 @@ export default function RecommendationEnginePage() {
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         <Box sx={{ width: '100%', maxWidth: 600 }}>
-          <LinearProgress variant="determinate" value={progressValue} sx={{ marginBottom: 2 }} />
+          <LinearProgress variant="determinate" value={(progressValue / 10) * 100} sx={{ marginBottom: 2 }} />
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
-          <Card 
+        <Box sx={{ display: 'flex', justifyContent: 'center', padding: 1 }}>
+          <Card
             key={currentIndex}
-            sx={{ 
-              maxWidth: 600, 
-              animation: animationDirection === 'left' ? `${slideLeft} 0.5s forwards` : animationDirection === 'right' ? `${slideRight} 0.5s forwards` : `${fadeIn} 0.5s ease-in-out` 
-              }}
+            sx={{
+              maxWidth: 600,
+              animation: animationDirection === 'left' ? `${slideLeft} 0.5s forwards` : animationDirection === 'right' ? `${slideRight} 0.5s forwards` : `${fadeIn} 0.5s ease-in-out`
+            }}
           >
-            <CardMedia 
-              component="img" 
-              alt="Pet Image" 
-              height="500" width="400" 
-              src={pets[currentIndex % petsPerRound]}  // Replace with real image URL
-              sx={{ objectFit: 'cover' }} 
+            <CardMedia
+              component="img"
+              alt="Pet Image"
+              height="500"
+              width="400"
+              src={allPets[currentIndex] || '/petImages/DEFAULT_IMG-612x612.jpg'} // Replace with real image URL
+              sx={{ objectFit: 'cover' }}
             />
             <CardActions sx={{ justifyContent: 'space-between' }}>
-              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo} handleAdopt={handleAdopt}/>
+              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo} handleAdopt={handleAdopt} />
             </CardActions>
 
-            <Box sx={{ padding: 3}}>
-              <Typography variant="h6" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-                {currentPetDetail.name}
+            <Box sx={{ padding: 3 }}>
+              <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
+                <strong>Name:</strong> {allPetDetails[currentIndex]?.name}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Breed:</strong> {currentPetDetail.breed}
+                <strong>Species:</strong> {allPetDetails[currentIndex]?.species}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Type:</strong> {currentPetDetail.type}
+                <strong>Breed:</strong> {allPetDetails[currentIndex]?.species === 'Dog' ? allPetDetails[currentIndex]?.dogBreed?.join(', ') : allPetDetails[currentIndex]?.catBreed?.join(', ')}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Weight:</strong> {currentPetDetail.weight}
+                <strong>Coat Length:</strong> {allPetDetails[currentIndex]?.coatLength}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Age:</strong> {currentPetDetail.age}
+                <strong>Fur Type:</strong> {allPetDetails[currentIndex]?.furType}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Temperament:</strong> {currentPetDetail.temperament}
+                <strong>Pet Size:</strong> {allPetDetails[currentIndex]?.petSize}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Health Status:</strong> {currentPetDetail.healthStatus}
+                <strong>Health Status:</strong> {allPetDetails[currentIndex]?.healthStatus}
               </Typography>
               <Typography variant="body1" sx={{ textAlign: 'center', color: '#555' }}>
-                <strong>Adoption Center:</strong> {currentPetDetail.adoptionCenter}
+                <strong>Temperament:</strong> {allPetDetails[currentIndex]?.temperament}
               </Typography>
             </Box>
           </Card>
         </Box>
 
-        <Button onClick={handleNextRound}>Next Round</Button>
+        <Button onClick={() => setProgressValue(0)}>Next Round</Button>
 
         <Snackbar
           open={snackbarOpen}

@@ -10,6 +10,6 @@ import java.util.List;
 public interface PetRepository extends JpaRepository<Pet, Long> {
     List<Pet> findByCenter_adoptionID(long adoptionID);
 
-    @Query(value = "SELECT p from Pet.TABLE_NAME p ORDER BY RAND() LIMIT ?1", nativeQuery = true)
+    @Query("SELECT p from Pet p ORDER BY RAND() LIMIT ?1")
     List<Pet> getRandom(long numPets);
 }

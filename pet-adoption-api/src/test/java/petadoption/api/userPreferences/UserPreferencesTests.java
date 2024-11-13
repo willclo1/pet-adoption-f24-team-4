@@ -1,6 +1,5 @@
 package petadoption.api.userPreferences;
 
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("testDB")
-@Transactional
+//@Transactional
 public class UserPreferencesTests {
     @Autowired
     private UserService userService;
