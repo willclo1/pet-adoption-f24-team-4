@@ -17,13 +17,10 @@ const LikedPets = () => {
         const fetchLikedPets = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${apiUrl}/likedPets/getPets`, {
+                const response = await fetch(`${apiUrl}/likedPets/getPets/${userID}`, {
                     headers: { 
                         'Authorization': `Bearer ${token}` 
                     },
-                    body: JSON.stringify({
-                        userId: Number(userID),
-                    }),
                 });
                 if (!response.ok) {
                     throw new Error('Failed to fetch liked pets');
@@ -37,7 +34,7 @@ const LikedPets = () => {
             }
         };
 
-        
+        fetchLikedPets();
     }, [apiUrl]);
 
     const handleBack = () => {

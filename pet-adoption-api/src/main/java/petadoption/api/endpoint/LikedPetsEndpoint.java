@@ -31,9 +31,9 @@ public class LikedPetsEndpoint {
     @Autowired
     private PetService petService;
 
-    @GetMapping("/getPets")
-    public List<Pet> getLikedPets(@RequestBody long userId) {
-        return likedPetService.getLikedPets(userId);
+    @GetMapping("/getPets/{userID}")
+    public List<Pet> getLikedPets(@PathVariable long userID) {
+        return likedPetService.getLikedPets(userID);
     }
 
     /*
@@ -42,6 +42,7 @@ public class LikedPetsEndpoint {
     @PostMapping("/addPet")
     public ResponseEntity<LikedPet> addLikedPet(@RequestBody RateAdoptedPetBody body) {
         try {
+
             LikedPet result = likedPetService.saveLikedPets(new LikedPet(
                     userService.findUser(body.userId).get(),
                     petService.getPetById(body.petId).get())

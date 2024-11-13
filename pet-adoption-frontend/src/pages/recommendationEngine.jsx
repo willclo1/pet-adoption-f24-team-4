@@ -155,7 +155,7 @@ export default function RecommendationEnginePage() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiUrl}/likedPets/addPet`, {
-        method: 'PUT', // PUT request to add the pet to likePetRepository
+        method: 'POST', // PUT request to add the pet to likePetRepository
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
