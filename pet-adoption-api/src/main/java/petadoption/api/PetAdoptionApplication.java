@@ -8,7 +8,6 @@ import petadoption.api.pet.PetService;
 
 import java.util.Scanner;
 
-import static petadoption.api.Utility.petGenerator.generateRandomPetsV2;
 
 @SpringBootApplication
 public class PetAdoptionApplication {
