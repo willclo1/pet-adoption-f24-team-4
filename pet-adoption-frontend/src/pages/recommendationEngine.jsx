@@ -4,10 +4,8 @@ import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, S
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
-import { ApiRounded } from '@mui/icons-material';
-import { current } from '@reduxjs/toolkit';
 
-// Keyframes for sliding left and right
+// Keyframe animations for sliding left and right
 const slideRight = keyframes`
   0% { transform: translateX(0); opacity: 1; }
   100% { transform: translateX(100%); opacity: 0; }
@@ -45,37 +43,48 @@ export default function RecommendationEnginePage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    if (router.isReady) {
-      if (email) {
-        setUserEmail(email);
-        fetchUserData(email);
-      }
-    }
-  }, [router.isReady, router.query]);
-
-  //get pets data for game
-  useEffect(() => {
     const fetchPets = async () => {
       try {
-        const response = await fetch(`${apiUrl}/pets`);
-        
-        if (!response.ok) throw new Error('Failed to fetch pet data');
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const petsRes = await fetch(`${apiUrl}/RecEng/getSampleDefault`, {
+          headers: { 'Authorization': `Bearer ${token}` }, // Use the token for authorization
+        });
 
-        const data = await response.json();
-        setAllPets(data);
+        if (!petsRes.ok) throw new Error('Failed to fetch pet data');
 
-        setLoading(false);
+        const petsData = await petsRes.json();
+        const formattedPets = petsData.map(pet => ({
+          ...pet,
+          species: formatOption(pet.species),
+          coatLength: formatOption(pet.coatLength),
+          furType: formatOption(pet.furType),
+          petSize: formatOption(pet.petSize),
+          healthStatus: formatOption(pet.healthStatus),
+          sex: formatOption(pet.sex),
+          furColor: pet.furColor.map(color => formatOption(color)),
+          temperament: pet.temperament.map(temp => formatOption(temp)),
+          dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
+          catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
+        }));
+
+        setAllPets(formattedPets.map(pet => pet.imageUrl));
+        setAllPetDetails(formattedPets);
+
       } catch (error) {
-        console.error('Error loading pets...', error);
+        console.error('Error fetching pets:', error);
+        setError("Failed to load pets.");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchPets();
   }, [apiUrl]);
 
-  //find what pets to display given the round
+  // Calculate the pets to display for the current round
   const startIndex = currentRound * petsPerRound;
-  const pets = allPets.slice(startIndex, startIndex+petsPerRound);
-  const petDetails = allPetDetails.slice(startIndex, startIndex+petsPerRound);
+  const pets = allPets.slice(startIndex, startIndex + petsPerRound);
+  const petDetails = allPetDetails.slice(startIndex, startIndex + petsPerRound);
 
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
@@ -102,7 +111,6 @@ export default function RecommendationEnginePage() {
     setIsLiked(true);
     setAnimationDirection('left');
     setSnackbarOpen(true);
-    //handleNextPet();
 
     setTimeout(() => {
       handleNextPet();
@@ -112,7 +120,6 @@ export default function RecommendationEnginePage() {
     setIsLiked(false);
     setAnimationDirection('right');
     setSnackbarOpen(true);
-    //handleNextPet();
 
     setTimeout(() => {
       handleNextPet();
@@ -132,10 +139,11 @@ export default function RecommendationEnginePage() {
   }
 
   const handleNextRound = () => {
+    // Increment the round, looping back to 0 if at the end
     setCurrentRound((prevRound) => (prevRound + 1) % (allPets.length / petsPerRound));
-  }
+  };
 
-  const currentPetDetail = petDetails[currentIndex] || {};
+  const currentPetDetail = petDetails[currentIndex % petsPerRound] || {};
   const progressValue = ((currentIndex % petsPerRound) + 1) * (100 / petsPerRound);
 
   return (
@@ -151,7 +159,7 @@ export default function RecommendationEnginePage() {
 
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
-        <Box>
+        <Box sx={{ width: '100%', maxWidth: 600 }}>
           <LinearProgress variant="determinate" value={progressValue} sx={{ marginBottom: 2 }} />
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
@@ -201,6 +209,8 @@ export default function RecommendationEnginePage() {
             </Box>
           </Card>
         </Box>
+
+        <Button onClick={handleNextRound}>Next Round</Button>
 
         <Snackbar
           open={snackbarOpen}
