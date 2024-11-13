@@ -2,7 +2,6 @@ package petadoption.api.userPreferences;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.checkerframework.checker.units.qual.C;
 import petadoption.api.pet.criteria.*;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
@@ -10,9 +9,11 @@ import petadoption.api.user.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.EnumMap;
 
 /**
  * @author Rafe Loya
+ * @author Will Clore
  *
  * @see User
  * @see Species
@@ -28,9 +29,6 @@ import java.util.Map;
  * @see Sex
  */
 
-import java.util.EnumMap;
-
-
 @Entity
 @Table(name = "user_preferences")
 public class UserPreferences {
@@ -39,101 +37,106 @@ public class UserPreferences {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_preferences_id;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_cat_breed_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "cat_breed")
     @Column(name = "preference")
-    private Map<CatBreed, Double> catBreedPreferences = new EnumMap<>(CatBreed.class);
+    private Map<CatBreed, Double> catBreedPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_dog_breed_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "dog_breed")
     @Column(name = "preference")
-    private Map<DogBreed, Double> dogBreedPreferences = new EnumMap<>(DogBreed.class);
+    private Map<DogBreed, Double> dogBreedPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_coat_length_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "coat_length")
     @Column(name = "preference")
-    private Map<CoatLength, Double> coatLengthPreferences = new EnumMap<>(CoatLength.class);
+    private Map<CoatLength, Double> coatLengthPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_fur_color_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "fur_color")
     @Column(name = "preference")
-    private Map<FurColor, Double> furColorPreferences = new EnumMap<>(FurColor.class);
+    private Map<FurColor, Double> furColorPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_fur_type_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "fur_type")
     @Column(name = "preference")
-    private Map<FurType, Double> furTypePreferences = new EnumMap<>(FurType.class);
+    private Map<FurType, Double> furTypePreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_health_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "health")
     @Column(name = "preference")
-    private Map<Health, Double> healthPreferences = new EnumMap<>(Health.class);
+    private Map<Health, Double> healthPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_sex_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "sex")
     @Column(name = "preference")
-    private Map<Sex, Double> sexPreferences = new EnumMap<>(Sex.class);
+    private Map<Sex, Double> sexPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_size_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "size")
     @Column(name = "preference")
-    private Map<Size, Double> sizePreferences = new EnumMap<>(Size.class);
+    private Map<Size, Double> sizePreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_spayed_neutered_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "spayed_neutered")
     @Column(name = "preference")
-    private Map<SpayedNeutered, Double> spayedNeuteredPreferences = new EnumMap<>(SpayedNeutered.class);
+    private Map<SpayedNeutered, Double> spayedNeuteredPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_species_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "species")
     @Column(name = "preference")
-    private Map<Species, Double> speciesPreferences = new EnumMap<>(Species.class);
+    private Map<Species, Double> speciesPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_temperament_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "temperament")
     @Column(name = "preference")
-    private Map<Temperament, Double> temperamentPreferences = new EnumMap<>(Temperament.class);
+    private Map<Temperament, Double> temperamentPreferences;
 
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_age_preferences", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyColumn(name = "age")
     @Column(name = "preference")
-    private Map<Integer, Double> agePreferences = new HashMap<>();
-
-    // Getters, setters, and other methods...
-
-    // Getters and setters for each field...
-
-    // Constructor, equals, hashCode, toString, etc.
+    private Map<Integer, Double> agePreferences;
 
     public UserPreferences() {
-        speciesPreferences = new HashMap<>();
-        catBreedPreferences = new HashMap<>();
-        dogBreedPreferences = new HashMap<>();
-        sizePreferences = new HashMap<>();
-        furColorPreferences = new HashMap<>();
-        furTypePreferences = new HashMap<>();
-        coatLengthPreferences = new HashMap<>();
+        speciesPreferences = new EnumMap<>(Species.class);
+        catBreedPreferences = new EnumMap<>(CatBreed.class);
+        dogBreedPreferences = new EnumMap<>(DogBreed.class);
+        sizePreferences = new EnumMap<>(Size.class);
+        furColorPreferences = new EnumMap<>(FurColor.class);
+        furTypePreferences = new EnumMap<>(FurType.class);
+        coatLengthPreferences = new EnumMap<>(CoatLength.class);
         agePreferences = new HashMap<>();
-        temperamentPreferences = new HashMap<>();
-        healthPreferences = new HashMap<>();
-        spayedNeuteredPreferences = new HashMap<>();
-        sexPreferences = new HashMap<>();
+        temperamentPreferences = new EnumMap<>(Temperament.class);
+        healthPreferences = new EnumMap<>(Health.class);
+        spayedNeuteredPreferences = new EnumMap<>(SpayedNeutered.class);
+        sexPreferences = new EnumMap<>(Sex.class);
     }
 
     public UserPreferences(
-            User u,
             Map<Species, Double> spe,
             Map<CatBreed, Double> cb,
             Map<DogBreed, Double> db,
@@ -430,6 +433,51 @@ public class UserPreferences {
         }
     }
 
-
     public void clearSexRating() { sexPreferences.clear(); }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) { return true; }
+        if (obj == null || obj.getClass() != this.getClass()) { return false; }
+
+        UserPreferences up = (UserPreferences)obj;
+        return (
+                (this.speciesPreferences != null
+                        && up.speciesPreferences != null
+                        && up.speciesPreferences.equals(this.speciesPreferences))
+                && (this.catBreedPreferences != null
+                        && up.catBreedPreferences != null
+                        && up.catBreedPreferences.equals(this.catBreedPreferences))
+                && (this.dogBreedPreferences != null
+                        && up.dogBreedPreferences != null
+                        && up.dogBreedPreferences.equals(this.dogBreedPreferences))
+                && (this.sizePreferences != null
+                        && up.sizePreferences != null
+                        && up.sizePreferences.equals(this.sizePreferences))
+                && (this.agePreferences != null
+                        && up.agePreferences != null
+                        && up.agePreferences.equals(this.agePreferences))
+                && (this.furColorPreferences != null
+                        && up.furColorPreferences != null
+                        && up.furColorPreferences.equals(this.furColorPreferences))
+                && (this.furTypePreferences != null
+                        && up.furTypePreferences != null
+                        && up.furTypePreferences.equals(this.furTypePreferences))
+                && (this.coatLengthPreferences != null
+                        && up.coatLengthPreferences != null
+                        && up.coatLengthPreferences.equals(this.coatLengthPreferences))
+                && (this.temperamentPreferences != null
+                        && up.temperamentPreferences != null
+                        && up.temperamentPreferences.equals(this.temperamentPreferences))
+                && (this.healthPreferences != null
+                        && up.healthPreferences != null
+                        && up.healthPreferences.equals(this.healthPreferences))
+                && (this.spayedNeuteredPreferences != null
+                        && up.spayedNeuteredPreferences != null
+                        && up.spayedNeuteredPreferences.equals(this.spayedNeuteredPreferences))
+                && (this.sexPreferences != null
+                        && up.sexPreferences != null
+                        && up.sexPreferences.equals(this.sexPreferences))
+        );
+    }
 }
