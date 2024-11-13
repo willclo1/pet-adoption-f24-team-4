@@ -147,6 +147,7 @@ public class UserPreferences {
         dogBreed = new HashMap<>();
         size = new HashMap<>();
         furColor = new HashMap<>();
+        furType = new HashMap<>();
         coatLength = new HashMap<>();
         age = new HashMap<>();
         temperament = new HashMap<>();
