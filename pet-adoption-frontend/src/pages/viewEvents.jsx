@@ -46,6 +46,7 @@ export default function ViewEvents() {
             if (centerResponse.ok) {
               const centerData = await centerResponse.json();
               event.center = centerData; // Attach center details to event
+              // Added comment
             }
             return event;
           })
