@@ -11,6 +11,9 @@ import java.util.Optional;
 public class AdoptionCenterService {
     @Autowired
     AdoptionCenterRepository repository;
+
+    public AdoptionCenterService() {}
+
     public AdoptionCenterService(AdoptionCenterRepository repository) {
         this.repository = repository;
     }
@@ -28,7 +31,7 @@ public class AdoptionCenterService {
     }
 
     
-
+    @
     public void addSampleAdoptionCenters() {
         // Create a list of sample adoption centers
         List<AdoptionCenter> sampleCenters = Arrays.asList(

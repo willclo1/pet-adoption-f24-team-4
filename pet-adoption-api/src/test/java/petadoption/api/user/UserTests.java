@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import petadoption.api.userPreferences.UserPreferences;
+import petadoption.api.userPreferences.UserPreferencesService;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +25,10 @@ public class UserTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    UserPreferencesService service;
+
 
     @Test
     void testUserCreate() {
@@ -41,6 +47,11 @@ public class UserTests {
         assertEquals(newUser.userType, foundUser.userType);
         assertEquals(newUser.emailAddress, foundUser.emailAddress);
         assertEquals(newUser.password, foundUser.password);
+    }
+    @Test
+    void testUserPreferences(){
+        UserPreferences userPreferences = new UserPreferences();
+        service.saveUserPreferences(userPreferences);
     }
 
     @Test

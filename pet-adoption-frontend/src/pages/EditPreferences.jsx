@@ -1,112 +1,102 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { TextField, MenuItem, Button, Grid, Dialog, DialogContent, DialogTitle, Icon, IconButton} from '@mui/material';
+import { Button, Grid, Dialog, DialogContent, DialogTitle, Chip, Box, Slider, Typography } from '@mui/material';
 import BackButton from '@/components/backButton';
-import { DialerSip } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
 
 const EditPreferences = () => {
     const router = useRouter();
-    const { userId, email } = router.query;
+    const { userID, email } = router.query;
     const [open, setOpen] = useState(true);
 
     const [preferences, setPreferences] = useState({
-        furColor: '',
-        petType: '',
-        breed: '',
-        petSize: '',
-        age: '',
-        temperament: '',
-        healthStatus: '',
+        furColor: {},
+        petType: {},
+        breed: {},
+        petSize: {},
+        age: 0, // Adjusted for age as a single value
+        temperament: {},
+        healthStatus: {},
     });
 
+    const [preferenceOptions, setPreferenceOptions] = useState({});
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    // Enums for Size and Temperament
-    const Size = {
-        SMALL: 'SMALL',
-        MEDIUM: 'MEDIUM',
-        LARGE: 'LARGE',
-        EXTRA_LARGE: 'EXTRA_LARGE',
+    // Helper function to make fetch requests with auth headers
+    const fetchWithAuth = async (url, options = {}) => {
+        const token = localStorage.getItem('token');
+        return fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
     };
 
-    const Temperament = {
-        CHILL: 'CHILL',
-        NEEDY: 'NEEDY',
-        AGGRESSIVE: 'AGGRESSIVE',
-        ENERGETIC: 'ENERGETIC',
-    };
-    const PetType = {
-        DOG: 'DOG',
-        CAT: 'CAT'
-    };
-    const HealthStatus = {
-        VACCINATED: 'VACCINATED',
-        UNVACCINATED: 'UNVACCINATED',
-    }
-
-    const fetchUserPreferences = async () => {
+    // Fetch the options for the preference categories
+    const fetchOptions = async () => {
         try {
-            if (!userId) {
-                console.warn('User ID is not defined.');
-                return; // Early return if userId is not available
-            }
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${apiUrl}/${userId}/preferences`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch user preferences');
-            }
-            const data = await response.json();
-            setPreferences(data);
+            const response = await fetchWithAuth(`${apiUrl}/getOptions`);
+            if (!response.ok) throw new Error('Failed to fetch options');
+            const options = await response.json();
+            setPreferenceOptions(options);
         } catch (error) {
-            console.error('Error fetching user preferences:', error);
+            console.error('Error fetching options:', error);
         }
     };
 
     useEffect(() => {
-        if (userId) { // Ensure userId is defined before fetching preferences
-            fetchUserPreferences();
-        }
-    }, [userId]);
+        fetchOptions();
+    }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setPreferences((prevPreferences) => ({
-            ...prevPreferences,
-            [name]: value,
+    const togglePreference = (category, option) => {
+        setPreferences((prev) => ({
+            ...prev,
+            [category]: {
+                ...(prev[category] || {}),
+                [option]: prev[category]?.[option] === 0.5 ? 0 : 0.5,
+            },
+        }));
+    };
+
+    const handleAgeChange = (event, newValue) => {
+        setPreferences((prev) => ({
+            ...prev,
+            age: newValue,
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${apiUrl}/users/${userId}/preferences`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(preferences),
+
+        const structuredPreferences = Object.keys(preferenceOptions).reduce((acc, category) => {
+            acc[category] = {};
+            preferenceOptions[category].forEach(option => {
+                const enumOption = option.replace(/\s+/g, '_').toUpperCase();
+                acc[category][enumOption] = preferences[category]?.[option] === 0.5 ? 0.5 : 0;
             });
+            return acc;
+        }, {});
 
-            if (!response.ok) {
-                throw new Error('Failed to update preferences');
-            }
+        // Set the selected age to have a rating of 0.5
+        structuredPreferences.age = { [preferences.age]: 0.5 };
 
-            alert('Preferences updated successfully!');
+        try {
+            const response = await fetchWithAuth(`${apiUrl}/users/${userID}/preferences`, {
+                method: 'PUT', // Use POST instead of PUT to add new preferences
+                body: JSON.stringify(structuredPreferences),
+            });
+            if (response.ok) alert('Preferences added successfully!');
+            else throw new Error('Failed to add preferences');
         } catch (error) {
-            console.error('Error updating preferences:', error);
-            alert('Failed to update preferences.');
+            console.error('Error adding preferences:', error);
+            alert('Failed to add preferences.');
         }
     };
 
     const handleBack = () => {
-        router.push(`/customer-home?email=${email}`); // Navigate back to home page with email
+        router.push(`/customer-home?email=${email}`);
     };
 
     const handleClose = () => {
@@ -115,120 +105,46 @@ const EditPreferences = () => {
     };
 
     return (
-        <Dialog open={open}>
+        <Dialog open={open} onClose={handleClose}>
             <DialogTitle>
                 Edit Preferences
-                {/* <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
-                    <CloseIcon />
-                </IconButton> */}
-                <BackButton  defaultPath='/customer-home'/>
-
+                <BackButton defaultPath='/customer-home' />
             </DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
+                        {Object.keys(preferenceOptions).map((category) => (
+                            <Grid item xs={12} key={category}>
+                                <Box mb={1}>{category.charAt(0).toUpperCase() + category.slice(1)}</Box>
+                                <Box display="flex" flexWrap="wrap">
+                                    {preferenceOptions[category].map((option) => (
+                                        <Chip
+                                            key={option}
+                                            label={option}
+                                            onClick={() => togglePreference(category, option)}
+                                            color={preferences[category]?.[option] === 0.5 ? 'primary' : 'default'}
+                                            sx={{ m: 0.5 }}
+                                        />
+                                    ))}
+                                </Box>
+                            </Grid>
+                        ))}
+                        {/* Add slider for Age preference */}
                         <Grid item xs={12}>
-                            <TextField
-                                label="Fur Color"
-                                name="furColor"
-                                value={preferences.furColor}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                select
-                                label="Pet Type"
-                                name="petType"
-                                value={preferences.petType}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            >
-                                {Object.values(PetType).map((petType) =>(
-                                    <MenuItem key={petType} value={petType}>
-                                        {petType}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Breed"
-                                name="breed"
-                                value={preferences.breed}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                select
-                                label="Pet Size"
-                                name="petSize"
-                                value={preferences.petSize}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            >
-                                {Object.values(Size).map((size) => (
-                                    <MenuItem key={size} value={size}>
-                                        {size}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                type="number"
-                                label="Age"
-                                name="age"
+                            <Typography gutterBottom>Preferred Age</Typography>
+                            <Slider
                                 value={preferences.age}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
+                                onChange={handleAgeChange}
+                                aria-labelledby="age-slider"
+                                min={0}
+                                max={20} // Set the max to a reasonable age limit for pets
+                                step={1}
+                                valueLabelDisplay="auto"
                             />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                select
-                                label="Temperament"
-                                name="temperament"
-                                value={preferences.temperament}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            >
-                                {Object.values(Temperament).map((temp) => (
-                                    <MenuItem key={temp} value={temp}>
-                                        {temp}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                select
-                                label="Health Status"
-                                name="healthStatus"
-                                value={preferences.healthStatus}
-                                onChange={handleChange}
-                                fullWidth
-                                variant="outlined"
-                            >
-                                {Object.values(HealthStatus).map((status) => (
-                                    <MenuItem key={status} value={status}>
-                                        {status}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
-                                Update Preferences
+                                Add Preferences
                             </Button>
                         </Grid>
                     </Grid>

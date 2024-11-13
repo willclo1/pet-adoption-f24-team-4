@@ -124,7 +124,11 @@ public class Pet {
 
         // [id] : name
         str.append("[" + id + "] : " + name + "\n");
-        str.append("adoption center: " + center.getCenterName() + "\n");
+        str.append(
+                "adoption center: "
+                + (center == null || center.getCenterName().isEmpty() ? "NULL" : center.getCenterName())
+                + "\n"
+        );
         str.append("species: " + species.getDisplayName() + "\n");
         str.append("sex: " + sex.getDisplayName() + "\n");
         if (species.ordinal() == 0) {

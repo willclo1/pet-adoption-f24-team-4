@@ -25,12 +25,6 @@ public class RecEngEndpoint {
     private static final long DEFAULT_REC_SAMPLE_SIZE = 100;
     private static final long DEFAULT_REC_DISPLAY_SIZE = 20;
 
-    /*
-    @GetMapping("/recommendationEngine")
-    public String recEngine_title() {
-        return "Welcome to the Recommendation Engine!";
-    }
-    */
     @Getter
     private final UserService userService;
 
@@ -57,7 +51,7 @@ public class RecEngEndpoint {
     public void logSuccessfulSave(UserPreferences up) {
         log.info(
                 "User preferences successfully updated: {}",
-                up.getUserPreferencesId()
+                up.getId()
         );
     }
 
