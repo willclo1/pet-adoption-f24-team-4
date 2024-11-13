@@ -2,6 +2,9 @@ package petadoption.api.pet.criteria.breed;
 
 import lombok.Getter;
 
+/**
+ * @author Rafe Loya
+ */
 public enum CatBreed implements AnimalBreed {
     // For unsure / unknown breed
     MIX_BREED("Mix Breed"),

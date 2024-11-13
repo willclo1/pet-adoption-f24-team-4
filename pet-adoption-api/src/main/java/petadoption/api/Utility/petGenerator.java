@@ -10,6 +10,10 @@ import java.util.*;
 
 import static petadoption.api.pet.criteria.Species.CAT;
 
+/**
+ * @author Harrison Hassler
+ * @author Rafe Loya
+ */
 public class petGenerator {
     public static final int MAX_BREED = 5;
     public static final int MAX_FUR_COLOR = 4;

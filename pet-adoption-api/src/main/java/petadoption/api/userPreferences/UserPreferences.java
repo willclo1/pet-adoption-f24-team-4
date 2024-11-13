@@ -12,9 +12,6 @@ import java.util.Map;
 import java.util.EnumMap;
 
 /**
- * @author Rafe Loya
- * @author Will Clore
- *
  * @see User
  * @see Species
  * @see CatBreed
@@ -27,6 +24,9 @@ import java.util.EnumMap;
  * @see Health
  * @see SpayedNeutered
  * @see Sex
+ *
+ * @author Rafe Loya
+ * @author Will Clore
  */
 
 @Entity
