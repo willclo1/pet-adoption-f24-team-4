@@ -91,6 +91,12 @@ export default function RecommendationEnginePage() {
     fetchPets();
   }, [apiUrl]);
 
+   useEffect(() => {
+    return () => {
+      allPets.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [allPets]);
+
   const formatOption = (str) => {
     if (!str) return '';
     return str

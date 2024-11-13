@@ -41,11 +41,12 @@ public class AdoptionCenter {
     @Setter
     @Getter
     @JsonIgnore
-    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     private Set<User> accounts;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "center", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Pet> pets;
 
     public AdoptionCenter(String centerName, String buildingAddress, String description) {
