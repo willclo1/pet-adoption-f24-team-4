@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * @author Rafe Loya
+ */
 @Repository
 public interface UserPreferencesRepository extends JpaRepository<UserPreferences, Long> {
 }

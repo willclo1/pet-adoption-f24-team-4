@@ -30,8 +30,6 @@ public class AdoptionCenterService {
         return repository.findAll();
     }
 
-    
-
     public void addSampleAdoptionCenters() {
         // Create a list of sample adoption centers
         List<AdoptionCenter> sampleCenters = Arrays.asList(

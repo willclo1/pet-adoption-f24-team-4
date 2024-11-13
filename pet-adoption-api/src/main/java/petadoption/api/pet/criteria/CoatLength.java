@@ -3,6 +3,9 @@ package petadoption.api.pet.criteria;
 import lombok.Getter;
 
 
+/**
+ * @author Rafe Loya
+ */
 public enum CoatLength {
     HAIRLESS("Hairless"),
     SHORT("Short"),

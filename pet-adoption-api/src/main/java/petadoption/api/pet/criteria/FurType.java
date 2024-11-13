@@ -2,7 +2,9 @@ package petadoption.api.pet.criteria;
 
 import lombok.Getter;
 
-
+/**
+ * @author Rafe Loya
+ */
 public enum FurType {
     HAIRLESS("Hairless"),
     SMOOTH("Smooth"),

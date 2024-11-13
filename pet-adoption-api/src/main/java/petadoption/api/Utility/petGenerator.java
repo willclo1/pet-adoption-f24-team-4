@@ -15,6 +15,10 @@ import java.util.*;
 
 import static petadoption.api.pet.criteria.Species.CAT;
 
+/**
+ * @author Harrison Hassler
+ * @author Rafe Loya
+ */
 @Component
 public class petGenerator {
     public static final int MAX_BREED = 1;
