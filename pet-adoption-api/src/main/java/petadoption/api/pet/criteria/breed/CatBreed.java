@@ -73,7 +73,7 @@ public enum CatBreed implements AnimalBreed {
     // "P"
     PERSIAN("Persian"),
     PETERBALD("Peterbald"),
-    PIXIE_BOB("Pixie-Bob"),
+    PIXIE_BOB("Pixie Bob"),
 
     // "R"
     RAGAMUFFIN("RagaMuffin"),

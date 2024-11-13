@@ -57,7 +57,7 @@ public class RecEngEndpoint {
     public void logSuccessfulSave(UserPreferences up) {
         log.info(
                 "User preferences successfully updated: {}",
-                up.getUserPreferencesId()
+                up.getId()
         );
     }
 

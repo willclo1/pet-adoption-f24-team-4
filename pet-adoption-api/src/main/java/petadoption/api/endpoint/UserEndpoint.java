@@ -1,15 +1,21 @@
 package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import petadoption.api.pet.criteria.*;
+import petadoption.api.pet.criteria.breed.CatBreed;
+import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.user.User;
-import petadoption.api.user.UserPreference;
 import petadoption.api.user.UserService;
+import petadoption.api.userPreferences.UserPreferences;
+import petadoption.api.userPreferences.UserPreferencesService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Log4j2
@@ -17,6 +23,9 @@ import java.util.Optional;
 public class UserEndpoint {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserPreferencesService userPreferencesService;
 
     @GetMapping("/users/{id}")
     public User findUserById(@PathVariable Long id) {
@@ -56,33 +65,79 @@ public class UserEndpoint {
         return null;
     }
 
-    @GetMapping("/{userId}/preferences")
-    public ResponseEntity<UserPreference> getUserPreferences(@PathVariable Long userId) {
-        Optional<User> userOpt = userService.findUser(userId);
+//    @GetMapping("/{userId}/preferences")
+//    public ResponseEntity<UserPreferences> getUserPreferences(@PathVariable Long userId) {
+//        Optional<User> userOpt = userService.findUser(userId);
+//
+//        if (userOpt.get().getUserPreferences() != null) {
+//            User user = userOpt.get();
+//            UserPreferences preferences = user.getUserPreferences(); // Get preferences from user
+//            return ResponseEntity.ok(preferences);
+//        } else {
+//            return ResponseEntity.notFound().build(); // Handle user not found
+//        }
+//    }
+@PutMapping("/users/{userId}/preferences")
+public ResponseEntity<UserPreferences> updateUserPreferences(
+        @PathVariable Long userId,
+        @RequestBody Map<String, Map<String, Double>> userPreferenceMap) {
 
-        if (userOpt.get().getUserPreference() != null) {
-            User user = userOpt.get();
-            UserPreference preferences = user.getUserPreference(); // Get preferences from user
-            return ResponseEntity.ok(preferences);
-        } else {
-            return ResponseEntity.notFound().build(); // Handle user not found
-        }
-    }
-    @PutMapping("/users/{userId}/preferences")
-    public ResponseEntity<UserPreference> updateUserPreferences(
-            @PathVariable Long userId,
-            @RequestBody UserPreference userPreference) {
-
-        Optional<User> optionalUser = userService.findUser(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setUserPreference(userPreference); // Update user preference
-            userService.saveUser(user); // Save updated user
-            return ResponseEntity.ok(userPreference);
-        }
+    Optional<User> optionalUser = userService.findUser(userId);
+    if (optionalUser.isEmpty()) {
         return ResponseEntity.notFound().build();
     }
 
+    User user = optionalUser.get();
+    UserPreferences preferences = user.getUserPreferences();
+
+    final UserPreferences finalPreferences = new UserPreferences();
+
+    userPreferenceMap.forEach((category, options) -> {
+        switch (category) {
+            case "furColor":
+                finalPreferences.clearFurColorRating();
+                options.forEach((key, value) -> finalPreferences.setFurColorRating(FurColor.valueOf(key), value));
+                break;
+            case "petType":
+                finalPreferences.clearSpeciesRating();
+                options.forEach((key, value) -> finalPreferences.setSpeciesRating(Species.valueOf(key), value));
+                break;
+            case "breed":
+                finalPreferences.clearDogBreedRating();
+                finalPreferences.clearCatBreedRating();
+                options.forEach((key, value) -> {
+                    if (EnumUtils.isValidEnum(DogBreed.class, key)) {
+                        finalPreferences.setDogBreedRating(DogBreed.valueOf(key), value);
+                    } else if (EnumUtils.isValidEnum(CatBreed.class, key)) {
+                        finalPreferences.setCatBreedRating(CatBreed.valueOf(key), value);
+                    }
+                });
+                break;
+            case "petSize":
+                finalPreferences.clearSizeRating();
+                options.forEach((key, value) -> finalPreferences.setSizeRating(Size.valueOf(key), value));
+                break;
+            case "age":
+                finalPreferences.clearAgeRating();
+                options.forEach((key, value) -> finalPreferences.setAgeRating(Integer.parseInt(key), value));
+                break;
+            case "temperament":
+                finalPreferences.clearTemperamentRating();
+                options.forEach((key, value) -> finalPreferences.setTemperamentRating(Temperament.valueOf(key), value));
+                break;
+            case "healthStatus":
+                finalPreferences.clearHealthRating();
+                options.forEach((key, value) -> finalPreferences.setHealthRating(Health.valueOf(key), value));
+                break;
+            default:
+                break; // Ignore unknown categories
+        }
+    });
+    user.setUserPreferences(finalPreferences);
+    userService.saveUser(user);
+
+    return ResponseEntity.ok(finalPreferences);
+}
     @GetMapping("/users")
     public ResponseEntity<List<User>> findAllUsers() {
         List<User> users = userService.findAllUsers();

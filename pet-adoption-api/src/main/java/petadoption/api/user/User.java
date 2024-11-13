@@ -37,10 +37,6 @@ public class User {
     @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
     Image profilePicture;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_PREFERENCE_ID", referencedColumnName = "id")
-    private UserPreference userPreference;
-
     /*
     @OneToOne(optional = false)
     @JoinColumn(name = "USER_PREFERENCES_ID", unique = true, nullable = false, updatable = false) */
