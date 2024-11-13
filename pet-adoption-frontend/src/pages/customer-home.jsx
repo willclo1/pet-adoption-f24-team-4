@@ -43,7 +43,7 @@ export default function CustomerHomePage() {
   };
 
   const handleViewEvents = () => {
-    router.push(`/ViewEvents?email=${email}`);
+    router.push(`/viewEvents?email=${email}`);
   };
 
   if (loading) return <div>Loading...</div>;
