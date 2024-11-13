@@ -37,11 +37,8 @@ public class petGenerator {
 
     @EventListener(ApplicationReadyEvent.class)
     public void generatePetsOnStartup() {
-
         List<AdoptionCenter> adoptionCenters = createAndSaveAdoptionCenters();
-        if(adoptionCenterService.getAllAdoptionCenters().isEmpty()){
-            generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
-        }
+        generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
 
     }
 
