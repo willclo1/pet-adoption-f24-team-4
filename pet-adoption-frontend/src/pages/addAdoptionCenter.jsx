@@ -9,10 +9,30 @@ export default function AddAdoptionHome() {
     const [adoptionAddress, setAdoptionAddress] = useState('');
     const [description, setDescription] = useState('');
     const [message, setMessage] = useState('');
+    const [errors, setErrors] = useState({});
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    const validateFields = () => {
+        let errors = {};
+        if (adoptionName.trim() === '') {
+            errors.adoptionName = 'Center Name is required';
+        }
+        if (adoptionAddress.trim() === '') {
+            errors.adoptionAddress = 'Address is required';
+        } else if (!/^[^,]+,\s*[^,]+,\s*[^,]+$/.test(adoptionAddress.trim())) {
+            errors.adoptionAddress = 'Address must be in the format: street, city, state';
+        }
+        if (description.trim() === '') {
+            errors.description = 'Description is required';
+        }
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();  // Prevents the default form submission behavior
+        if (!validateFields()) return;
+        
         try {
             const response = await fetch(`${apiUrl}/adoption-centers/add`, {
                 method: 'POST',
@@ -26,6 +46,9 @@ export default function AddAdoptionHome() {
 
             if (response.status === 200) {
                 setMessage("Center Added!");
+                setTimeout(() => {
+                    router.push(`/`);
+                }, 1000);
             } else {
                 setMessage("Center not added");
             }
@@ -91,6 +114,8 @@ export default function AddAdoptionHome() {
                             onChange={(e) => setAdoptionName(e.target.value)}
                             placeholder="Enter Center Name"
                             required
+                            error={!!errors.adoptionName}
+                            helperText={errors.adoptionName}
                         />
                         <TextField
                             label="Address"
@@ -99,8 +124,10 @@ export default function AddAdoptionHome() {
                             margin="normal"
                             value={adoptionAddress}
                             onChange={(e) => setAdoptionAddress(e.target.value)}
-                            placeholder="Enter Center Address"
+                            placeholder="Enter Center Address (e.g., street, city, state)"
                             required
+                            error={!!errors.adoptionAddress}
+                            helperText={errors.adoptionAddress}
                         />
                         <TextField
                             label="Description"
@@ -111,6 +138,8 @@ export default function AddAdoptionHome() {
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Enter Description"
                             required
+                            error={!!errors.description}
+                            helperText={errors.description}
                         />
                         <Button
                             type="submit"

@@ -1,19 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { keyframes } from '@emotion/react';
+import { Stack, Typography, Button, Box, Card, CardMedia, CardActions, Drawer, Snackbar, Backdrop, LinearProgress } from '@mui/material';
 import { useRouter } from 'next/router';
 import NavBar from '@/components/NavBar';
 import LikeDislikeButtons from '@/components/likeDislikeButtons';
 
+// Keyframe animations for sliding left and right
+const slideRight = keyframes`
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+`;
+
+const slideLeft = keyframes`
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-100%); opacity: 0; }
+`;
+
+const fadeIn = keyframes`
+  0% { transform: translateX(50%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+`;
+
 export default function RecommendationEnginePage() {
-  //const [state, setState] = useState({ left: false });
   const router = useRouter();
   const { email } = router.query;
   const [userEmail, setUserEmail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null);
-  //const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -21,35 +34,57 @@ export default function RecommendationEnginePage() {
   const [isLiked, setIsLiked] = useState(null);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const pets = [
-    '/petImages/cat1.jpg',
-    '/petImages/cat2.jpg',
-    '/petImages/cat3.jpg',
-    '/petImages/cat4.jpg',
-    '/petImages/cat5.jpg',
-    '/petImages/cat6.jpg',
-    '/petImages/dog1.jpg',
-    '/petImages/dog2.jpg',
-    '/petImages/dog3.jpg',
-    '/petImages/dog4.jpg',
-    '/petImages/dog5.jpg'
-  ]; 
-  const petDetails = [
-    { name: 'Cat 1', breed: 'Siamese', type: 'Cat', weight: '4kg', age: '2 years', temperament: 'Calm', healthStatus: 'Healthy', adoptionCenter: 'Center A' },
-    { name: 'Cat 2', breed: 'Maine Coon', type: 'Cat', weight: '6kg', age: '3 years', temperament: 'Playful', healthStatus: 'Healthy', adoptionCenter: 'Center B' },
-    { name: 'Dog 1', breed: 'Labrador', type: 'Dog', weight: '25kg', age: '5 years', temperament: 'Friendly', healthStatus: 'Healthy', adoptionCenter: 'Center C' },
-  ]; 
-  const currentPet = pets[currentIndex]
+  const [animationDirection, setAnimationDirection] = useState(null);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+  const [allPets, setAllPets] = useState([]);
+  const [allPetDetails, setAllPetDetails] = useState([]);
+  const [currentRound, setCurrentRound] = useState(0);
+  const petsPerRound = 10;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    if (router.isReady) {
-      if (email) {
-        setUserEmail(email);
-        fetchUserData(email);
+    const fetchPets = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const petsRes = await fetch(`${apiUrl}/RecEng/getSampleDefault`, {
+          headers: { 'Authorization': `Bearer ${token}` }, // Use the token for authorization
+        });
+
+        if (!petsRes.ok) throw new Error('Failed to fetch pet data');
+
+        const petsData = await petsRes.json();
+        const formattedPets = petsData.map(pet => ({
+          ...pet,
+          species: formatOption(pet.species),
+          coatLength: formatOption(pet.coatLength),
+          furType: formatOption(pet.furType),
+          petSize: formatOption(pet.petSize),
+          healthStatus: formatOption(pet.healthStatus),
+          sex: formatOption(pet.sex),
+          furColor: pet.furColor.map(color => formatOption(color)),
+          temperament: pet.temperament.map(temp => formatOption(temp)),
+          dogBreed: pet.dogBreed ? pet.dogBreed.map(breed => formatOption(breed)) : [],
+          catBreed: pet.catBreed ? pet.catBreed.map(breed => formatOption(breed)) : [],
+        }));
+
+        setAllPets(formattedPets.map(pet => pet.imageUrl));
+        setAllPetDetails(formattedPets);
+
+      } catch (error) {
+        console.error('Error fetching pets:', error);
+        setError("Failed to load pets.");
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [router.isReady, router.query]);
+    };
+
+    fetchPets();
+  }, [apiUrl]);
+
+  // Calculate the pets to display for the current round
+  const startIndex = currentRound * petsPerRound;
+  const pets = allPets.slice(startIndex, startIndex + petsPerRound);
+  const petDetails = allPetDetails.slice(startIndex, startIndex + petsPerRound);
 
   // Function to fetch user data (including profile picture)
   const fetchUserData = async (email) => {
@@ -71,121 +106,79 @@ export default function RecommendationEnginePage() {
     }
   };
 
-  // Function to handle avatar click for menu
-  const handleAvatarClick = (event) => setAnchorEl(event.currentTarget);
-  const handleCloseMenu = () => setAnchorEl(null);
-
-  // Open dialog for editing personal information
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleCloseMenu();
-  };
-
-  // Close dialog for editing personal information
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProfilePictureFile(null);
-  };
-
-  // Handle file upload for profile picture
-  const handlePfFile = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePictureFile(file);
-    }
-  };
-
-  // Handle snackbar close
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  }
-
-  const handleLogout = () => {
-    localStorage.setItem('validUser',JSON.stringify(null));
-    router.push(`/`);
-  };
-
-  // Save the profile picture to the backend
-  const handleSave = async () => {
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
-      const token = localStorage.getItem('token');
-
-      try {
-        const response = await fetch(`${apiUrl}/user/profile-image/${userEmail}`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) throw new Error('Failed to upload image');
-        const updatedUser = await response.json();
-        setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        setSnackbarOpen(true);
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
-    handleCloseDialog();
-  };
-
-  const handleNavigation = (path) => {
-    router.push(`${path}?email=${email}&userID=${user.id}`);
-    handleCloseMenu();
-  };  
-
   // Handle like or dislike button
   const handleYes = () => {
     setIsLiked(true);
+    setAnimationDirection('left');
     setSnackbarOpen(true);
-    //handleNextPet();
 
     setTimeout(() => {
-      //setIsLiked(null);
       handleNextPet();
-    }, 1000);
+    }, 500);
   }
   const handleNo = () => {
     setIsLiked(false);
+    setAnimationDirection('right');
     setSnackbarOpen(true);
-    //handleNextPet();
 
     setTimeout(() => {
-      //setIsLiked(null);
       handleNextPet();
-    }, 1000);
+    }, 500);
   }
 
+  const handleAdopt = () => {
+    setShowBackdrop(true)
+    setTimeout(() => {
+      setShowBackdrop(false);
+    }, 1000);
+  };
+
   const handleNextPet = () => {
+    setAnimationDirection(null);
     setCurrentIndex((prevIdx) => (prevIdx + 1) % pets.length);
   }
 
-  // const handlePreviousPet = () => {
-  //   setCurrentIndex((prevIdx) => (prevIdx - 1 + pets.length) % pets.length);
-  // }
+  const handleNextRound = () => {
+    // Increment the round, looping back to 0 if at the end
+    setCurrentRound((prevRound) => (prevRound + 1) % (allPets.length / petsPerRound));
+  };
 
-  const currentPetDetail = petDetails[currentIndex] || {};
+  const currentPetDetail = petDetails[currentIndex % petsPerRound] || {};
+  const progressValue = ((currentIndex % petsPerRound) + 1) * (100 / petsPerRound);
 
   return (
     <main>
       <NavBar />
 
+      <Backdrop
+        sx={{ backgroundColor: 'rgba(0,0,0,0.8)', color: 'green', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={showBackdrop}
+      >
+        <Typography variant="h3" color="primary">Congratulations on choosing to adopt!</Typography>
+      </Backdrop>
+
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
+        <Box sx={{ width: '100%', maxWidth: 600 }}>
+          <LinearProgress variant="determinate" value={progressValue} sx={{ marginBottom: 2 }} />
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', padding : 1 }}>
-          <Card sx={{ maxWidth: 600 }}>
+          <Card 
+            key={currentIndex}
+            sx={{ 
+              maxWidth: 600, 
+              animation: animationDirection === 'left' ? `${slideLeft} 0.5s forwards` : animationDirection === 'right' ? `${slideRight} 0.5s forwards` : `${fadeIn} 0.5s ease-in-out` 
+              }}
+          >
             <CardMedia 
-            component="img" 
-            alt="Pet Image" 
-            height="500" width="400" 
-            src={pets[currentIndex]}  // Replace with real image URL
-            sx={{ objectFit: 'cover' }} />
+              component="img" 
+              alt="Pet Image" 
+              height="500" width="400" 
+              src={pets[currentIndex % petsPerRound]}  // Replace with real image URL
+              sx={{ objectFit: 'cover' }} 
+            />
             <CardActions sx={{ justifyContent: 'space-between' }}>
-              {/* <Button size="large" color="primary" onClick={handleYes} startIcon={<CheckCircleIcon sx={{ fontSize: 60 }} />} />
-              <Button size="large" color="secondary" onClick={handleNo} startIcon={<CancelIcon sx={{ fontSize: 60 }} />} /> */}
-              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo}/>
+              <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo} handleAdopt={handleAdopt}/>
             </CardActions>
 
             <Box sx={{ padding: 3}}>
@@ -217,15 +210,11 @@ export default function RecommendationEnginePage() {
           </Card>
         </Box>
 
-        {/* {isLiked !== null && (
-          <Typography variant="h5" sx={{ marginTop: 2 }}>
-            {isLiked ? "You liked this pet!" : "You disliked this pet."}
-          </Typography>
-        )} */}
+        <Button onClick={handleNextRound}>Next Round</Button>
 
         <Snackbar
           open={snackbarOpen}
-          onClose={handleCloseSnackbar}
+          onClose={() => setSnackbarOpen(false)}
           autoHideDuration={2000}
           message={isLiked ? "You liked this pet!" : "You disliked this pet."}
         />

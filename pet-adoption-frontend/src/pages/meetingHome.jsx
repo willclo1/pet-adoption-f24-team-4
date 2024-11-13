@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Box, Card, CardContent, Typography } from '@mui/material';
+import NavBar from '@/components/NavBar';
 
 export default function AdoptionHome() {
     const [data, setData] = useState('');
@@ -25,7 +26,9 @@ export default function AdoptionHome() {
     }, []);
 
     return (
-        <Box>
+        <main>
+            <NavBar/>
+            
             <Head>
                 <title>Meeting Home</title>
             </Head>
@@ -35,6 +38,6 @@ export default function AdoptionHome() {
                     <Typography>Meetings will be here!</Typography>
                 </CardContent>
             </Card>
-        </Box>
+        </main>
     );
 }

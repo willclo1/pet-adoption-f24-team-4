@@ -139,7 +139,7 @@ function NavBar () {
     };  
 
     if (loading) {
-      return <div>Loading...</div>;
+      return;
     }
   
     if (error) {
@@ -158,7 +158,7 @@ function NavBar () {
       >
         <List>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/recommendationEngine')}>
+            <ListItemButton onClick={() => handleNavigation('/viewUserPets')}>
               <ListItemIcon>
                 <PetsIcon />
               </ListItemIcon>

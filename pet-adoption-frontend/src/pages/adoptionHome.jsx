@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import AdoptionNavBar from '@/components/adoptionNavBar';
 import {
   Box,
   Stack,
   Typography,
-  AppBar,
-  Toolbar,
   Button,
-  Avatar,
-  Menu,
-  MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -17,7 +13,6 @@ import {
   Snackbar,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-
 
 export default function AdoptionHome() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,7 +41,7 @@ export default function AdoptionHome() {
   };
 
   const logoutAction = () => {
-    localStorage.setItem('validUser',JSON.stringify(null))
+    localStorage.setItem('validUser', JSON.stringify(null));
     router.push(`/`);
   };
 
@@ -61,14 +56,13 @@ export default function AdoptionHome() {
       setProfilePictureFile(file); // Store the file for uploading later
     }
   };
-    const handleMessage = () => {
-      const token = localStorage.getItem('token'); 
-      if(token){
-        router.push(`/AdoptionCenterMessages?email=${email}&userID=${user.firstName}`)
-      }
 
-  }
-
+  const handleMessage = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push(`/AdoptionCenterMessages?email=${email}&userID=${user.firstName}`);
+    }
+  };
 
   const handleSave = async () => {
     if (profilePictureFile) {
@@ -103,18 +97,19 @@ export default function AdoptionHome() {
     }
     handleCloseDialog();
   };
-   useEffect(() => {
+
+  useEffect(() => {
     const fetchUser = async () => {
       if (email) {
         setLoading(true);
-        console.log("Fetching user with email:", email);
+        console.log('Fetching user with email:', email);
 
         try {
           const token = localStorage.getItem('token');
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
-              'Authorization': `Bearer ${token}` // Add token to headers
-            }
+              Authorization: `Bearer ${token}`, // Add token to headers
+            },
           });
           if (!response.ok) {
             if (response.status === 404) {
@@ -125,7 +120,7 @@ export default function AdoptionHome() {
           }
 
           const data = await response.json();
-          console.log("Fetched user data:", data);
+          console.log('Fetched user data:', data);
           setUser(data);
 
           if (data.profilePicture && data.profilePicture.imageData) {
@@ -142,7 +137,6 @@ export default function AdoptionHome() {
 
     fetchUser();
   }, [email]);
-
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -182,15 +176,15 @@ export default function AdoptionHome() {
       pathname: '/modifyAdoptionCenter',
       query: { adoptionID, email },
     });
-  }
+  };
 
   const handleModifyEvents = () => {
     const adoptionID = user.center.adoptionID;
     router.push({
       pathname: '/modifyEvents',
       query: { adoptionID, email },
-    })
-  }
+    });
+  };
 
   const handleAddEvent = () => {
     const adoptionID = user.center.adoptionID;
@@ -198,33 +192,19 @@ export default function AdoptionHome() {
       pathname: '/addEvent',
       query: { adoptionID, email },
     });
-  }
+  };
 
-  const handleModifyAdoptionCenterProfile= () => {
+  const handleModifyAdoptionCenterProfile = () => {
     const adoptionID = user.center.adoptionID;
     router.push({
       pathname: '/modifyAdoptionCenterProfile',
       query: { adoptionID, email },
     });
-    
-  } 
+  };
 
   return (
     <main>
-      <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            Whisker Works
-          </Typography>
-          <Avatar
-            alt={user.firstName}
-            src={profilePicture} // Use the uploaded profile picture here
-            sx={{ marginLeft: 2, width: 56, height: 56, cursor: 'pointer' }}
-            onClick={handleClick}
-          />
-        </Toolbar>
-      </AppBar>
-
+      <AdoptionNavBar />
       <Box sx={{ paddingBottom: 8 }}>
         <Stack spacing={3} direction="row" sx={{ marginTop: 4, marginLeft: 4 }}>
           <Box
@@ -332,7 +312,7 @@ export default function AdoptionHome() {
             </Button>
           </Box>
 
-           <Box
+          <Box
             sx={{
               width: 300,
               padding: 4,
@@ -341,29 +321,21 @@ export default function AdoptionHome() {
               backgroundColor: '#fff',
               textAlign: 'center',
             }}
-        >
-          <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
-            Check out your messages!
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleMessage}
-            sx={{ fontWeight: 'bold' }}
           >
-            Send/View Messages
-          </Button>
-        </Box>
-
-      
-          
+            <Typography variant="h5" sx={{ mb: 2, color: '#333', fontWeight: 'bold' }}>
+              Check out your messages!
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleMessage}
+              sx={{ fontWeight: 'bold' }}
+            >
+              Send/View Messages
+            </Button>
+          </Box>
         </Stack>
       </Box>
-
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-        <MenuItem onClick={logoutAction}>Logout</MenuItem>
-      </Menu>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Edit Personal Information</DialogTitle>
