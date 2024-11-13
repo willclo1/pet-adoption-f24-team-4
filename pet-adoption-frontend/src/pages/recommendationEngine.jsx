@@ -47,7 +47,7 @@ export default function RecommendationEnginePage() {
     const fetchPets = async () => {
       try {
         const token = localStorage.getItem('token');
-        const petsRes = await fetch(`${apiUrl}/pets`, {
+        const petsRes = await fetch(`${apiUrl}/RecEng/getSampleDefault`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
 

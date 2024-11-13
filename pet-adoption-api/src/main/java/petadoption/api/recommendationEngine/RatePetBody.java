@@ -10,7 +10,7 @@ import petadoption.api.userPreferences.UserPreferences;
 public class RatePetBody {
     public long userId;
 
-    public long pet;
+    public long petId;
 
     public boolean like;
 }

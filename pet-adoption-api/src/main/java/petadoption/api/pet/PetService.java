@@ -2,12 +2,10 @@ package petadoption.api.pet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.criteria.*;
-import petadoption.api.pet.criteria.breed.AnimalBreed;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.Utility.*;
@@ -20,7 +18,7 @@ import java.util.*;
 @Service
 public class PetService {
     @Autowired
-    PetRepository repository;
+    private PetRepository repository;
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
