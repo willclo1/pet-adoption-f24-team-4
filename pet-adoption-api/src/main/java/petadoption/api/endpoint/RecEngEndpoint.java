@@ -1,5 +1,6 @@
 package petadoption.api.endpoint;
 
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +132,7 @@ public class RecEngEndpoint {
     }
 
     @PutMapping("/ratePet")
+    @Transactional
     public ResponseEntity<UserPreferences> ratePet(@RequestBody RatePetBody body) {
         Optional<User> u = userService.findUser(body.userId);
         Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
@@ -169,6 +171,7 @@ public class RecEngEndpoint {
     }
 
     @PutMapping("/rateAdoptedPet")
+    @Transactional
     public ResponseEntity<UserPreferences> rateAdoptedPet(@RequestBody RateAdoptedPetBody body) {
         Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
         Optional<Pet> p = petService.getPetById(body.petId);
@@ -203,6 +206,7 @@ public class RecEngEndpoint {
     }
 
     @PutMapping("/setPreferences")
+    @Transactional
     public ResponseEntity<UserPreferences> setPreferences(
             @RequestParam("userId") long userId,
             @RequestBody UserPreferences userPreferences) {
