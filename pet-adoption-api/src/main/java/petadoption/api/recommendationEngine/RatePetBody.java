@@ -8,18 +8,9 @@ import petadoption.api.userPreferences.UserPreferences;
 
 @Data
 public class RatePetBody {
-    @Getter
-    @Setter
-    private UserPreferences userPreferences;
+    public long userId;
 
-    @Getter
-    @Setter
-    private Pet pet;
+    public long pet;
 
-    @Setter
-    private boolean like;
-
-    public boolean wasLiked() {
-        return like;
-    }
+    public boolean like;
 }

@@ -140,6 +140,16 @@ public class RecommendationEngine {
         throw new RuntimeException("Unknown species encountered: " + s);
     }
 
+    public List<Pet> resortPetSample(UserPreferences up, List<Pet> pets) {
+        SortedSet<Map.Entry<Pet, Double>> entries = new TreeSet<>(new PetComparator());
+
+        for (Pet pet : pets) {
+            entries.add(new AbstractMap.SimpleEntry<>(pet, calculatePetRating(up, pet)));
+        }
+
+        return entries.stream().map(Map.Entry::getKey).toList();
+    }
+
     /**
      * Determines <code>Breed</code> associated with the pet,
      * then iterates through each <code>Breed</code>,
