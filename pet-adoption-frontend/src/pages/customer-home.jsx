@@ -105,6 +105,7 @@ export default function CustomerHomePage() {
 
         try {
           const token = localStorage.getItem('token');
+          console.log(token);
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: {
               'Authorization': `Bearer ${token}` // Add token to headers

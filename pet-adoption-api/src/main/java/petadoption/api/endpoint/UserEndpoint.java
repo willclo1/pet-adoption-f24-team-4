@@ -77,6 +77,7 @@ public class UserEndpoint {
 //            return ResponseEntity.notFound().build(); // Handle user not found
 //        }
 //    }
+
 @PutMapping("/users/{userId}/preferences")
 public ResponseEntity<UserPreferences> updateUserPreferences(
         @PathVariable Long userId,
