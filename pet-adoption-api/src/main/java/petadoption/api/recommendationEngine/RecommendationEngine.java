@@ -139,10 +139,12 @@ public class RecommendationEngine {
      *
      * @param s <code>Species</code> that caused the error
      */
+    /*
     private void unknownSpeciesError(Species s) throws RuntimeException {
         log.error("Unknown species encountered: {}", s);
         throw new RuntimeException("Unknown species encountered: " + s);
     }
+    */
 
     /*
     public List<Pet> resortPetSample(UserPreferences up, List<Pet> pets) {
@@ -228,6 +230,18 @@ public class RecommendationEngine {
     }
     */
 
+    public static double calculatePetRating(Map<PetAttribute, Double> prefs, Pet p) {
+        double rating = 0.0;
+
+        for (PetAttribute pa : p.getAttributes()) {
+            if (prefs.containsKey(pa)) {
+                rating += prefs.get(pa);
+            }
+        }
+
+        return rating;
+    }
+
     /**
      * Calculates a <code>Pet</code>'s total rating according to the
      * specified <code>User</code>'s preferences
@@ -236,6 +250,7 @@ public class RecommendationEngine {
      * @param p Pet to calculate the rating for
      * @return The given pet's rating according to the user's preferences
      */
+    /*
     public double calculatePetRating(User u,Pet p) {
         double rating = 0.0;
         Map<PetAttribute, Double> preferences =
@@ -254,13 +269,14 @@ public class RecommendationEngine {
 
         return rating;
     }
+    */
 
     /**
      * Calculates a <code>Pet</code>'s total rating through
      * the members in <Code>UserPreferences</Code>, which map to
      * the specific criterion's rating.
      *
-     * @param up <code>User</code>'s specific preferences
+     * @param u <code>User</code>'s specific preferences
      * @param p  <code>Pet</code> to calculate ratings from
      * @return   given pet's total rating
      */
@@ -284,6 +300,15 @@ public class RecommendationEngine {
     }
     */
 
+    public static void updatePreferences(User u, Pet p, double updateVal) {
+        for (PetAttribute pa : p.getAttributes()) {
+            if (u.getPreferences().containsKey(pa)) {
+                u.getPreferences().put(pa, u.getPreferences().get(pa) + updateVal);
+            }
+        }
+    }
+
+    /*
     public void updatePreferences(User u, Pet p, double updateVal) {
         Map<PetAttribute, Double> preferences =
                 u.getPreferences()
@@ -305,6 +330,7 @@ public class RecommendationEngine {
 
         u.setPreferences(newPreferences);
     }
+     */
 
     /**
      * Changes a given <code>User</code>'s <code>UserPreferences</code>
@@ -374,6 +400,15 @@ public class RecommendationEngine {
     }
     */
 
+    public static void ratePet(User u, Pet p, boolean like) {
+        double updateVal;
+
+        if (like) updateVal = DEFAULT_VAL;
+        else updateVal = -(DEFAULT_VAL);
+
+        updatePreferences(u, p, updateVal);
+    }
+
     /**
      * Increments / decrements the ratings in the given <code>UserPreferences</code>
      * mapped by the criteria contained in a passed <code>Pet</code> instance.
@@ -382,6 +417,7 @@ public class RecommendationEngine {
      * @param p    <code>Pet</code> to reference criteria from
      * @param like if the <code>User</code> liked the pet
      */
+    /*
     public void ratePet(UserPreferences up, Pet p, boolean like) {
        // double updateVal = like ? DEFAULT_VAL : -(DEFAULT_VAL);
         double updateVal;
@@ -395,6 +431,7 @@ public class RecommendationEngine {
 
         updatePreferences(up, p, updateVal);
     }
+    */
 
     /**
      * Increments the ratings in the given <code>UserPreferences</code>
@@ -406,10 +443,10 @@ public class RecommendationEngine {
      * contacts the <code>AdoptionCenter</code> associated with the given
      * <code>Pet</code>.
      *
-     * @param up <code>User</code>'s specific preferences
+     * @param u <code>User</code>'s specific preferences
      * @param p  <code>Pet</code> to reference criteria from
      */
-    public void rateAdoptedPet(UserPreferences up, Pet p) {
-        updatePreferences(up, p, DEFAULT_ADOPT_VAL);
+    public static void rateAdoptedPet(User u, Pet p) {
+        updatePreferences(u, p, DEFAULT_ADOPT_VAL);
     }
 }

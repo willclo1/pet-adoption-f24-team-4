@@ -12,11 +12,11 @@ import petadoption.api.pet.PetService;
 import petadoption.api.recommendationEngine.*;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
-import petadoption.api.userPreferences.UserPreferences;
-import petadoption.api.userPreferences.UserPreferencesService;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static petadoption.api.recommendationEngine.RecommendationEngine.calculatePetRating;
 
 @Log4j2
 @RestController
@@ -29,9 +29,11 @@ public class RecEngEndpoint {
     @Autowired
     private UserService userService;
 
+    /*
     @Getter
     @Autowired
     private UserPreferencesService userPreferencesService;
+    */
 
     @Getter
     @Autowired
@@ -44,14 +46,14 @@ public class RecEngEndpoint {
     @Getter
     private final RecommendationEngine recommendationEngine = new RecommendationEngine();
 
-    private void logSuccessfulSave(UserPreferences up) {
+    private void logSuccessfulSave(User u) {
         log.info(
                 "User preferences successfully updated: {}",
-                up.getId()
+                u.getId()
         );
     }
 
-    private ResponseEntity<UserPreferences> failedUserPetRetrieval(long userId, long petId) {
+    private ResponseEntity<User> failedUserPetRetrieval(long userId, long petId) {
         log.error("""
                 Failed to find user's preferences and / or pet:
                 user:  {}
@@ -79,6 +81,7 @@ public class RecEngEndpoint {
         return likedPetService.getLikedPets(userId);
     }
 
+    /*
     @GetMapping("/resort")
     public List<Pet> resortSample(@RequestBody ResortBody body) {
         Optional<User> u =  userService.findUser(body.userId);
@@ -96,20 +99,39 @@ public class RecEngEndpoint {
         log.error("Failure to find user and / or sort empty list");
         return null;
     }
+    */
 
     @GetMapping("/recommendations")
-    public List<Pet> getRecommendations(@RequestBody Long userId) {
-        Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(userId);
+    public Set<Pet> getRecommendations(@RequestBody Long userId) {
+        //Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(userId);
+        Optional<User> user = userService.findUser(userId);
 
-        if (up.isPresent()) {
+        //if (up.isPresent()) {
+        if (user.isPresent()) {
             List<Pet> petSample = petService.getRandPets(DEFAULT_REC_SAMPLE_SIZE);
+            SortedSet<Map.Entry<Pet, Double>> sortedSample = new TreeSet<>(new PetComparator());
 
             for (Pet p : petSample) {
                 Map.Entry<Pet, Double> ratedPet = new AbstractMap.SimpleEntry<>(p, 0.0);
-                ratedPet.setValue(recommendationEngine.calculatePetRating(up.get(), p));
-                recommendationEngine.getRecommendations().add(ratedPet);
+
+                ratedPet.setValue(
+                        calculatePetRating(
+                                user.get().getPreferences(),
+                                p
+                        )
+                );
+
+                //recommendationEngine.getRecommendations().add(ratedPet);
+                sortedSample.add(ratedPet);
             }
 
+            // Only sorted pets are needed by frontend, don't need to include ratings
+            return sortedSample.stream()
+                    .limit(DEFAULT_REC_DISPLAY_SIZE)
+                    .map(Map.Entry::getKey).collect(Collectors.toSet());
+            //return sortedSample;
+
+            /*
             for (int i = 0; i < petSample.size(); i++) {
                 try {
                     petSample.set(
@@ -122,9 +144,8 @@ public class RecEngEndpoint {
                     log.error("Failed to grab pet(???)");
                 }
             }
-
-            return petSample.stream()
-                    .limit(DEFAULT_REC_DISPLAY_SIZE).collect(Collectors.toList());
+            */
+            //return petSample.stream().limit(DEFAULT_REC_DISPLAY_SIZE).collect(Collectors.toList());
         }
 
         log.error("Failed to find UserPreferences for user: {}", userId);
@@ -133,11 +154,36 @@ public class RecEngEndpoint {
 
     @PutMapping("/ratePet")
     @Transactional
-    public ResponseEntity<UserPreferences> ratePet(@RequestBody RatePetBody body) {
+    public ResponseEntity<User> ratePet(@RequestBody RatePetBody body) {
         Optional<User> u = userService.findUser(body.userId);
-        Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
-        Optional<Pet> p = petService.getPetById(body.petId);
+        //Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
+        //Optional<Pet> p = petService.getPetById(body.petId);
 
+        if (u.isPresent()) {
+            if (u.get().getPreferences().isEmpty()) {
+                u.get().setPreferences(new HashMap<>());
+                userService.saveUser(u.get());
+            }
+
+            Optional<Pet> p = petService.getPetById(body.petId);
+            if (p.isPresent()) {
+                try {
+                    RecommendationEngine.ratePet(u.get(), p.get(), body.like);
+                    User result = userService.saveUser(u.get());
+                    logSuccessfulSave(result);
+
+                    return ResponseEntity.ok(result);
+                } catch (Exception e) {
+                    log.error("Failed to update user preferences [ratePet()]", e);
+                    return ResponseEntity.badRequest().build();
+                }
+            } else {
+                return failedUserPetRetrieval(body.userId, body.petId);
+            }
+        }
+
+        return failedUserPetRetrieval(body.userId, body.petId);
+        /*
         if (u.isPresent()) {
             if (up.isEmpty()) {
                 u.get().setUserPreferences(new UserPreferences());
@@ -168,15 +214,36 @@ public class RecEngEndpoint {
         }
 
         return failedUserPetRetrieval(body.userId, body.petId);
+        */
     }
 
     @PutMapping("/rateAdoptedPet")
     @Transactional
-    public ResponseEntity<UserPreferences> rateAdoptedPet(@RequestBody RateAdoptedPetBody body) {
-        Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
-        Optional<Pet> p = petService.getPetById(body.petId);
+    public ResponseEntity<User> rateAdoptedPet(@RequestBody RateAdoptedPetBody body) {
+        //Optional<UserPreferences> up = userPreferencesService.getUserPreferencesByUserId(body.userId);
+        //Optional<Pet> p = petService.getPetById(body.petId);
         Optional<User> u = userService.findUser(body.userId);
 
+        if (u.isPresent()) {
+            if (u.get().getPreferences().isEmpty()) {
+                u.get().setPreferences(new HashMap<>());
+                userService.saveUser(u.get());
+            }
+
+            Optional<Pet> p = petService.getPetById(body.petId);
+            if (p.isPresent()) {
+                RecommendationEngine.rateAdoptedPet(u.get(), p.get());
+                User result = userService.saveUser(u.get());
+                logSuccessfulSave(result);
+
+                return ResponseEntity.ok(result);
+            } else {
+                return failedUserPetRetrieval(body.userId, body.petId);
+            }
+        }
+
+        return failedUserPetRetrieval(body.userId, body.petId);
+        /*
         if (u.isPresent()) {
             if (up.isEmpty()) {
                 u.get().setUserPreferences(new UserPreferences());
@@ -203,17 +270,35 @@ public class RecEngEndpoint {
         }
 
         return failedUserPetRetrieval(body.userId, body.petId);
+        */
     }
 
+    // NEEDS WORK
     @PutMapping("/setPreferences")
     @Transactional
-    public ResponseEntity<UserPreferences> setPreferences(
-            @RequestParam("userId") long userId,
-            @RequestBody UserPreferences userPreferences) {
-
+    public ResponseEntity<User> setPreferences(@RequestParam("userId") long userId) {
         Optional<User> u = userService.findUser(userId);
+        User result = null;
 
-        if (u.isPresent() && userPreferences != null) {
+        if (u.isPresent()) {
+            if (u.get().getPreferences().isEmpty()) {
+                u.get().setPreferences(new HashMap<>());
+                result = userService.saveUser(u.get());
+            }
+            try {
+                result = userService.saveUser(u.get());
+                if (result != null) {
+                    logSuccessfulSave(result);
+                    return ResponseEntity.ok(result);
+                } else {
+                    log.error("Failed to save user on update preferences");
+                    return ResponseEntity.badRequest().build();
+                }
+            } catch (Exception e) {
+                log.error("Failed to update user preferences", e);
+                return ResponseEntity.badRequest().build();
+            }
+            /*
             try {
                 UserPreferences result
                         = userPreferencesService.saveUserPreferences(userPreferences);
@@ -224,6 +309,7 @@ public class RecEngEndpoint {
                 log.error("Failed to update user preferences", e);
                 return ResponseEntity.badRequest().build();
             }
+            */
         }
 
         log.error("Failed to find user and / or user preferences was null: {}", userId);

@@ -2,12 +2,16 @@ package petadoption.api.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.pet.criteria.PetAttribute;
 import petadoption.api.userPreferences.Preference;
 import petadoption.api.userPreferences.UserPreferences;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -50,9 +54,18 @@ public class User {
     private UserPreferences userPreferences;
     */
 
+    /*
     @OneToMany
     @Column(name = "PREFERENCES")
     HashSet<Preference> preferences;
+    */
+    @Getter
+    @Setter
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "preferences", joinColumns = @JoinColumn(name = "USER_ID"))
+    @MapKeyColumn(name = "pet_attribute")
+    @Column(name = "rating")
+    private Map<PetAttribute, Double> preferences;
 
     public Image getProfilePicture() {
         return profilePicture;
