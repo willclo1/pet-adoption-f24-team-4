@@ -32,6 +32,10 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
     public Optional<User> findUser(Long userId) {
         return userRepository.findById(userId);
     }

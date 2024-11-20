@@ -25,6 +25,10 @@ public class PetService {
 
     private static final long DEFAULT_RAND_PETS = 500;
 
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
     public Optional<Pet> savePet(Long petID){
         return repository.findById(petID);
     }
@@ -2222,7 +2226,6 @@ public class PetService {
 
         repository.saveAll(samplePets);
     }
-
 
 
 }
