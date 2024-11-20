@@ -8,6 +8,7 @@ import petadoption.api.pet.criteria.*;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -27,6 +28,41 @@ public class Pet {
     @Column(name = "name")
     private String name;
 
+    @OneToMany
+    @Column(name = "attributes")
+    private HashSet<PetAttribute> attributes;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
+    private Image profilePicture;
+
+    @ManyToOne
+    @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
+    private AdoptionCenter center;
+
+    public Pet(String name, HashSet<PetAttribute> attributes) {
+        this.name = name;
+        this.attributes = attributes;
+    }
+
+    public Pet() {}
+
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        str.append("//==============================================//\n");
+        str.append("[id]   ").append(this.id).append("\n");
+        str.append("[name] ").append(this.name).append("\n");
+        str.append("[attributes]\n");
+        for (PetAttribute attr : this.attributes) {
+            str.append("\t [").append(attr.getType()).append("] ")
+                    .append(attr.getAttribute()).append("\n");
+        }
+        str.append("[Adoption Center] ").append(this.center).append("\n");
+
+        return str.toString();
+    }
+    /*
     @Enumerated(EnumType.STRING)
     @Column(name = "SPECIES")
     private Species species;
@@ -159,5 +195,5 @@ public class Pet {
 
         return str.toString();
     }
-
+    */
 }

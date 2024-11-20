@@ -7,9 +7,7 @@ import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.user.User;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.EnumMap;
+import java.util.*;
 
 /**
  * @see User
@@ -32,93 +30,92 @@ import java.util.EnumMap;
 @Entity
 @Table(name = "user_preferences")
 public class UserPreferences {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_preferences_id;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_cat_breed_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_cat_breed_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "cat_breed")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<CatBreed, Double> catBreedPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_dog_breed_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_dog_breed_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "dog_breed")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<DogBreed, Double> dogBreedPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_coat_length_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_coat_length_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "coat_length")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<CoatLength, Double> coatLengthPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_fur_color_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_fur_color_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "fur_color")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<FurColor, Double> furColorPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_fur_type_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_fur_type_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "fur_type")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<FurType, Double> furTypePreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_health_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_health_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "health")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Health, Double> healthPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_sex_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_sex_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "sex")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Sex, Double> sexPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_size_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_size_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "size")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Size, Double> sizePreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_spayed_neutered_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_spayed_neutered_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "spayed_neutered")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<SpayedNeutered, Double> spayedNeuteredPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_species_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_species_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "species")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Species, Double> speciesPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_temperament_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_temperament_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "temperament")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Temperament, Double> temperamentPreferences;
 
     @Getter
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_age_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_age_preferences", joinColumns = @JoinColumn(name = "user_preferences_id"))
     @MapKeyColumn(name = "age")
-    @Column(name = "preference")
+    @Column(name = "rating")
     private Map<Integer, Double> agePreferences;
 
     public UserPreferences() {

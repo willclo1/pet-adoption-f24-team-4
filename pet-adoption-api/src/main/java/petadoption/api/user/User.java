@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.userPreferences.Preference;
 import petadoption.api.userPreferences.UserPreferences;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -40,10 +44,15 @@ public class User {
     /*
     @OneToOne(optional = false)
     @JoinColumn(name = "USER_PREFERENCES_ID", unique = true, nullable = false, updatable = false) */
+    /*
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_PREFERENCES_ID", referencedColumnName = "user_preferences_id")
     private UserPreferences userPreferences;
+    */
 
+    @OneToMany
+    @Column(name = "PREFERENCES")
+    HashSet<Preference> preferences;
 
     public Image getProfilePicture() {
         return profilePicture;

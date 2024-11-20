@@ -5,13 +5,17 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import petadoption.api.pet.Pet;
 import petadoption.api.pet.criteria.FurColor;
+import petadoption.api.pet.criteria.PetAttribute;
 import petadoption.api.pet.criteria.Species;
 import petadoption.api.pet.criteria.Temperament;
 import petadoption.api.pet.criteria.breed.CatBreed;
 import petadoption.api.pet.criteria.breed.DogBreed;
+import petadoption.api.user.User;
+import petadoption.api.userPreferences.Preference;
 import petadoption.api.userPreferences.UserPreferences;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Rafe Loya
@@ -62,12 +66,12 @@ public class RecommendationEngine {
         entries.addAll(recommendations);
 
         for (Map.Entry<Pet, Double> entry : entries) {
-            builder.append(
-                    "[" + i + "] "
-                    + entry.getKey().getName()
-                    + " : "
-                    + entry.getValue()
-            );
+            builder.append("[")
+                    .append(i)
+                    .append("] ")
+                    .append(entry.getKey().getName())
+                    .append(" : ")
+                    .append(entry.getValue());
             ++i;
         }
 
@@ -140,6 +144,7 @@ public class RecommendationEngine {
         throw new RuntimeException("Unknown species encountered: " + s);
     }
 
+    /*
     public List<Pet> resortPetSample(UserPreferences up, List<Pet> pets) {
         SortedSet<Map.Entry<Pet, Double>> entries = new TreeSet<>(new PetComparator());
 
@@ -149,6 +154,7 @@ public class RecommendationEngine {
 
         return entries.stream().map(Map.Entry::getKey).toList();
     }
+     */
 
     /**
      * Determines <code>Breed</code> associated with the pet,
@@ -159,6 +165,7 @@ public class RecommendationEngine {
      * @param p  <code>Pet</code> to calculate ratings from
      * @return   sum of ratings associated with pet's breeds
      */
+    /*
     public double calculateBreedRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
@@ -179,6 +186,7 @@ public class RecommendationEngine {
 
         return rating;
     }
+    */
 
     /**
      * Iterates through <code>Pet</code>'s <code>FurColor</code>s,
@@ -188,6 +196,7 @@ public class RecommendationEngine {
      * @param p  <code>Pet</code> to calculate ratings from
      * @return   sum of ratings associated with pet's fur colors
      */
+    /*
     public double calculateFurColorRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
@@ -197,6 +206,7 @@ public class RecommendationEngine {
 
         return rating;
     }
+    */
 
     /**
      * Iterates through <code>Pet</code>'s <code>Temperament</code>s,
@@ -206,11 +216,40 @@ public class RecommendationEngine {
      * @param p  <code>Pet</code> to calculate ratings from
      * @return   sum of ratings associated with pet's temperaments
      */
+    /*
     public double calculateTemperamentRating(UserPreferences up, Pet p) {
         double rating = 0.0;
 
         for (Temperament t : p.getTemperament()) {
             rating += up.getTemperamentRating(t);
+        }
+
+        return rating;
+    }
+    */
+
+    /**
+     * Calculates a <code>Pet</code>'s total rating according to the
+     * specified <code>User</code>'s preferences
+     *
+     * @param u User which will determine the pet's rating
+     * @param p Pet to calculate the rating for
+     * @return The given pet's rating according to the user's preferences
+     */
+    public double calculatePetRating(User u,Pet p) {
+        double rating = 0.0;
+        Map<PetAttribute, Double> preferences =
+                u.getPreferences()
+                        .stream().collect(
+                                Collectors.toMap(
+                                        x -> new PetAttribute(x.getType(), x.getAttribute()),
+                                        Preference::getRating));
+
+        // lambda map
+        for (PetAttribute pa : p.getAttributes()) {
+            if (preferences.containsKey(pa)) {
+                rating += preferences.get(pa);
+            }
         }
 
         return rating;
@@ -225,6 +264,7 @@ public class RecommendationEngine {
      * @param p  <code>Pet</code> to calculate ratings from
      * @return   given pet's total rating
      */
+    /*
     public double calculatePetRating(UserPreferences up, Pet p) {
         double totalRating = 0.0;
 
@@ -242,6 +282,29 @@ public class RecommendationEngine {
 
         return totalRating;
     }
+    */
+
+    public void updatePreferences(User u, Pet p, double updateVal) {
+        Map<PetAttribute, Double> preferences =
+                u.getPreferences()
+                        .stream().collect(
+                                Collectors.toMap(
+                                        x -> new PetAttribute(x.getType(), x.getAttribute()),
+                                        Preference::getRating));
+
+        for (PetAttribute pa : p.getAttributes()) {
+            if (preferences.containsKey(pa)) {
+                preferences.put(pa, preferences.get(pa) + updateVal);
+            }
+        }
+
+        HashSet<Preference> newPreferences = new HashSet<>();
+        for (Map.Entry<PetAttribute, Double> entry : preferences.entrySet()) {
+            newPreferences.add(new Preference(entry.getKey().getType(), entry.getKey().getAttribute(), entry.getValue()));
+        }
+
+        u.setPreferences(newPreferences);
+    }
 
     /**
      * Changes a given <code>User</code>'s <code>UserPreferences</code>
@@ -255,6 +318,7 @@ public class RecommendationEngine {
      * @param p         <code>Pet</code> to reference criteria from
      * @param updateVal value to increment / decrement critera ratings by
      */
+    /*
     public void updatePreferences(UserPreferences up, Pet p, double updateVal) {
         //double updateVal = like ? DEFAULT_VAL : -(DEFAULT_VAL);
 
@@ -308,6 +372,7 @@ public class RecommendationEngine {
         // Sex
         up.updateSexRating(p.getSex(), updateVal);
     }
+    */
 
     /**
      * Increments / decrements the ratings in the given <code>UserPreferences</code>
