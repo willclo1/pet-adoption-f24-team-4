@@ -1,133 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Stack, Typography, AppBar, Toolbar, Button, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Box, Stack, Typography, Button, Paper, Divider } from '@mui/material';
 import NavBar from '@/components/NavBar';
 import { useRouter } from 'next/router';
 
 export default function CustomerHomePage() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
-  const [profilePictureFile, setProfilePictureFile] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const router = useRouter();
-  const { email } = router.query;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
+  const { email } = router.query;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleLoginInformation = () => {
-    // Retrieve the token from local storage
-    const token = localStorage.getItem('token'); // Get the token from local storage
-
-    // Check if the token exists before redirecting
-    if (token) {
-        // Redirect to the Profile page, only passing the email
-        router.push(`/Profile?email=${email}`);
-    } else {
-        console.error('No token found in local storage.'); // Handle the case where no token is found
-        // Optionally, you could show an error message to the user or redirect them to the login page
-    }
-};
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-    handleCloseMenu();
-  };
-
-  const logoutAction = () => {
-    setUser(null);
-    localStorage.removeItem('token'); // Remove the token from local storage on logout
-    router.push(`/loginPage`);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setProfilePictureFile(null);
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePictureFile(file);
-    }
-  };
-
-  const handleSave = async () => {
-    if (profilePictureFile) {
-      const formData = new FormData();
-      formData.append('image', profilePictureFile);
-
-      try {
-        const token = localStorage.getItem('token'); // Get the token from local storage
-        const response = await fetch(`${apiUrl}/user/profile-image/${email}`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `Bearer ${token}` // Add token to headers
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to upload image');
-        }
-
-        const updatedUser = await response.json();
-        if (updatedUser.profilePicture && updatedUser.profilePicture.imageData) {
-          setProfilePicture(`data:image/png;base64,${updatedUser.profilePicture.imageData}`);
-        } else {
-          setProfilePicture(null);
-        }
-
-        setSnackbarOpen(true);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-      }
-    }
-    handleCloseDialog();
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
       if (email) {
         setLoading(true);
-        console.log("Fetching user with email:", email);
-
         try {
           const token = localStorage.getItem('token');
+
           console.log(token);
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
-            headers: {
-              'Authorization': `Bearer ${token}` // Add token to headers
-            }
+            headers: { 'Authorization': `Bearer ${token}` }
           });
-          if (!response.ok) {
-            if (response.status === 404) {
-              setError('User not found.');
-              return;
-            }
-            throw new Error('Network response was not ok');
-          }
-
+          if (!response.ok) throw new Error('Failed to fetch user');
           const data = await response.json();
-          console.log("Fetched user data:", data);
           setUser(data);
-
+          localStorage.setItem('id', data.id)
           if (data.profilePicture && data.profilePicture.imageData) {
             setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
           }
         } catch (error) {
-          console.error('Error fetching user:', error);
           setError('User not found.');
         } finally {
           setLoading(false);
@@ -138,157 +41,60 @@ export default function CustomerHomePage() {
     fetchUser();
   }, [email]);
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
+  const handleMessage = () => {
+    router.push(`/message?email=${email}&userID=${user?.id}`);
   };
 
-  const handleStartMatching = () => {
-    // Retrieve the token from local storage
-    const token = localStorage.getItem('token'); // Get the token from local storage
+  const handleViewEvents = () => {
+    router.push(`/viewEvents?email=${email}`);
+  };
 
-    // Check if the token exists before redirecting
-    if (token) {
-        // Store the token in session storage or a context if needed
-        // For example: sessionStorage.setItem('token', token);
-        
-        // Redirect to the recommendation engine page with the email in the URL
-        router.push(`/recommendationEngine?email=${email}&userID=${user.id}`);
-    } else {
-        console.error('No token found in local storage.'); // Handle the case where no token is found
-        // Optionally, redirect to the login page or show an error message
-    }
-};
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!user) {
-    return <div>User not found.</div>;
-  }
-  const handleEditPreferences = () => {
-    const token = localStorage.getItem('token'); 
-    if(token){
-      router.push(`/EditPreferences?email=${email}&userID=${user.id}`)
-    }
-
-  }
-    const handleMessage = () => {
-      const token = localStorage.getItem('token'); 
-      if(token){
-        router.push(`/message?email=${email}&userID=${user.id}`)
-      }
-
-  }
-
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!user) return <div>User not found.</div>;
 
   return (
     <main>
       <NavBar />
+      <Stack sx={{ paddingTop: 8, maxWidth: 600, margin: '0 auto', gap: 3 }} alignItems="center">
+        
+        {/* Welcome Section */}
+        <Paper elevation={3} sx={{ padding: 4, width: '100%', textAlign: 'center' }}>
+          <Typography variant="h3" gutterBottom>Welcome, {user.firstName}</Typography>
+          <Typography variant="body1" color="text.secondary">
+            Explore your account features below!
+          </Typography>
+        </Paper>
 
-      <Stack sx={{ paddingTop: 10 }} alignItems="center" gap={2}>
-        <Typography variant="h3">Welcome, {user.firstName}</Typography>
-        <Typography variant="body1" color="text.secondary">
-          Check out the home page!
-        </Typography>
-        <Box sx={{
-        position: 'absolute',
-        top: 100,
-        left: 20,
-        width: 300,
-        padding: 2,
-        boxShadow: 3,
-        borderRadius: 2,
-        textAlign: 'center',
-        backgroundColor: 'white',
-      }}>
-        <Typography variant="h6" gutterBottom>Check out your messages!</Typography>
-        <Button variant="contained" color="primary" onClick={handleMessage}>
-          Send/View Messages
-        </Button>
-      </Box>
+        {/* Actions Section */}
+        <Stack direction="column" spacing={3} sx={{ width: '100%' }}>
+          
+          {/* Messages Box */}
+          <Paper elevation={2} sx={{ padding: 3 }}>
+            <Typography variant="h6" gutterBottom>Messages</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
+              Stay connected with the adoption center!
+            </Typography>
+            <Button variant="contained" color="primary" onClick={handleMessage} fullWidth>
+              View Messages
+            </Button>
+          </Paper>
+
+          {/* Divider between sections */}
+          <Divider sx={{ marginY: 2 }} />
+
+          {/* Events Box */}
+          <Paper elevation={2} sx={{ padding: 3 }}>
+            <Typography variant="h6" gutterBottom>Upcoming Events</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 1 }}>
+              Discover and join events at adoption centers.
+            </Typography>
+            <Button variant="contained" color="secondary" onClick={handleViewEvents} fullWidth>
+              View Events
+            </Button>
+          </Paper>
+        </Stack>
       </Stack>
-{/* 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-      >
-        <MenuItem onClick={handleLoginInformation}>Login Information</MenuItem>
-        <MenuItem onClick={handleOpenDialog}>Edit Personal Information</MenuItem>
-        <MenuItem onClick={logoutAction}>Logout</MenuItem>
-      </Menu>
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Personal Information</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="First Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.firstName}
-          />
-          <TextField
-            margin="dense"
-            label="Last Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-            defaultValue={user.lastName}
-          />
-          <TextField
-            margin="dense"
-            label="Address"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <Stack marginTop={2}>
-            <Typography variant="body1">Profile Picture</Typography>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="profile-picture-upload"
-              type="file"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="profile-picture-upload">
-              <Button variant="contained" component="span">
-                Upload Profile Picture
-              </Button>
-            </label>
-            {profilePicture && (
-              <Avatar
-                alt="Profile Picture Preview"
-                src={profilePicture}
-                sx={{ width: 56, height: 56, marginTop: 1 }}
-              />
-            )}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        message="Profile picture updated successfully"
-      /> */}
     </main>
   );
 }

@@ -30,22 +30,22 @@ public class AdoptionCenterService {
         return repository.findAll();
     }
 
-    public void addSampleAdoptionCenters() {
-        // Create a list of sample adoption centers
-        List<AdoptionCenter> sampleCenters = Arrays.asList(
-                new AdoptionCenter("Happy Paws Rescue"),
-                new AdoptionCenter("Furry Friends Shelter"),
-                new AdoptionCenter("Pawtastic Haven"),
-                new AdoptionCenter("Animal Lovers Alliance"),
-                new AdoptionCenter("Compassionate Critters"),
-                new AdoptionCenter("Safe Haven Animal Shelter"),
-                new AdoptionCenter("Forever Home Animal Rescue"),
-                new AdoptionCenter("Loving Paws Sanctuary"),
-                new AdoptionCenter("Whiskers and Wags Shelter"),
-                new AdoptionCenter("Hopeful Hearts Animal Rescue")
-        );
+//    public void addSampleAdoptionCenters() {
+//        // Create a list of sample adoption centers
+//        List<AdoptionCenter> sampleCenters = Arrays.asList(
+//                new AdoptionCenter("Happy Paws Rescue"),
+//                new AdoptionCenter("Furry Friends Shelter"),
+//                new AdoptionCenter("Pawtastic Haven"),
+//                new AdoptionCenter("Animal Lovers Alliance"),
+//                new AdoptionCenter("Compassionate Critters"),
+//                new AdoptionCenter("Safe Haven Animal Shelter"),
+//                new AdoptionCenter("Forever Home Animal Rescue"),
+//                new AdoptionCenter("Loving Paws Sanctuary"),
+//                new AdoptionCenter("Whiskers and Wags Shelter"),
+//                new AdoptionCenter("Hopeful Hearts Animal Rescue")
+//        );
 
         // Save all sample centers to the repository
-        repository.saveAll(sampleCenters);
-    }
+//        repository.saveAll(sampleCenters);
+//    }
 }

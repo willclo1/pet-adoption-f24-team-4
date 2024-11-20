@@ -31,32 +31,32 @@ public class SamplesEndpoint {
         this.petService = new PetService();
     }
 
-    @GetMapping("/adoptionCenters")
-    public String addSampleAdoptionCenters() {
-        adoptionCenterService.addSampleAdoptionCenters();
-        log.info("Sample Adoption Centers added");
-        return "Sample Adoption Centers added";
-    }
+//    @GetMapping("/adoptionCenters")
+//    public String addSampleAdoptionCenters() {
+//        adoptionCenterService.addSampleAdoptionCenters();
+//        log.info("Sample Adoption Centers added");
+//        return "Sample Adoption Centers added";
+//    }
 
-    @GetMapping("/petRandom")
-    public String addRandomSamplePets(@RequestParam long numPets) {
-        Random random = new Random();
-        List<Pet> pets = petService.getRandPets(numPets);
-        addPets(random, pets);
+//    @GetMapping("/petRandom")
+//    public String addRandomSamplePets(@RequestParam long numPets) {
+//        Random random = new Random();
+//        List<Pet> pets = petService.getRandPets(numPets);
+//        addPets(random, pets);
+//
+//        log.info("Sample randomized Pets added: {}", numPets);
+//        return "Sample randomized Pets added: " + numPets;
+//    }
 
-        log.info("Sample randomized Pets added: {}", numPets);
-        return "Sample randomized Pets added: " + numPets;
-    }
-
-    @GetMapping("/petRandomDefault")
-    public String addRandomPetsDefault() {
-        Random random = new Random();
-        List<Pet> pets = petService.getRandPets();
-        addPets(random, pets);
-
-        log.info("Sample randomized Pets added");
-        return "Sample randomized Pets added";
-    }
+//    @GetMapping("/petRandomDefault")
+//    public String addRandomPetsDefault() {
+//        Random random = new Random();
+//        List<Pet> pets = petService.getRandPets();
+//        addPets(random, pets);
+//
+//        log.info("Sample randomized Pets added");
+//        return "Sample randomized Pets added";
+//    }
 
     @GetMapping("/petCurated")
     public String addCuratedPets() {
@@ -77,20 +77,20 @@ public class SamplesEndpoint {
      *               <code>AdoptionCenter</code>
      * @param pets   list of sample pets
      */
-    private void addPets(Random random, List<Pet> pets) {
-        List<AdoptionCenter> ac;
-
-        // if no AdoptionCenters found, populate db w/ sample adoption centers
-        if ((ac = adoptionCenterService.getAllAdoptionCenters()).isEmpty()) {
-            addSampleAdoptionCenters();
-            ac = adoptionCenterService.getAllAdoptionCenters();
-        }
-
-        for (Pet p : pets) {
-            petService.savePet(
-                    p,
-                    ac.get(random.nextInt(ac.size())).getAdoptionID()
-            );
-        }
-    }
+//    private void addPets(Random random, List<Pet> pets) {
+//        List<AdoptionCenter> ac;
+//
+//        // if no AdoptionCenters found, populate db w/ sample adoption centers
+//        if ((ac = adoptionCenterService.getAllAdoptionCenters()).isEmpty()) {
+//            addSampleAdoptionCenters();
+//            ac = adoptionCenterService.getAllAdoptionCenters();
+//        }
+//
+//        for (Pet p : pets) {
+//            petService.savePet(
+//                    p,
+//                    ac.get(random.nextInt(ac.size())).getAdoptionID()
+//            );
+//        }
+//    }
 }

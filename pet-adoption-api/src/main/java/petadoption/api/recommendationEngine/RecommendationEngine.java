@@ -318,7 +318,15 @@ public class RecommendationEngine {
      * @param like if the <code>User</code> liked the pet
      */
     public void ratePet(UserPreferences up, Pet p, boolean like) {
-        double updateVal = like ? DEFAULT_VAL : -(DEFAULT_VAL);
+       // double updateVal = like ? DEFAULT_VAL : -(DEFAULT_VAL);
+        double updateVal;
+
+        if (like) {
+            updateVal = DEFAULT_VAL;
+        } else {
+            updateVal = -(DEFAULT_VAL);
+        }
+
 
         updatePreferences(up, p, updateVal);
     }

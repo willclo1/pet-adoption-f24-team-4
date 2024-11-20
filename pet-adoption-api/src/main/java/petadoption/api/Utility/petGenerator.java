@@ -5,6 +5,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.Pet;
 import petadoption.api.pet.PetService;
 import petadoption.api.pet.criteria.*;
@@ -14,195 +15,125 @@ import petadoption.api.pet.criteria.breed.DogBreed;
 import java.util.*;
 
 import static petadoption.api.pet.criteria.Species.CAT;
+import static petadoption.api.pet.criteria.Species.DOG;
 
-/**
- * @author Harrison Hassler
- * @author Rafe Loya
- */
 @Component
 public class petGenerator {
-    public static final int MAX_BREED = 1;
-    public static final int MAX_FUR_COLOR = 1;
-    public static final int MAX_TEMPERAMENTS = 1;
-    public static final String[] NAMES = {
-            "Angel",
-            "Popeye",
-            "Squishy",
-            "Abigail",
-            "Red",
-            "Fern Lily",
-            "Akiro",
-            "Boots",
-            "Swiper",
-            "Dora",
-            "McFluffin",
-            "Iggy",
-            "Waggs",
-            "Samson",
-            "Lucky",
-            "Diamond",
-            "Zeus",
-            "Bella",
-            "Casanova",
-            "Sketch",
-            "Allen",
-            "Toot",
-            "Gale",
-            "Sammy",
-            "Marvin",
-            "Waffles",
-            "Robbie",
-            "Houdini",
-            "Wayne",
-            "Dumplin",
-            "Knox",
-            "Potato",
-            "Bert",
-            "Porkchop",
-            "Chase",
-            "Barbie",
-            "Silver",
-            "Brody",
-            "Raven",
-            "Stephen",
-            "Sprite",
-            "Kate",
-            "Mandarin"
+
+    private static final int DEFAULT_NUM_PETS = 50;
+    private static final String[] NAMES = {
+            "Angel", "Popeye", "Squishy", "Abigail", "Red", "Fern Lily", "Akiro", "Boots", "Swiper",
+            "Dora", "McFluffin", "Iggy", "Waggs", "Samson", "Lucky", "Diamond", "Zeus", "Bella",
+            "Casanova", "Sketch", "Allen", "Toot", "Gale", "Sammy", "Marvin", "Waffles", "Robbie",
+            "Houdini", "Wayne", "Dumplin", "Knox", "Potato", "Bert", "Porkchop", "Chase", "Barbie",
+            "Silver", "Brody", "Raven", "Stephen", "Sprite", "Kate", "Mandarin"
     };
+
     @Autowired
-    PetService petService;
+    private PetService petService;
+
+    @Autowired
+    private AdoptionCenterService adoptionCenterService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void generatePetsOnStartup() {
-        int numPets = 20;
-        for(Pet p: generateRandomPetsV2(null, numPets)){
-            petService.savePet(p);
-        }
+        List<AdoptionCenter> adoptionCenters = createAndSaveAdoptionCenters();
+        generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
 
     }
 
-    public static List<Pet> generateRandomPetsV2(List<AdoptionCenter> adoptionCenters, int numPets) {
+    private List<AdoptionCenter> createAndSaveAdoptionCenters() {
+        List<AdoptionCenter> adoptionCenters = Arrays.asList(
+                new AdoptionCenter("Happy Paws Adoption Center", "123 Main St, Houston, TX", "Providing loving homes to pets in need. Open 7 days a week!"),
+                new AdoptionCenter("Forever Friends Shelter", "456 Elm St, Austin, TX", "A no-kill shelter with a variety of pets ready for adoption."),
+                new AdoptionCenter("Houston Humane Society", "789 Oak St, Houston, TX", "Rescue, care, and adoption of homeless pets. Serving the community for over 50 years."),
+                new AdoptionCenter("Pet Haven", "1010 Birch St, Dallas, TX", "Specializing in pet rescues and providing forever homes to abandoned pets."),
+                new AdoptionCenter("Furry Friends Foundation", "111 Pine St, San Antonio, TX", "Dedicated to helping pets find loving families and supporting pet owners in need.")
+        );
+
+        adoptionCenters.forEach(adoptionCenterService::saveCenter); // Save each center to the database
+        return adoptionCenters;
+    }
+
+    public void generateAndSavePets(int numPets, List<AdoptionCenter> adoptionCenters) {
+        List<Pet> pets = generateRandomPets(numPets, adoptionCenters);
+        pets.forEach(petService::savePet);
+    }
+
+    private List<Pet> generateRandomPets(int numPets, List<AdoptionCenter> adoptionCenters) {
         Random random = new Random();
-        Species[] speciesValues = Species.values();
-        CoatLength[] coatLengthValues = CoatLength.values();
-        FurColor[] furColorValues = FurColor.values();
-        CatBreed[] catBreeds = CatBreed.values();
-        DogBreed[] dogBreeds = DogBreed.values();
-        FurType[] furTypeValues = FurType.values();
-        Health[] healthValues = Health.values();
-        Size[] sizeValues = Size.values();
-        Temperament[] temperamentValues = Temperament.values();
-        Sex[] sexValues = Sex.values();
-        SpayedNeutered[] spayedNeuteredValues = SpayedNeutered.values();
-        List<Pet> pets = new ArrayList<Pet>();
+        List<Pet> pets = new ArrayList<>();
 
-        for(int i = 0; i < numPets; i++) {
-            Pet p = new Pet();
+        for (int i = 0; i < numPets; i++) {
+            Pet pet = new Pet();
+            pet.setName(NAMES[random.nextInt(NAMES.length)]);
+            pet.setAge(random.nextInt(1, 21));
+            pet.setSpecies(randomSpecies(random));
+            pet.setWeight(generateWeight(pet.getSpecies(), random));
+            pet.setCatBreed(generateCatBreeds(pet.getSpecies(), random));
+            pet.setDogBreed(generateDogBreeds(pet.getSpecies(), random));
+            pet.setFurType(randomEnum(FurType.class, random));
+            pet.setCoatLength(pet.getFurType() == FurType.HAIRLESS ? CoatLength.HAIRLESS : randomEnum(CoatLength.class, random));
+            pet.setFurColor(generateFurColors(pet.getFurType(), random));
+            pet.setHealthStatus(randomEnum(Health.class, random));
+            pet.setTemperament(generateTemperaments(random));
+            pet.setPetSize(randomEnum(Size.class, random));
+            pet.setSex(randomEnum(Sex.class, random));
+            pet.setSpayedNeutered(randomEnum(SpayedNeutered.class, random));
 
-            p.setName(NAMES[random.nextInt(NAMES.length)]);
-            p.setAge(random.nextInt(1, 21));
-            p.setSpecies(speciesValues[random.nextInt(speciesValues.length)]);
-            p.setWeight(random.nextInt(1, (p.getSpecies() == Species.CAT) ? 21 : 150));
-            if (p.getSpecies() == CAT) {
-                int numCatBreed = random.nextInt(MAX_BREED);
-                Set<CatBreed> cb = new HashSet<>();
-                for (int j = 0; j < numCatBreed; j++) {
-                    cb.add(catBreeds[random.nextInt(catBreeds.length)]);
-                }
-                if (random.nextBoolean()) {
-                    cb.add(CatBreed.MIX_BREED);
-                }
-                p.setCatBreed(cb);
-            } else {
-                int numDogBreed = random.nextInt(MAX_BREED);
-                Set<DogBreed> db = new HashSet<>();
-                for (int j = 0; j < numDogBreed; j++) {
-                    db.add(dogBreeds[random.nextInt(dogBreeds.length)]);
-                }
-                if (random.nextBoolean()) {
-                    db.add(DogBreed.MIX_BREED);
-                }
-                p.setDogBreed(db);
+            // Randomly assign an adoption center to the pet
+            if (adoptionCenters != null && !adoptionCenters.isEmpty()) {
+                pet.setCenter(adoptionCenters.get(random.nextInt(adoptionCenters.size())));
             }
-            p.setFurType(furTypeValues[random.nextInt(furTypeValues.length)]);
-            if (p.getFurType() != FurType.HAIRLESS) {
-                p.setCoatLength(coatLengthValues[random.nextInt(coatLengthValues.length)]);
-
-                int numFurColors = random.nextInt(MAX_FUR_COLOR);
-                Set<FurColor> furColors = new HashSet<>();
-                for (int j = 0; j < numFurColors; j++) {
-                    furColors.add(furColorValues[random.nextInt(furColorValues.length)]);
-                }
-                p.setFurColor(furColors);
-            } else {
-                p.setCoatLength(CoatLength.HAIRLESS);
-                Set<FurColor> furColors = new HashSet<>();
-                furColors.add(FurColor.NONE);
-                p.setFurColor(furColors);
-            }
-
-            p.setHealthStatus(healthValues[random.nextInt(healthValues.length)]);
-
-            int numTemperaments = random.nextInt(MAX_TEMPERAMENTS);
-            Set<Temperament> temperaments = new HashSet<>();
-            for (int j = 0; j < numTemperaments; j++) {
-                temperaments.add(temperamentValues[random.nextInt(temperamentValues.length)]);
-            }
-            p.setTemperament(temperaments);
-            p.setPetSize(sizeValues[random.nextInt(sizeValues.length)]);
-            p.setSex(sexValues[random.nextInt(sexValues.length)]);
-            p.setSpayedNeutered(spayedNeuteredValues[random.nextInt(spayedNeuteredValues.length)]);
-            if (adoptionCenters != null) {
-                p.setCenter(adoptionCenters.get(random.nextInt(adoptionCenters.size())));
-            }
-
-            pets.add(p);
-            System.out.println(p);
+            pets.add(pet);
         }
-
         return pets;
     }
 
-    private static void generateRandomPets(int count) {
-        Random random = new Random();
-        Species[] speciesValues = Species.values();
-        CoatLength[] coatLengthValues = CoatLength.values();
-        FurColor[] furColorValues = FurColor.values();
-        FurType[] furTypeValues = FurType.values();
-        Health[] healthValues = Health.values();
-        Size[] sizeValues = Size.values();
-        Temperament[] temperamentValues = Temperament.values();
-        Sex[] sexValues = Sex.values();
-        SpayedNeutered[] spayedNeuteredValues = SpayedNeutered.values();
+    private Species randomSpecies(Random random) {
+        return random.nextBoolean() ? CAT : DOG;
+    }
 
-        for (int i = 0; i < count; i++) {
-            Species randomSpecies = speciesValues[random.nextInt(speciesValues.length)];
-            CoatLength randomCoatLength = coatLengthValues[random.nextInt(coatLengthValues.length)];
-            FurColor randomFurColor = furColorValues[random.nextInt(furColorValues.length)];
-            FurType randomFurType = furTypeValues[random.nextInt(furTypeValues.length)];
-            Health randomHealth = healthValues[random.nextInt(healthValues.length)];
-            Size randomSize = sizeValues[random.nextInt(sizeValues.length)];
-            Temperament randomTemperament = temperamentValues[random.nextInt(temperamentValues.length)];
-            Sex randomSex = sexValues[random.nextInt(sexValues.length)];
-            SpayedNeutered randomSpayed = spayedNeuteredValues[random.nextInt(spayedNeuteredValues.length)];
+    private int generateWeight(Species species, Random random) {
+        return random.nextInt(1, species == CAT ? 21 : 150);
+    }
 
-
-            String randomBreed;
-            if (randomSpecies == CAT) {
-                CatBreed[] catBreeds = CatBreed.values();
-                randomBreed = catBreeds[random.nextInt(catBreeds.length)].getDisplayName();
-            } else if (randomSpecies == Species.DOG) {
-                DogBreed[] dogBreeds = DogBreed.values();
-                randomBreed = dogBreeds[random.nextInt(dogBreeds.length)].getDisplayName();
-            } else {
-                randomBreed = "Unknown Breed";
-            }
-            System.out.println(randomSpecies.getDisplayName() + "," + randomBreed + "," +
-                    randomCoatLength.getDisplayName() + "," + randomFurColor.getDisplayName() + "," +
-                    randomFurType.getDisplayName() + "," + randomHealth.getDisplayName() + "," +
-                    randomSize.getDisplayName() + "," + randomTemperament.getDisplayName() + "," + randomSex.getDisplayName()
-                    + "," + randomSpayed.getDisplayName()
-            );
+    private Set<CatBreed> generateCatBreeds(Species species, Random random) {
+        Set<CatBreed> breeds = new HashSet<>();
+        if (species == CAT) {
+            breeds.add(randomEnum(CatBreed.class, random));
+            if (random.nextBoolean()) breeds.add(CatBreed.MIX_BREED);
         }
+        return breeds;
+    }
+
+    private Set<DogBreed> generateDogBreeds(Species species, Random random) {
+        Set<DogBreed> breeds = new HashSet<>();
+        if (species == DOG) {
+            breeds.add(randomEnum(DogBreed.class, random));
+            if (random.nextBoolean()) breeds.add(DogBreed.MIX_BREED);
+        }
+        return breeds;
+    }
+
+    private Set<FurColor> generateFurColors(FurType furType, Random random) {
+        Set<FurColor> colors = new HashSet<>();
+        if (furType != FurType.HAIRLESS) {
+            colors.add(randomEnum(FurColor.class, random));
+        } else {
+            colors.add(FurColor.NONE);
+        }
+        return colors;
+    }
+
+    private Set<Temperament> generateTemperaments(Random random) {
+        Set<Temperament> temperaments = new HashSet<>();
+        temperaments.add(randomEnum(Temperament.class, random));
+        return temperaments;
+    }
+
+    private <T extends Enum<?>> T randomEnum(Class<T> enumClass, Random random) {
+        T[] enumValues = enumClass.getEnumConstants();
+        return enumValues[random.nextInt(enumValues.length)];
     }
 }

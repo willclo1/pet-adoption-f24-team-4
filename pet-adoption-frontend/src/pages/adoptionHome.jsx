@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import AdoptionNavBar from '@/components/adoptionNavBar';
+import AdoptionNavBar from '@/components/AdoptionNavBar';
 import {
   Box,
   Stack,
