@@ -253,7 +253,7 @@ const AddPet = () => {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Autocomplete
+                    <Autocomplete
                             multiple
                             options={options.temperament}
                             getOptionLabel={(option) => option}
@@ -278,7 +278,7 @@ const AddPet = () => {
                         </TextField>
                     </Grid>
                     <Grid item xs={6}>
-                        <Autocomplete
+                    <Autocomplete
                             multiple
                             options={options.furColor}
                             getOptionLabel={(option) => option}
