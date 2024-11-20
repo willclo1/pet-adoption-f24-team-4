@@ -42,6 +42,16 @@ export default function ViewCenters() {
     });
     };
 
+    const handleViewAllpets = () => {
+
+        if(email){
+            router.push(`/allPets?email=${email}&userID=${userID}`)
+        }
+        else{
+            router.push(`/allPets`)
+        }
+    }
+
 
     return (
         <Box sx={{ padding: 4, backgroundColor: '#f4f6f8' }}> {/* Light greyish background for contrast */}
@@ -56,7 +66,7 @@ export default function ViewCenters() {
             <Button
                 variant="outlined"
                 sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push(`/allPets?email=${email}&userID=${userID}`)}
+                onClick={handleViewAllpets}
             >
                 View All Pets
             </Button>

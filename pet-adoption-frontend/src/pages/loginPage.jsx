@@ -50,6 +50,8 @@ export default function LoginPage() {
                 // Store the JWT token in localStorage
                 
                 localStorage.setItem('token', result.token);
+                localStorage.setItem('email',emailAddress);
+                
                 setTokenStored(true); // Set token stored status to true
                 if (result.adoptionId) {
                     router.push(`/adoptionHome?email=${emailAddress}`); 

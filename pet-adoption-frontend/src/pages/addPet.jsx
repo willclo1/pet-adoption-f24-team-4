@@ -124,222 +124,225 @@ const AddPet = () => {
     };
 
     return (
-        <Paper sx={{ padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600, margin: 'auto' }}>
-            <Typography variant="h4" gutterBottom align="center">
-                Add a New Pet
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Name"
-                            name="name"
-                            value={petData.name}
-                            onChange={handleChange}
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            label="Weight"
-                            name="weight"
-                            value={petData.weight}
-                            onChange={handleChange}
-                            type="number"
-                            fullWidth
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            label="Age"
-                            name="age"
-                            value={petData.age}
-                            onChange={handleChange}
-                            type="number"
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            select
-                            label="Species"
-                            name="species"
-                            value={petData.species}
-                            onChange={handleSpeciesChange}
-                            fullWidth
-                            required
-                        >
-                            {options.species.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            select
-                            label="Coat Length"
-                            name="coatLength"
-                            value={petData.coatLength}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.coatLength.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <TextField
-                            select
-                            label="Fur Type"
-                            name="furType"
-                            value={petData.furType}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.furType.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-
-                    {petData.species === 'Dog' && (
-                        <Grid item xs={12}>
-                            <Autocomplete
-                                multiple
-                                options={options.dogBreed}
-                                getOptionLabel={(option) => option}
-                                onChange={(e, newValue) => handleArrayChange('dogBreed', newValue)}
-                                renderInput={(params) => <TextField {...params} label="Dog Breed" fullWidth />}
-                            />
-                        </Grid>
-                    )}
-                    {petData.species === 'Cat' && (
-                        <Grid item xs={12}>
-                            <Autocomplete
-                                multiple
-                                options={options.catBreed}
-                                getOptionLabel={(option) => option}
-                                onChange={(e, newValue) => handleArrayChange('catBreed', newValue)}
-                                renderInput={(params) => <TextField {...params} label="Cat Breed" fullWidth />}
-                            />
-                        </Grid>
-                    )}
-
-                    <Grid item xs={6}>
-                        <TextField
-                            select
-                            label="Pet Size"
-                            name="petSize"
-                            value={petData.petSize}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.size.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                    <Autocomplete
-                            multiple
-                            options={options.temperament}
-                            getOptionLabel={(option) => option}
-                            onChange={(e, newValue) => handleArrayChange('temperament', newValue)}
-                            renderInput={(params) => <TextField {...params} label="Temperament" fullWidth />}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            select
-                            label="Health Status"
-                            name="healthStatus"
-                            value={petData.healthStatus}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.healthStatus.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-                    <Grid item xs={6}>
-                    <Autocomplete
-                            multiple
-                            options={options.furColor}
-                            getOptionLabel={(option) => option}
-                            onChange={(e, newValue) => handleArrayChange('furColor', newValue)}
-                            renderInput={(params) => <TextField {...params} label="Fur Color" fullWidth />}
-                        />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <TextField
-                            select
-                            label="Sex"
-                            name="sex"
-                            value={petData.sex}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.sex.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <TextField
-                            select
-                            label="Spayed/Neutered"
-                            name="spayedNeutered"
-                            value={petData.spayedNeutered}
-                            onChange={handleChange}
-                            fullWidth
-                        >
-                            {options.spayedNeutered.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-                </Grid>
-                <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', marginTop: 2 }}>
-                    Add Pet
-                </Button>
-            </Box>
-            <Button variant="outlined" sx={{ mt: 2 }} onClick={handleBack}>
-              Back
-            </Button>
+        <main>
             
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-                    Pet added successfully!
-                </Alert>
-            </Snackbar>
-        </Paper>
+            <Paper sx={{ padding: 3, display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600, margin: 'auto' }}>
+                <Typography variant="h4" gutterBottom align="center">
+                    Add a New Pet
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Name"
+                                name="name"
+                                value={petData.name}
+                                onChange={handleChange}
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Weight"
+                                name="weight"
+                                value={petData.weight}
+                                onChange={handleChange}
+                                type="number"
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                label="Age"
+                                name="age"
+                                value={petData.age}
+                                onChange={handleChange}
+                                type="number"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                select
+                                label="Species"
+                                name="species"
+                                value={petData.species}
+                                onChange={handleSpeciesChange}
+                                fullWidth
+                                required
+                            >
+                                {options.species.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Coat Length"
+                                name="coatLength"
+                                value={petData.coatLength}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.coatLength.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Fur Type"
+                                name="furType"
+                                value={petData.furType}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.furType.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+
+                        {petData.species === 'Dog' && (
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    options={options.dogBreed}
+                                    getOptionLabel={(option) => option}
+                                    onChange={(e, newValue) => handleArrayChange('dogBreed', newValue)}
+                                    renderInput={(params) => <TextField {...params} label="Dog Breed" fullWidth />}
+                                />
+                            </Grid>
+                        )}
+                        {petData.species === 'Cat' && (
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    options={options.catBreed}
+                                    getOptionLabel={(option) => option}
+                                    onChange={(e, newValue) => handleArrayChange('catBreed', newValue)}
+                                    renderInput={(params) => <TextField {...params} label="Cat Breed" fullWidth />}
+                                />
+                            </Grid>
+                        )}
+
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Pet Size"
+                                name="petSize"
+                                value={petData.petSize}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.size.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={6}>
+                        <Autocomplete
+                                multiple
+                                options={options.temperament}
+                                getOptionLabel={(option) => option}
+                                onChange={(e, newValue) => handleArrayChange('temperament', newValue)}
+                                renderInput={(params) => <TextField {...params} label="Temperament" fullWidth />}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                select
+                                label="Health Status"
+                                name="healthStatus"
+                                value={petData.healthStatus}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.healthStatus.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                        <Autocomplete
+                                multiple
+                                options={options.furColor}
+                                getOptionLabel={(option) => option}
+                                onChange={(e, newValue) => handleArrayChange('furColor', newValue)}
+                                renderInput={(params) => <TextField {...params} label="Fur Color" fullWidth />}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Sex"
+                                name="sex"
+                                value={petData.sex}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.sex.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Spayed/Neutered"
+                                name="spayedNeutered"
+                                value={petData.spayedNeutered}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.spayedNeutered.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                    </Grid>
+                    <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', marginTop: 2 }}>
+                        Add Pet
+                    </Button>
+                </Box>
+                <Button variant="outlined" sx={{ mt: 2 }} onClick={handleBack}>
+                Back
+                </Button>
+                
+                <Snackbar
+                    open={openSnackbar}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                        Pet added successfully!
+                    </Alert>
+                </Snackbar>
+            </Paper>
+        </main>
     );
 };
 

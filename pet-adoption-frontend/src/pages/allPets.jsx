@@ -2,12 +2,14 @@ import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid, Autocomplete,Button,TextField, MenuItem,Avatar,Dialog,DialogTitle,DialogContent,DialogActions } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
+import NavBar from '@/components/NavBar';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function allPets() {
     const router = useRouter();
     const { email } = router.query;
     const { userID } = router.query;
+    const [nav,setNav] = useState(false);
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currPet,setCurrPet] = useState(null);
@@ -134,6 +136,18 @@ export default function allPets() {
         
     }
 
+    const handleGoBack = () => {
+        if(email){
+            router.push(`/viewCenters?email=${email}&userID=${userID}`)
+
+        }
+        else{
+
+            router.push('/viewCenters')
+        }
+        
+
+    }
     const handleViewPet = (pet) =>{
         setCurrPet(pet);   
 
@@ -319,7 +333,7 @@ export default function allPets() {
         }, 1000);
       };
 
-    useEffect(() => {
+      useEffect(() => {
         const token = localStorage.getItem('token');
         console.log(token)
         fetch(`${apiUrl}/getOptions`, {
@@ -355,6 +369,11 @@ export default function allPets() {
             }
         };
         fetchPets();
+        if(userID){
+            setNav(true);
+        }
+        
+        console.log('i fire once');
     }, [change]);
 
     if (loading) {
@@ -378,17 +397,20 @@ export default function allPets() {
     }
 
     return (
+        <main>
+            {nav && <NavBar />}
+        
         <Box sx={{ padding: 4, backgroundColor: '#f0f4f8' }}>
             <Button
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
-                sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push('/viewCenters')}
+                sx={{ marginBottom: 2, marginLeft: 35,color: '#1976d2', borderColor: '#1976d2' }}
+                onClick={handleGoBack}
             >
                 Back to Home
             </Button>
             <div className='card-container'>
-            <Card sx={{ boxShadow: 3, borderRadius: 4, padding: 3 }} className='fixed-card'>
+            <div  className='fixed-card'>
             <Typography variant="body1" className="sort-by-typography">
                     Sort by:
                 </Typography>
@@ -563,7 +585,7 @@ export default function allPets() {
                 )}
 
 
-            </Card>
+            </div>
             <Card sx={{ boxShadow: 3, borderRadius: 4, padding: 3 }} className='scrollable-card'>
 
                 <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
@@ -682,7 +704,7 @@ export default function allPets() {
             </Dialog>
             
             </Box>
-
+            </main>
         
     );
 }

@@ -139,7 +139,7 @@ export default function Profile() {
 
       console.log(user.emailAddress)
 
-      const response = await fetch(`${apiUrl}/changeFirstName`, {
+      const response = await fetch(`${apiUrl}/changeEmail`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ export default function Profile() {
 
     user.emailAddress = newEmail;
 
-    router.push(`Profile?email=${newEmail}&userID=${user.id}`);
+    router.push(`/Profile?email=${newEmail}&userID=${user.id}`);
 
     } catch (error) {
       console.error("Error logging in: ", error);
