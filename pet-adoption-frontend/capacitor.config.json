@@ -1,0 +1,9 @@
+{
+  "appId": "com.example.petadoption",
+  "appName": "Pet Adoption",
+  "webDir": "out",
+  "server": {
+    "url": "http://34.28.118.235:3000",
+    "cleartext": false
+  }
+}
