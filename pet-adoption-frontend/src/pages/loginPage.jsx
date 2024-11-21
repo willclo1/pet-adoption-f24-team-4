@@ -23,31 +23,22 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify({ emailAddress, password }),
             });
-            console.log('WE ETNERED');
-            console.log(emailAddress);
-            console.log(password);
-
-
-            console.log(`${apiUrl}/login`);
-            console.log("Response status:", response.status);
     
             if (!response.ok) {
                 const errorMessage = await response.text();
                 setIsSuccess(false);
-                setMessage(errorMessage); // Display error message from backend
-                setTokenStored(false); // Reset token stored status
+                setMessage("Login Failed. Please Try Again!");
+                setTokenStored(false);
                 return;
             }
     
             const result = await response.json();
             
     
-            // Check if token exists in the response
             if (result.token) {
                 setIsSuccess(true);
                 setMessage("Login successful!");
     
-                // Store the JWT token in localStorage
                 
                 localStorage.setItem('token', result.token);
                 setTokenStored(true); // Set token stored status to true
