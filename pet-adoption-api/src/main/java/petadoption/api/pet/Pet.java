@@ -47,6 +47,150 @@ public class Pet {
 
     public Pet() {}
 
+    public void setAttributes(HashSet<PetAttribute> attributes) {
+        boolean species = false,
+                catBreed = false,
+                dogBreed = false,
+                furType = false,
+                furColor = false,
+                furLength = false,
+                size = false,
+                health = false,
+                gender = false,
+                spayedNeutered = false,
+                temperament = false,
+                age = false,
+                weight = false;
+        String speciesType = "";
+
+        /* Although a set would prohibit multiple elements,
+         * this attribute checking is intended to ensure the following:
+         *      - There is at least one occurrence of necessary attributes
+         *      - Attributes that can only appear a single time do not
+         *          have multiple entries (ex. age, gender, species, etc.)
+         *      - Species only have breeds that are relevant to them
+         *          (i.e. a cat does not contain dog breeds, v.v.)
+         */
+        for (PetAttribute attribute : attributes) {
+            switch (attribute.getType()) {
+                case "Species":
+                    if (species) {
+                        throw new RuntimeException("Multiple species records found");
+                    }
+                    speciesType = attribute.getAttribute();
+                    species = true;
+                    break;
+                case "Cat Breed":
+                    catBreed = true;
+                    break;
+                case "Dog Breed":
+                    dogBreed = true;
+                    break;
+                case "Fur Type":
+                    if (furType) {
+                        throw new RuntimeException("Multiple fur type records found");
+                    }
+                    furType = true;
+                    break;
+                case "Fur Color":
+                    furColor = true;
+                    break;
+                case "Fur Length":
+                    if (furLength) {
+                        throw new RuntimeException("Multiple fur length records found");
+                    }
+                    furLength = true;
+                    break;
+                case "Size":
+                    if (size) {
+                        throw new RuntimeException("Multiple size records found");
+                    }
+                    size = true;
+                    break;
+                case "Health":
+                    if (health) {
+                        throw new RuntimeException("Multiple health records found");
+                    }
+                    health = true;
+                    break;
+                case "Gender":
+                    if (gender) {
+                        throw new RuntimeException("Multiple gender records found");
+                    }
+                    gender = true;
+                    break;
+                case "Spayed / Neutered":
+                    if (spayedNeutered) {
+                        throw new RuntimeException("Multiple spayed neutered records found");
+                    }
+                    spayedNeutered = true;
+                    break;
+                case "Temperament":
+                    temperament = true;
+                    break;
+                case "Age":
+                    if (age) {
+                        throw new RuntimeException("Multiple age records found");
+                    }
+                    age = true;
+                    break;
+                case "Weight":
+                    if (weight) {
+                        throw new RuntimeException("Multiple weight records found");
+                    }
+                    weight = true;
+            }
+        }
+        if (!species) {
+            throw new RuntimeException("Species was not specified in attributes");
+        }
+        if (speciesType.equals("Cat")) {
+            if (!catBreed) {
+                throw new RuntimeException("No cat breeds found for cat");
+            }
+            if (dogBreed) {
+                throw new RuntimeException("Dog breeds detected for cat");
+            }
+        }
+        if (speciesType.equals("Dog")) {
+            if (!dogBreed) {
+                throw new RuntimeException("No dog breeds found for dog");
+            }
+            if (catBreed) {
+                throw new RuntimeException("Cat breeds detected for dog");
+            }
+        }
+        if (!furType) {
+            throw new RuntimeException("No fur type records found for pet");
+        }
+        if (!furColor) {
+            throw new RuntimeException("No fur color records found for pet");
+        }
+        if (!size) {
+            throw new RuntimeException("No size records found for pet");
+        }
+        if (!health) {
+            throw new RuntimeException("No health records found for pet");
+        }
+        if (!gender) {
+            throw new RuntimeException("No gender records found for pet");
+        }
+        if (!spayedNeutered) {
+            throw new RuntimeException("No spayed neutered records found for pet");
+        }
+        if (!temperament) {
+            throw new RuntimeException("No temperament records found for pet");
+        }
+        if (!age) {
+            throw new RuntimeException("No age records found for pet");
+        }
+        if (!weight) {
+            throw new RuntimeException("No weight records found for pet");
+        }
+
+        this.attributes = attributes;
+    }
+
     public String toString() {
         StringBuilder str = new StringBuilder();
 
