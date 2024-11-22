@@ -398,7 +398,7 @@ export default function allPets() {
 
     return (
         <main>
-            {nav && <NavBar />}
+            {nav ? <NavBar /> : <p></p>}
         
         <Box sx={{ padding: 4, backgroundColor: '#f0f4f8' }}>
             <Button
