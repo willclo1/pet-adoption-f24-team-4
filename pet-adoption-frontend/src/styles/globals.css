@@ -9,6 +9,102 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
 }
+.adopt-button {
+  background-image: linear-gradient(to right, #6ee7b7, #3b82f6); /* Green to blue gradient */
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 24px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  transition: transform 0.3s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Custom style for the checkbox */
+.cool-checkbox {
+  width: 40px; /* Bigger checkbox for better clickability and visibility */
+  height: 40px; /* Keep it square */
+  cursor: pointer; /* Indicates it's clickable */
+  accent-color: #2196F3; /* Sets the primary color for the checkbox in supported browsers */
+  margin-left: 8px; /* Space between checkbox and label */
+  position: absolute;
+  right: 0; /* Aligns the checkbox to the far right edge of the container */
+  margin-right: 22px;
+}
+
+
+.sort-by-typography {
+  color: black; /* Setting the text color to blue */
+  font-weight: bold; /* Making the font bold */
+  text-transform: uppercase; /* Converting text to uppercase */
+  letter-spacing: 0.1em; /* Increasing letter spacing */
+ 
+  padding: 5px; /* Padding around the text */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+.card-container {
+  
+  display: flex; /* Establishes a flex container */
+  
+}
+
+.check-container {
+  display: flex;
+  margin-top: 10px;
+}
+.fixed-card {
+  position: fixed; /* Fix the position relative to the viewport */
+  top: 100px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  width: 245px; /* Set a fixed width for the fixed card */
+  height: 100vh; /* Full viewport height */
+  max-width:100%;    
+  background-color: #f8f9fa; /* Light background for visibility */
+  padding: 20px; /* Padding for internal spacing */
+  box-shadow: 0 2px 5px rgba(0,   0, 0, 0.1); /* Optional shadow for depth */
+  
+}
+
+.scrollable-card {
+  margin-left: 250px; /* Offset to the right by the width of the fixed card plus some margin */
+  
+  background-color: #ffffff; /* Different background color for contrast */
+  padding: 20px; /* Padding for content */
+  overflow-y: auto; /* Enable vertical scrolling */
+  flex-grow: 1; /* Allows the Card to take up necessary space */
+  overflow-y: auto; /* Scroll inside the Card */
+  padding: 20px; /* Padding inside the card */
+  border: 1px solid #ccc; /* Visibility */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Optional depth */
+}
+
+
+
+.scrollable-box {
+  height: 300px; /* Fixed height or max-height depending on your design */
+  overflow-y: auto; /* Enables vertical scrolling */
+  padding: 15px; /* Optional padding */
+  border: 1px solid #ccc; /* Optional border for visibility */
+  margin: 20px; /* Spacing around the box */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Optional styling */
+}
+.button-container {
+  display: flex;
+
+}
+.adopt-button:hover, .adopt-button:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+.adopt-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
 
 a {
   color: inherit;

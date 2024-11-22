@@ -9,7 +9,8 @@ export default function ViewCenters() {
     const [message, setMessage] = useState(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
-
+    const { email } = router.query;
+    const { userID } = router.query;
     useEffect(() => {
         const fetchAdoptionCenters = async () => {
             try {
@@ -41,6 +42,16 @@ export default function ViewCenters() {
     });
     };
 
+    const handleViewAllpets = () => {
+
+        if(email){
+            router.push(`/allPets?email=${email}&userID=${userID}`)
+        }
+        else{
+            router.push(`/allPets`)
+        }
+    }
+
 
     return (
         <Box sx={{ padding: 4, backgroundColor: '#f4f6f8' }}> {/* Light greyish background for contrast */}
@@ -51,6 +62,13 @@ export default function ViewCenters() {
                 onClick={() => router.push('/')}
             >
                 Back to Home
+            </Button>
+            <Button
+                variant="outlined"
+                sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
+                onClick={handleViewAllpets}
+            >
+                View All Pets
             </Button>
            
             <Typography variant="h4" gutterBottom sx={{ color: '#000', marginBottom: 3, fontWeight: 'bold'}}>
