@@ -139,25 +139,7 @@ export default function Profile() {
 
       console.log(user.emailAddress)
 
-      const response = await fetch(`${apiUrl}/changeEmail`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email: user.emailAddress, newEmail: newEmail }),
-      });
-
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.log('aw man :(')
-        console.log(errorMessage);
-        //setIsSuccess(false);
-        //setMessage(errorMessage); // Display error message from backend
-        //setTokenStored(false); // Reset token stored status
-        return;
-      }
+      
 
     const reponse = await fetch(`${apiUrl}/login`, {
       method: 'POST',
@@ -185,9 +167,33 @@ export default function Profile() {
       localStorage.setItem('token', result.token);
     }
     else{
+      return;
       console.log('WORNG')
     }
 
+    const response = await fetch(`${apiUrl}/changeEmail`, {
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email: user.emailAddress, newEmail: newEmail }),
+    });
+
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.log('aw man :(')
+      console.log(errorMessage);
+      //setIsSuccess(false);
+      //setMessage(errorMessage); // Display error message from backend
+      //setTokenStored(false); // Reset token stored status
+      return;
+    }
+    else{
+
+
+    }
     user.emailAddress = newEmail;
 
     router.push(`/Profile?email=${newEmail}&userID=${user.id}`);
