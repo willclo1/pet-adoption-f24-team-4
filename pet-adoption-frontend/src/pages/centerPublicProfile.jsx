@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid, Button, Avatar } from '@mui/material';
+import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid, Button, Avatar,Dialog,DialogTitle,DialogContent,DialogActions } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -10,10 +10,20 @@ export default function CenterPublicProfile() {
     const [adoptionCenter, setAdoptionCenter] = useState(null);
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currPet,setCurrPet] = useState(null);
     const [error, setError] = useState(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
+    const handleViewPet = (pet) =>{
+        setCurrPet(pet);   
+
+    }
+    const handleExit = () => {
+        setCurrPet(null);
+
+
+    }
     // Fetch Adoption Center details
     useEffect(() => {
         const fetchAdoptionCenter = async () => {
@@ -123,35 +133,107 @@ export default function CenterPublicProfile() {
                     <Grid container spacing={3}>
                         {pets.map((pet) => (
                             <Grid item xs={12} sm={6} md={4} key={pet.id}>
-                                <Card sx={{ borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }}>
-                                    <Avatar
+                                <Card sx={{ width: 500,height: 500, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }} >
+                                <Avatar
                                         src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
-                                        sx={{ width: 200, height: 200, borderRadius: 0 }}
+                                        sx={{
+                                            flex: 1,
+                                            width: 450,
+                                            height: 350,
+                                            resizeMode: 'contain',
+                                            borderRadius: '0%', // if you want it circular, use '50%'
+                                            objectPosition: 'center'  // Centers the image within the element
+                                        }}
+                                        style={{border: 0, objectfit: 'fill'}}
+                                        
+                                        
                                     />
                                     <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                                         <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
                                             <PetsIcon />
                                         </Avatar>
                                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                            {pet.firstName} {pet.lastName}
+                                            {pet.name} 
                                         </Typography>
                                     </Box>
-
-                                    <Typography variant="body2" color="textSecondary">
-                                        Type: {pet.petType}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Weight: {pet.weight} lbs
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Fur Type: {pet.furType}
-                                    </Typography>
+                                    <Button className="adopt-button"  onClick={() => handleViewPet(pet)}>View Pet</Button>
+                                        
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
                 )}
             </Card>
-        </Box>
+            <Dialog open={currPet}>
+                <DialogTitle>{"Would You Like To Adopt This Pet?"}</DialogTitle>
+                <DialogContent>
+                <Avatar
+                    src={currPet && currPet.profilePicture && currPet.profilePicture.imageData ? `data:image/png;base64,${currPet.profilePicture.imageData}` : null}
+                        sx={{
+                            flex: 1,
+                            width: 450,
+                            height: 350,
+                            resizeMode: 'contain',
+                            borderRadius: '0%', // if you want it circular, use '50%'
+                            objectPosition: 'center'  // Centers the image within the element
+                        }}
+                        style={{border: 0, objectfit: 'fill'}}
+                        
+                        
+                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                        <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
+                            <PetsIcon />
+                        </Avatar>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {currPet ? currPet.name : null} 
+                        </Typography>
+                        
+                    </Box>
+                    <Typography variant="body2" color="textSecondary">
+                        Type: {currPet ? currPet.species : null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Age: {currPet ? currPet.age : null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Coat Length: {currPet ? currPet.coatLength : null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         Breed: {currPet ? currPet.species == 'CAT' ? currPet.catBreed : currPet.dogBreed : null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         Fur Type: {currPet ? currPet.furType: null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         Health Status: {currPet ? currPet.healthStatus: null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         Size: {currPet ? currPet.petSize: null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         Sex: {currPet ? currPet.sex: null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                         spayed Neutered: {currPet ? currPet.spayedNeutered: null}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Temperament: {currPet ? currPet.temperament: null}
+                    </Typography>
+                   
+
+                </DialogContent>
+                <DialogActions>
+                    <Button className="adopt-button" onClick={handleExit}>No</Button>
+                    <Button  className="adopt-button">
+                        Adopt
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+            
+            </Box>
+
+        
     );
 }

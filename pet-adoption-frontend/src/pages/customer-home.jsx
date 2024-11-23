@@ -18,12 +18,15 @@ export default function CustomerHomePage() {
         setLoading(true);
         try {
           const token = localStorage.getItem('token');
+
+          console.log(token);
           const response = await fetch(`${apiUrl}/users/email/${encodeURIComponent(email)}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (!response.ok) throw new Error('Failed to fetch user');
           const data = await response.json();
           setUser(data);
+          localStorage.setItem('id', data.id)
           if (data.profilePicture && data.profilePicture.imageData) {
             setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
           }
