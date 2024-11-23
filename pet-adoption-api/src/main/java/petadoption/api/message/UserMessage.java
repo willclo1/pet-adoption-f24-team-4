@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.units.qual.C;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.recommendationEngine.RecommendationEngine;
 import petadoption.api.user.User;
 
 @Data
 @Entity
 @Table(name = UserMessage.TABLE_NAME)
-public class UserMessage {
+public class UserMessage extends RecommendationEngine {
     public static final String TABLE_NAME = "UserMessage";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -599,7 +599,7 @@ export default function allPets() {
                 ) : (
                     <Grid container spacing={3}>
                         {pets.map((pet) => (
-                            <Grid item xs={4} sm={2} md={2} key={pet.id}>
+                            <Grid item xs={12} sm={4} md={2.4} key={pet.id}>
                                 <Card sx={{ width: 250,height: 325, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }} >
                                 <Avatar
                                         src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
