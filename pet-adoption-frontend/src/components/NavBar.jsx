@@ -126,7 +126,7 @@ function NavBar () {
       // Check if the token exists before redirecting
       if (token) {
           // Redirect to the Profile page, only passing the email
-          router.push(`/Profile?email=${email}`);
+          router.push(`/Profile?email=${user.emailAddress}`);
       } else {
           console.error('No token found in local storage.'); // Handle the case where no token is found
           // Optionally, you could show an error message to the user or redirect them to the login page
@@ -134,7 +134,7 @@ function NavBar () {
     };
 
     const handleNavigation = (path) => {
-      router.push(`${path}?email=${email}&userID=${user.id}`);
+      router.push(`${path}?email=${user.emailAddress}&userID=${user.id}`);
       handleCloseMenu();
     };  
 

@@ -1,10 +1,7 @@
 package petadoption.api.user;
 
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
@@ -13,7 +10,6 @@ import petadoption.api.adoptionCenter.AdoptionCenterRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 
 @Service
@@ -70,6 +66,9 @@ public class UserService {
             userRepository.save(user);
         }
     }
+    public void change(User user) {
+        userRepository.save(user);
+    }
     public void deleteUser(ChangePassword ucer) {
         User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
         if(user.getEmailAddress().equals(ucer.getEmail())) {
@@ -106,9 +105,11 @@ public class UserService {
     }
 
     public String verify(User user) {
+        System.out.println(user.getEmailAddress());
         Optional<User> optionalUser = userRepository.findByEmailAddress(user.getEmailAddress());
 
         if (optionalUser.isPresent()) {
+            System.out.println("well hello there");
             User foundUser = optionalUser.get();
             if (encoder.matches(user.getPassword(), foundUser.getPassword())) {
                 return jwtService.generateToken(user.getEmailAddress());
@@ -131,4 +132,7 @@ public class UserService {
     public void deleteAllUsers() {
         userRepository.deleteAll();
     }
+
+
+
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar } from '@mui/material';
+import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Snackbar, Box,Card } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { ClosedCaptionDisabledSharp, MarkEmailUnread } from '@mui/icons-material';
 import NavBar from '@/components/NavBar'
@@ -19,10 +19,19 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [password, setPassword] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
-  const [currentPassword, setCurrentPassowrd] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState(null);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [passwordMessgae,setPasswordMessage] = useState('');
   const [passColor, setPassColor] = useState(null);
+  const [isEditingFirstName, setIsEditingFirstName] = useState(false);
+  const [isEditingLastName, setIsEditingLastName] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [currentFirstName, setCurrentFirstName] = useState(false)
+  const [currentLastName,setCurrentLastName] = useState(false)
+  const [newEmail, setNewEmail]  = useState(null);
+  const [newFirstName, setNewFirstName]  = useState(null);
+  const [newLastName, setNewLastName]  = useState(null);
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
@@ -37,7 +46,168 @@ export default function Profile() {
     setProfilePicture(newPictureUrl);
   };
 
+  
+  const editFirstName = () => {
+    setIsEditingFirstName(true); 
+  }
+
+  const editLastName = () => {
+    setIsEditingLastName(true);
+    
+  }
+  const editEmail = () => {
+    setIsEditingEmail(true);
+  }
+
+
+  const changeFirstName = async (e) =>{
+    setIsEditingFirstName(false)
+    try{
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/changeFirstName`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: user.emailAddress, firstName: newFirstName }),
+      });
+      
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.log('aw man :(')
+        console.log(errorMessage);
+        //setIsSuccess(false);
+        //setMessage(errorMessage); // Display error message from backend
+        //setTokenStored(false); // Reset token stored status
+        return;
+      }
+      setCurrentFirstName(newFirstName)
+
+
+    }catch (error) {
+      console.error("Error logging in: ", error);
+      //setMessage("NOOB");
+    }
+
+
+  }
+
+  const changeLastName = async (e) =>{
+    setIsEditingLastName(false)
+    try{
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/changeLastName`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: user.emailAddress, lastName: newLastName }),
+      });
+      
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        console.log('aw man :(')
+        console.log(errorMessage);
+        //setIsSuccess(false);
+        //setMessage(errorMessage); // Display error message from backend
+        //setTokenStored(false); // Reset token stored status
+        return;
+      }
+      setCurrentLastName(newLastName)
+
+
+    }catch (error) {
+      console.error("Error logging in: ", error);
+      //setMessage("NOOB");
+    }
+
+
+  }
+
+  const changeEmail = async (e) => {
+    setIsEditingEmail(false);
+    
+    try {
+      console.log(`${apiUrl}/changeEmail`);
+      console.log('hi')
+      const token = localStorage.getItem('token');
+      console.log(token);
+
+      console.log(user.emailAddress)
+
+      
+
+    const reponse = await fetch(`${apiUrl}/login`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ emailAddress: newEmail, password  }),
+    });
+
+    if (!reponse.ok) {
+      const errorMessage = await reponse.text();
+      console.log('aw mn :(')
+      console.log(errorMessage);
+      //setIsSuccess(false);
+      //setMessage(errorMessage); // Display error message from backend
+      //setTokenStored(false); // Reset token stored status
+      return;
+    }
+    const result = await reponse.json();
+
+    if(result.token) {
+
+      // Store the JWT token in localStorage
+      
+      localStorage.setItem('token', result.token);
+    }
+    else{
+      return;
+      console.log('WORNG')
+    }
+
+    const response = await fetch(`${apiUrl}/changeEmail`, {
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email: user.emailAddress, newEmail: newEmail }),
+    });
+
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.log('aw man :(')
+      console.log(errorMessage);
+      //setIsSuccess(false);
+      //setMessage(errorMessage); // Display error message from backend
+      //setTokenStored(false); // Reset token stored status
+      return;
+    }
+    else{
+
+
+    }
+    user.emailAddress = newEmail;
+
+    router.push(`/Profile?email=${newEmail}&userID=${user.id}`);
+
+    } catch (error) {
+      console.error("Error logging in: ", error);
+      //setMessage("NOOB");
+      }
+
+
+  }
+
   const deleteAccount = async (e) => {
+
     e.preventDefault();
 
     try {
@@ -58,15 +228,13 @@ export default function Profile() {
       const result = await response.json();
       
       if(response.status == 200){
-          console.log('WE LIKE FOTNITE')
+        console.log('WE LIKE FOTNITE')
       }
-      } catch (error) {
+    } catch (error) {
       console.error("Error logging in: ", error);
       //setMessage("NOOB");
       }
       router.push(`/`);
-
-
   }
 
   const changePassword = async (e) => {
@@ -118,7 +286,7 @@ export default function Profile() {
         setPassword(newPassword);
         console.log('Your new Password is: ' + newPassword);
         try {
-            const token = localStorage.getItem('token'); // Get the token from local storage
+          const token = localStorage.getItem('token'); // Get the token from local storage
             
             const response = await fetch(`${apiUrl}/profile`, {
                 method: 'PUT',
@@ -212,6 +380,7 @@ export default function Profile() {
     const fetchUser = async () => {
         if (email) {
             const token = localStorage.getItem('token'); // Get the token from local storage
+            console.log(email)
             try {
                 const response = await fetch(`${apiUrl}/users/email/${email}`, {
                     method: 'GET',
@@ -225,9 +394,12 @@ export default function Profile() {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-
+                
                 const data = await response.json();
                 setUser(data); // Set the user data
+                console.log(data)
+                setCurrentFirstName(data.firstName)
+                setCurrentLastName(data.lastName)
 
                 if (data.profilePicture && data.profilePicture.imageData) {
                     setProfilePicture(`data:image/png;base64,${data.profilePicture.imageData}`);
@@ -263,19 +435,210 @@ export default function Profile() {
       <Typography variant="h6" component='span' gutterBottom sx={{ fontWeight: 'bold', color: '#black' }}>
         Account Info
         </Typography>
-        <Typography variant="h6" component='span' gutterBottom sx={{  color: '#Black' }}>
-        First name: {user.firstName} 
-        </Typography>
-        <Typography variant="h6" component='span' gutterBottom sx={{ color: '#Black' }}>
-        Last name: {user.lastName} 
-        </Typography>
-      <Typography variant="h6" component='span' gutterBottom sx={{  color: 'black' }}>
-        Email Address: {user.emailAddress}
-        </Typography>
-      </Stack>
-      <Stack>
+        
+        <Card sx={{ borderRadius: 1, backgroundColor: 'lightBlue', boxShadow: 3, padding: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* This Box acts as a flex container */}
+        {isEditingFirstName ?
+        <Box>
+        <TextField
+        label="First Name"
+        variant="outlined"
+        margin="normal"
+        value={newFirstName}
+        onChange={(e) => setNewFirstName(e.target.value)}
+        required
+        sx={{ borderRadius: 2 }}
+        />
+      <Button
+      variant="contained"
+      onClick={changeFirstName}
+      sx={{
+        marginTop: 2.8,
+        paddingY: 1,
+        paddingX: 3,
+        borderRadius: 2.5,
+        backgroundColor: '#1976d2',
+        '&:hover': {
+          backgroundColor: '#1565c0',
+        },
+      }}
+    >
+      Save
+    </Button> 
+    </Box>  
+        :
+        <Box>
+        <Typography 
+        variant="h6" 
+        component="span" 
+        gutterBottom
+        sx={{
+          color: '#000000', // Corrected the color value
+          marginRight: 2 // Adds spacing between the text and the button
+        }}
+      >
+        First name: {currentFirstName}
+      </Typography>
 
-        <table>
+      <Button
+        variant="contained"
+        onClick={editFirstName}
+        sx={{
+          marginBottom: 0,
+          paddingY: 1,
+          paddingX: 3,
+          borderRadius: 2.5,
+          backgroundColor: '#1976d2',
+          '&:hover': {
+            backgroundColor: '#1565c0',
+          },
+        }}
+      >
+        Edit
+      </Button>
+      </Box>  
+        }
+    
+    </Box>
+    </Card>
+    
+
+    <Card sx={{ borderRadius: 1, backgroundColor: 'lightBlue', boxShadow: 3, padding: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* This Box acts as a flex container */}
+    {isEditingLastName ?
+        <Box>
+        <TextField
+        label="Last Name"
+        variant="outlined"
+        margin="normal"
+        value={newLastName}
+        onChange={(e) => setNewLastName(e.target.value)}
+        required
+        sx={{ borderRadius: 2 }}
+        />
+      <Button
+      variant="contained"
+      onClick={changeLastName}
+      sx={{
+        marginTop: 2.8,
+        paddingY: 1,
+        paddingX: 3,
+        borderRadius: 2.5,
+        backgroundColor: '#1976d2',
+        '&:hover': {
+          backgroundColor: '#1565c0',
+        },
+      }}
+    >
+      Save
+    </Button> 
+    </Box>  
+        :
+        <Box>
+        <Typography 
+        variant="h6" 
+        component="span" 
+        gutterBottom
+        sx={{
+          color: '#000000', // Corrected the color value
+          marginRight: 2 // Adds spacing between the text and the button
+        }}
+      >
+        Last name: {currentLastName}
+      </Typography>
+
+      <Button
+        variant="contained"
+        onClick={editLastName}
+        sx={{
+          marginBottom: 0,
+          paddingY: 1,
+          paddingX: 3,
+          borderRadius: 2.5,
+          backgroundColor: '#1976d2',
+          '&:hover': {
+            backgroundColor: '#1565c0',
+          },
+        }}
+      >
+        Edit
+      </Button>
+      </Box>  
+        }
+      
+    </Box>
+    </Card>
+
+    <Card sx={{ borderRadius: 1, backgroundColor: 'lightBlue', boxShadow: 3, padding: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* This Box acts as a flex container */}
+    
+      {isEditingEmail ?
+      <Box>
+      <TextField
+      label="Email"
+      variant="outlined"
+      margin="normal"
+      value={newEmail}
+      onChange={(e) => setNewEmail(e.target.value)}
+      required
+      sx={{ borderRadius: 2 }}
+      />
+    <TextField
+      label="Password"
+      variant="outlined"
+      margin="normal"
+      onChange={(e) => setPassword(e.target.value)}
+      required
+      sx={{ borderRadius: 2 }}
+    />
+    <Button
+    variant="contained"
+    onClick={changeEmail}
+    sx={{
+      marginTop: 2.8,
+      paddingY: 1,
+      paddingX: 3,
+      borderRadius: 2.5,
+      backgroundColor: '#1976d2',
+      '&:hover': {
+        backgroundColor: '#1565c0',
+      },
+    }}
+  >
+    Save
+  </Button> 
+  </Box>      
+          :
+          <Box>
+        <Typography variant="h6" component='span' gutterBottom sx={{  color: 'black' }}>
+        Email Address: {user.emailAddress}
+        
+        </Typography>
+        <Button
+        variant="contained"
+        onClick={editEmail}
+        sx={{
+          marginBottom: 0,
+          paddingY: 1,
+          paddingX: 3,
+          borderRadius: 2.5,
+          backgroundColor: '#1976d2',
+          '&:hover': {
+            backgroundColor: '#1565c0',
+          },
+        }}
+      >
+        Edit
+      </Button>
+      </Box>
+         }
+        
+      
+      
+    </Box>
+    </Card>
+
+      <table>
           
           <tr>
             <td >
@@ -288,7 +651,7 @@ export default function Profile() {
                   //fullWidth
                   margin="normal"
                   value={currentPassword}
-                  onChange={(e) => setCurrentPassowrd(e.target.value)}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
                   required
                   sx={{ borderRadius: 2 }}
                 />

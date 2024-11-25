@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
     "@date-io/date-fns": "^3.0.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^6.1.2",
-    "@mui/lab": "^6.0.0-beta.14",
+    "@mui/lab": "^6.0.0-beta.15",
     "@mui/material": "^5.15.3",
     "@mui/material-nextjs": "^5.15.3",
     "@mui/system": "^6.1.6",
