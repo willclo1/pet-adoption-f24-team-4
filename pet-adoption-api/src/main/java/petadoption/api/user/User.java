@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.pet.criteria.Attribute;
 
-import java.util.Arrays;
+import static petadoption.api.pet.criteria.Attribute.verifyAttributeFormat;
+
 import java.util.Map;
 
 @Data
@@ -55,7 +55,6 @@ public class User {
     Image profilePicture;
 
     @Getter
-    @Setter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "preferences", joinColumns = @JoinColumn(name = "USER_ID"))
     @MapKeyColumn(name = "pet_attribute")
@@ -72,6 +71,14 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
     private AdoptionCenter center;
+
+    public void setPreferences(Map<String, Integer> preferences) {
+        preferences.forEach((key, value) -> {
+            if (verifyAttributeFormat(key)) {
+                this.preferences.put(key, value);
+            }
+        });
+    }
 
     @Override
     public int hashCode() {
