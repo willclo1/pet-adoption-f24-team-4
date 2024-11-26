@@ -1,25 +1,14 @@
 package petadoption.api.user;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ChangePassword {
+    @Getter
+    @Setter
     private String email;
+
+    @Getter
+    @Setter
     private String password;
-
-
-    // Getters and setters
-    public String getEmail() {
-        return email;
-    }
-
-    public void setFirstName(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 }

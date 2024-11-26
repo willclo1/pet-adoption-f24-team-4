@@ -22,18 +22,11 @@ public class AdoptionCenterEndpoint {
         this.adoptionCenterService = adoptionCenterService;
     }
 
-
     @GetMapping
     public List<AdoptionCenter> displayCenters() {
         return adoptionCenterService.getAllAdoptionCenters();
     }
 
-//    @GetMapping("/sample")
-//    public String addSampleCenters() {
-//        System.out.println("1");
-//        adoptionCenterService.addSampleAdoptionCenters();
-//        return "Sample adoption centers added successfully.";
-//    }
     @PostMapping("/add")
     public ResponseEntity<AdoptionCenter> addAdoptionCenter(@RequestBody AdoptionCenterRequest request) {
         System.out.println("2");
@@ -50,13 +43,8 @@ public class AdoptionCenterEndpoint {
             log.info("Center Failed!");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-
-
     }
 
-
-    //
     @GetMapping("/{adoptionID}")
     public Optional<AdoptionCenter> getAdoptionCenter(@PathVariable Long adoptionID) {
         System.out.println("3");
@@ -73,24 +61,25 @@ public class AdoptionCenterEndpoint {
             }
             AdoptionCenter AC = ACOpt.get();
 
-            //AC.setAdoptionID(ACRequest.getAdoptionID());
             AC.setCenterName(ACRequest.getCenterName());
             AC.setBuildingAddress(ACRequest.getBuildingAddress());
             AC.setDescription(ACRequest.getDescription());
 
             adoptionCenterService.saveCenter(AC);
 
-            log.info("AdoptionCenter successfully updated: "
-                    + AC.getAdoptionID()
-                    + AC.getCenterName()
+            log.info(
+                    "AdoptionCenter successfully updated: {} {}",
+                    AC.getAdoptionID(),
+                    AC.getCenterName()
             );
 
             return ResponseEntity.ok(AC);
         } catch (Exception e) {
-            log.error("Failed to update AdoptionCenter: "
-                    + ACRequest.getAdoptionID() + " "
-                    + ACRequest.getCenterName()
-                    + "\n" + e.getMessage()
+            log.error(
+                    "Failed to update AdoptionCenter: {} {}\n{}",
+                    ACRequest.getAdoptionID(),
+                    ACRequest.getCenterName(),
+                    e.getMessage()
             );
             return ResponseEntity.badRequest().build();
         }

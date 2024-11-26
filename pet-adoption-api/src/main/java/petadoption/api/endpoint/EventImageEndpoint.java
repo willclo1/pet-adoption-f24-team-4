@@ -30,7 +30,6 @@ public class EventImageEndpoint {
         Optional<Event> eventOpt = eventService.getEventById(eventID);
         if (eventOpt.isPresent()) {
             Event event = eventOpt.get();
-            long adoptionId = event.getCenter().getAdoptionID();
 
             if (event.getEventPicture() != null) {
                 long oldImageId = event.getEventPicture().getId();

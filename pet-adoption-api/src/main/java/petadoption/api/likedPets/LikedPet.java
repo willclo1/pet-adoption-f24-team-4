@@ -38,15 +38,4 @@ public class LikedPet {
         this.user = u;
         this.pet = p;
     }
-    /*
-    @Getter
-    @Setter
-    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-    private Long userId;
-
-    @Getter
-    @Setter
-    @JoinColumn(name = "petID", referencedColumnName = "petID")
-    private Long petId;
-    */
 }

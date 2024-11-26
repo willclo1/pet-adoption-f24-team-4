@@ -29,7 +29,7 @@ public class LikedPetService {
         return petList;
     }
 
-    public LikedPet saveLikedPets(LikedPet likedPet) {
+    public LikedPet saveLikedPet(LikedPet likedPet) {
         return likedPetRepository.save(likedPet);
     }
 }

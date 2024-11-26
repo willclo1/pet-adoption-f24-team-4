@@ -41,11 +41,9 @@ public class PetService {
             } else {
                 throw new RuntimeException("Adoption Center not found.");
             }
-
-
         }
-        return repository.save(pet);
 
+        return repository.save(pet);
     }
 
     public Optional<Pet> getPetById(long petId){
