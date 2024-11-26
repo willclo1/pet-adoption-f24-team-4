@@ -791,7 +791,7 @@ public class Attribute {
             return false;
         }
         if (verifyType(values[TYPE])) {
-            return switch(values[ATTR]) {
+            return switch(values[TYPE]) {
                 case "Species" -> species.contains(values[ATTR]);
                 case "Cat Breed" -> catBreeds.contains(values[ATTR]);
                 case "Dog Breed" -> dogBreeds.contains(values[ATTR]);

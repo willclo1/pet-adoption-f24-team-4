@@ -69,6 +69,7 @@ public class petGenerator {
         HashSet<String> attributes = new HashSet<>();
 
         for (int i = 0; i < numPets; i++) {
+            attributes.clear();
             Pet pet = new Pet();
 
             // name
@@ -143,7 +144,7 @@ public class petGenerator {
             // gender
             attributes.add(buildAttribute(
                     typeList[8],
-                    sizeList[random.nextInt(sizeList.length)]
+                    genderList[random.nextInt(genderList.length)]
             ));
 
             // spayed / neutered

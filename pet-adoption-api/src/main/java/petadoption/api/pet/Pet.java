@@ -103,7 +103,7 @@ public class Pet {
                 throw new IllegalArgumentException(
                         "Attribute does not follow proper format\n"
                         + "[type]: " + attribute[TYPE] + "\n"
-                        + "[attribute] " + attribute[ATTR] + "\n"
+                        + "[attribute] " + attribute[ATTR]
                 );
             }
             switch (attribute[TYPE]) {
