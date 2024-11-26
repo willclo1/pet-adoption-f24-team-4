@@ -9,7 +9,7 @@ export default function LoginPage() {
     const [message, setMessage] = useState('');
     const [isSuccess, setIsSuccess] = useState(null);
     const [tokenStored, setTokenStored] = useState(false);
-    const router = useRouter();
+    const router = useRouter();// To check if token was stored successfully
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const handleSubmit = async (e) => {
@@ -23,15 +23,17 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify({ emailAddress, password }),
             });
-        
+
 
 
             console.log(`${apiUrl}/login`);
             console.log("Response status:", response.status);
-    
+
             if (!response.ok) {
                 const errorMessage = await response.text();
                 setIsSuccess(false);
+                setMessage("Login Failed. Please Try Again!");
+                setTokenStored(false);
                 setMessage("Login failed. Please try again!"); // Display error message from backend
                 setTokenStored(false); // Reset token stored status
                 return;
@@ -39,17 +41,15 @@ export default function LoginPage() {
     
             const result = await response.json();
             
-    
-            // Check if token exists in the response
+
             if (result.token) {
                 setIsSuccess(true);
                 setMessage("Login successful!");
-    
-                // Store the JWT token in localStorage
+
                 
                 localStorage.setItem('token', result.token);
                 localStorage.setItem('email',emailAddress);
-                
+
                 setTokenStored(true); // Set token stored status to true
                 if (result.adoptionId) {
                     router.push(`/adoptionHome?email=${emailAddress}`); 
