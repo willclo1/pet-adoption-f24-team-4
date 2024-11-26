@@ -699,7 +699,7 @@ public class Attribute {
             case "Size" -> sizeList;
             case "Health" -> healthList;
             case "Gender" -> genderList;
-            case "SpayedNeutered" -> spayedNeuteredList;
+            case "Spayed / Neutered" -> spayedNeuteredList;
             case "Temperament" -> temperamentList;
 
             default -> null;
