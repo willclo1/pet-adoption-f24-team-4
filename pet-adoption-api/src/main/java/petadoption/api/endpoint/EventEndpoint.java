@@ -58,21 +58,6 @@ public class EventEndpoint {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    /*
-    public ResponseEntity<Event> addEvent(@RequestBody Event request) {
-        try {
-            Event e = new Event();
-            copyRequestToEvent(request, e);
-
-            Event result = eventService.saveEvent(e);
-            log.info("Successfully saved event");
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.info("Failed to save event", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-     */
 
     @GetMapping("/{eventID}")
     public Optional<Event> getEvent(@PathVariable long eventID) {
@@ -95,7 +80,7 @@ public class EventEndpoint {
 
             copyRequestToEvent(request, e);
             Event saveResult = eventService.saveEvent(e);
-            log.info("Event successfully updated: " + saveResult.getEventID());
+            log.info("Event successfully updated: {}", saveResult.getEventID());
             return ResponseEntity.ok(saveResult);
         } catch (Exception e) {
             log.error("Failed to update Event", e);
@@ -114,27 +99,6 @@ public class EventEndpoint {
             return ResponseEntity.badRequest().build();
         }
     }
-    /*
-    @DeleteMapping("/deleteEvent")
-    public ResponseEntity<String> deleteEvent(@RequestBody Event request) {
-        try {
-            eventService.deleteEvent(request.getEventID());
-            log.info("Event successfully deleted: {}", request.getEventID());
-            return ResponseEntity.ok(
-                    "Event successfully deleted: "
-                            + request.getTitle()
-            );
-        } catch (EntityNotFoundException e) {
-            log.error("Event not found", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Event not found.");
-        } catch (Exception e) {
-            log.error("Failed to delete Event", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while deleting the pet.");
-        }
-    }
-     */
 
     private void copyRequestToEvent(@RequestBody Event request, Event e) {
         e.setCenter(request.getCenter());
@@ -146,6 +110,5 @@ public class EventEndpoint {
         e.setLocation(request.getLocation());
         e.setEndDateTime(request.getEndDateTime());
         e.setStartDateTime(request.getStartDateTime());
-
     }
 }

@@ -10,7 +10,6 @@ import petadoption.api.pet.Pet;
 import petadoption.api.user.User;
 
 import java.util.Set;
-import java.util.Stack;
 
 @Data
 @Entity
@@ -68,8 +67,9 @@ public class AdoptionCenter {
         else {
             log.error(
                     "ERR: Improper formatting for AdoptionCenter.buildingAddress, " +
-                    "must be of the form: <street address>,<city>,<state>\n" +
-                    "given address: " + buildingAddress
+                            "must be of the form: <street address>,<city>,<state>" +
+                            "\ngiven address: {}",
+                    buildingAddress
             );
             this.buildingAddress = "";
             throw new IllegalArgumentException();
