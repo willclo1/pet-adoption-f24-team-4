@@ -68,7 +68,6 @@ public class petGenerator {
         List<Pet> pets = new ArrayList<>();
 
         for (int i = 0; i < numPets; i++) {
-            attributes.clear();
             Pet pet = new Pet();
             HashSet<String> attributes = new HashSet<>();
 
