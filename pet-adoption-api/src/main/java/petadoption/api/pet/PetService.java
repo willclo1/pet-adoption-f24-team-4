@@ -61,7 +61,7 @@ public class PetService {
     public List<Pet> getRandPets() { return repository.getRandom(DEFAULT_RAND_PETS); }
 
     public List<Pet> getAdoptionCenterPets(long adoptionID) {
-        return repository.findByCenter_adoptionID(adoptionID);
+        return repository.findByCenter_AdoptionID(adoptionID);
     }
 
     public void deletePet(long petID){

@@ -66,10 +66,10 @@ public class petGenerator {
     private List<Pet> generateRandomPets(int numPets, List<AdoptionCenter> adoptionCenters) {
         Random random = new Random();
         List<Pet> pets = new ArrayList<>();
-        HashSet<String> attributes = new HashSet<>();
 
         for (int i = 0; i < numPets; i++) {
             Pet pet = new Pet();
+            HashSet<String> attributes = new HashSet<>();
 
             // name
             pet.setName(NAMES[random.nextInt(NAMES.length)]);
@@ -143,7 +143,8 @@ public class petGenerator {
             // gender
             attributes.add(buildAttribute(
                     typeList[8],
-                    sizeList[random.nextInt(sizeList.length)]
+                    genderList[random.nextInt(genderList.length)]
+
             ));
 
             // spayed / neutered
@@ -193,6 +194,7 @@ public class petGenerator {
             if (adoptionCenters != null && !adoptionCenters.isEmpty()) {
                 pet.setCenter(adoptionCenters.get(random.nextInt(adoptionCenters.size())));
             }
+            pet.setAttributes(attributes);
             pets.add(pet);
         }
         return pets;

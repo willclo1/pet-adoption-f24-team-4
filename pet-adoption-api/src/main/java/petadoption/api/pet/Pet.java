@@ -36,7 +36,7 @@ public class Pet {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "pet_attributes", joinColumns = @JoinColumn(name = "petID"))
     @Column(name = "attributes")
-    private HashSet<String> attributes;
+    private Set<String> attributes;
 
     @Getter
     @Setter
