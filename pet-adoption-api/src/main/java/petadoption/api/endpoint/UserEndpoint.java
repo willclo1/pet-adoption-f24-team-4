@@ -1,19 +1,12 @@
 package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import petadoption.api.pet.criteria.*;
-import petadoption.api.pet.criteria.breed.CatBreed;
-import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
-import petadoption.api.userPreferences.UserPreferences;
-import petadoption.api.userPreferences.UserPreferencesService;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +16,6 @@ import java.util.Optional;
 public class UserEndpoint {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserPreferencesService userPreferencesService;
 
     @GetMapping("/users/{id}")
     public User findUserById(@PathVariable Long id) {
@@ -79,7 +69,7 @@ public class UserEndpoint {
 //    }
 
 @PutMapping("/users/{userId}/preferences")
-public ResponseEntity<UserPreferences> updateUserPreferences(
+public ResponseEntity<Map<String, Integer>> updateUserPreferences(
         @PathVariable Long userId,
         @RequestBody Map<String, Map<String, Double>> userPreferenceMap) {
 
@@ -88,15 +78,17 @@ public ResponseEntity<UserPreferences> updateUserPreferences(
         return ResponseEntity.notFound().build();
     }
 
+    /*
     User user = optionalUser.get();
-    UserPreferences preferences = user.getUserPreferences();
+    Map<String, Integer> preferences = user.getPreferences();
 
-    final UserPreferences finalPreferences = new UserPreferences();
+    final Map<String, Integer> finalPreferences = new HashMap<>();
 
     userPreferenceMap.forEach((category, options) -> {
         switch (category) {
             case "furColor":
-                finalPreferences.clearFurColorRating();
+                //finalPreferences.clearFurColorRating();
+                finalPreferences.keySet().removeIf(key -> key.contains("Fur Color"));
                 options.forEach((key, value) -> finalPreferences.setFurColorRating(FurColor.valueOf(key), value));
                 break;
             case "petType":
@@ -134,10 +126,12 @@ public ResponseEntity<UserPreferences> updateUserPreferences(
                 break; // Ignore unknown categories
         }
     });
-    user.setUserPreferences(finalPreferences);
+    user.setPreferences(finalPreferences);
     userService.saveUser(user);
+    */
 
-    return ResponseEntity.ok(finalPreferences);
+    //return ResponseEntity.ok(finalPreferences);
+    return ResponseEntity.ok(null);
 }
     @GetMapping("/users")
     public ResponseEntity<List<User>> findAllUsers() {

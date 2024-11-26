@@ -14,6 +14,7 @@ import petadoption.api.pet.criteria.breed.DogBreed;
 
 import java.util.*;
 
+import static petadoption.api.pet.criteria.Attribute.*;
 import static petadoption.api.pet.criteria.Species.CAT;
 import static petadoption.api.pet.criteria.Species.DOG;
 
@@ -60,13 +61,119 @@ public class petGenerator {
         pets.forEach(petService::savePet);
     }
 
+
+
     private List<Pet> generateRandomPets(int numPets, List<AdoptionCenter> adoptionCenters) {
         Random random = new Random();
         List<Pet> pets = new ArrayList<>();
+        HashSet<String> attributes = new HashSet<>();
 
         for (int i = 0; i < numPets; i++) {
             Pet pet = new Pet();
+
+            // name
             pet.setName(NAMES[random.nextInt(NAMES.length)]);
+
+            // species
+            attributes.add(buildAttribute(
+                            typeList[0],
+                            speciesList[random.nextInt(speciesList.length)]
+            ));
+
+            // breed
+            // variable below will be reused for other multi-row records
+            int numAttr = random.nextInt(1, 6);
+            if (attributes.contains("Species:Cat")) {
+                for (int j = 0; j < numAttr; j++) {
+                    attributes.add(buildAttribute(
+                            typeList[1],
+                            catBreedList[random.nextInt(catBreedList.length)]
+                    ));
+                }
+                // add "Domestic Shorthair" tag
+                if (numAttr != 1) {
+                    attributes.add(buildAttribute(typeList[1], catBreedList[0]));
+                }
+            } else {
+                for (int j = 0; j < numAttr; j++) {
+                    attributes.add(buildAttribute(
+                            typeList[2],
+                            dogBreedList[random.nextInt(dogBreedList.length)]
+                    ));
+                }
+                // add "Mix-Breed" tag
+                if (numAttr != 1) {
+                    attributes.add(buildAttribute(typeList[2], dogBreedList[0]));
+                }
+            }
+
+            // fur type
+            attributes.add(buildAttribute(
+                            typeList[3],
+                            furTypeList[random.nextInt(furTypeList.length)]
+            ));
+
+            // fur color
+            numAttr = random.nextInt(1, 6);
+            for (int j = 0; j < numAttr; j++) {
+                attributes.add(buildAttribute(
+                        typeList[4],
+                        furColorList[random.nextInt(furColorList.length)]
+                ));
+            }
+
+            // fur length
+            attributes.add(buildAttribute(
+                    typeList[5],
+                    furLengthList[random.nextInt(furLengthList.length)]
+            ));
+
+            // size
+            attributes.add(buildAttribute(
+                    typeList[6],
+                    sizeList[random.nextInt(sizeList.length)]
+            ));
+
+            // health
+            attributes.add(buildAttribute(
+                    typeList[7],
+                    healthList[random.nextInt(healthList.length)]
+            ));
+
+            // gender
+            attributes.add(buildAttribute(
+                    typeList[8],
+                    sizeList[random.nextInt(sizeList.length)]
+            ));
+
+            // spayed / neutered
+            attributes.add(buildAttribute(
+                    typeList[9],
+                    spayedNeuteredList[random.nextInt(spayedNeuteredList.length)]
+            ));
+
+            // temperament
+            numAttr = random.nextInt(1, 6);
+            for (int j = 0; j < numAttr; j++) {
+                attributes.add(buildAttribute(
+                        typeList[10],
+                        temperamentList[random.nextInt(temperamentList.length)]
+                ));
+            }
+
+            // age
+            attributes.add(buildAttribute(
+                    typeList[11],
+                    Integer.toString(random.nextInt(1, 51))
+            ));
+
+            // weight
+            attributes.add(buildAttribute(
+                    typeList[12],
+                    Integer.toString(random.nextInt(1, 401))
+            ));
+
+            /*
             pet.setAge(random.nextInt(1, 21));
             pet.setSpecies(randomSpecies(random));
             pet.setWeight(generateWeight(pet.getSpecies(), random));
@@ -80,6 +187,7 @@ public class petGenerator {
             pet.setPetSize(randomEnum(Size.class, random));
             pet.setSex(randomEnum(Sex.class, random));
             pet.setSpayedNeutered(randomEnum(SpayedNeutered.class, random));
+            */
 
             // Randomly assign an adoption center to the pet
             if (adoptionCenters != null && !adoptionCenters.isEmpty()) {

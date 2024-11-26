@@ -25,10 +25,6 @@ public class PetService {
 
     private static final long DEFAULT_RAND_PETS = 500;
 
-    public void deleteAll() {
-        repository.deleteAll();
-    }
-
     public Optional<Pet> savePet(Long petID){
         return repository.findById(petID);
     }
@@ -72,6 +68,7 @@ public class PetService {
         repository.deleteById(petID);
     }
 
+    /*
     public Pet generatePet(String name, Species species, int weight,
                            CoatLength coatLength, FurType furType, Set<FurColor> furColors,
                            AdoptionCenter adoptionCenter,Set<DogBreed> dogBreeds,
@@ -2226,6 +2223,7 @@ public class PetService {
 
         repository.saveAll(samplePets);
     }
+*/
 
 
 }

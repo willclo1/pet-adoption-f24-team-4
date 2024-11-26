@@ -14,9 +14,9 @@ import java.util.Map;
  * @author Rafe Loya
  * @see RecommendationEngine
  */
-public class PetComparator implements Comparator<Map.Entry<Pet, Double>> {
+public class PetComparator implements Comparator<Map.Entry<Pet, Integer>> {
     @Override
-    public int compare(Map.Entry<Pet, Double> o1, Map.Entry<Pet, Double> o2) {
+    public int compare(Map.Entry<Pet, Integer> o1, Map.Entry<Pet, Integer> o2) {
         return o1.getValue().compareTo(o2.getValue());
     }
 }

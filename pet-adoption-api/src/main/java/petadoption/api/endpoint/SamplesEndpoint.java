@@ -61,7 +61,7 @@ public class SamplesEndpoint {
     @GetMapping("/petCurated")
     public String addCuratedPets() {
         try {
-            petService.addSamplePets(adoptionCenterService);
+            //petService.addSamplePets(adoptionCenterService);
         } catch (Exception e) {
             log.error("Failed to load curated pets:\n{}", e.getMessage());
             return "Failed to load curated pets:\n" + e.getMessage();

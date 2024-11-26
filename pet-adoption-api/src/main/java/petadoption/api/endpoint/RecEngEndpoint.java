@@ -109,10 +109,10 @@ public class RecEngEndpoint {
         //if (up.isPresent()) {
         if (user.isPresent()) {
             List<Pet> petSample = petService.getRandPets(DEFAULT_REC_SAMPLE_SIZE);
-            SortedSet<Map.Entry<Pet, Double>> sortedSample = new TreeSet<>(new PetComparator());
+            SortedSet<Map.Entry<Pet, Integer>> sortedSample = new TreeSet<>(new PetComparator());
 
             for (Pet p : petSample) {
-                Map.Entry<Pet, Double> ratedPet = new AbstractMap.SimpleEntry<>(p, 0.0);
+                Map.Entry<Pet, Integer> ratedPet = new AbstractMap.SimpleEntry<>(p, 0);
 
                 ratedPet.setValue(
                         calculatePetRating(
@@ -283,7 +283,7 @@ public class RecEngEndpoint {
         if (u.isPresent()) {
             if (u.get().getPreferences().isEmpty()) {
                 u.get().setPreferences(new HashMap<>());
-                result = userService.saveUser(u.get());
+                //result = userService.saveUser(u.get());
             }
             try {
                 result = userService.saveUser(u.get());

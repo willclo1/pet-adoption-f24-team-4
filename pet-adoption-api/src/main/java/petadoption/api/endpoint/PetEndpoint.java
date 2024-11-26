@@ -38,13 +38,16 @@ public class PetEndpoint {
     @PostMapping("/addPet")
     public ResponseEntity<?> addPet(@RequestBody PetRequest petRequest) {
         try {
-            Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter(petRequest.getAdoptionId());
+            Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter(petRequest.adoptionID);
 
             if (adoptionCenter.isEmpty()) {
                 return ResponseEntity.badRequest().body("Adoption center not found");
             }
 
             Pet pet = new Pet();
+            pet.setName(petRequest.name);
+            pet.setAttributes(petRequest.attributes);
+            /*
             pet.setName(petRequest.getName());
             pet.setSpecies(petRequest.getSpecies());
             pet.setPetSize(petRequest.getPetSize());
@@ -64,6 +67,7 @@ public class PetEndpoint {
             if (petRequest.getCatBreed() != null) {
                 pet.setCatBreed(petRequest.getCatBreed());
             }
+            */
 
             pet.setCenter(adoptionCenter.get());
 
@@ -92,7 +96,7 @@ public class PetEndpoint {
     public String addSampleCenters() throws IOException {
         System.out.println("1");
 
-        petService.addSamplePets(adoptionCenterService);
+        //petService.addSamplePets(adoptionCenterService);
         return "Sample pets added successfully.";
     }
 
@@ -122,7 +126,7 @@ public class PetEndpoint {
     @PutMapping("/updatePet")
     public ResponseEntity<Pet> updatePet(@RequestBody PetRequest petRequest) {
         try {
-            Optional<Pet> existingPetOpt = petService.getPetById(petRequest.getId());
+            Optional<Pet> existingPetOpt = petService.getPetById(petRequest.id);
             if (!existingPetOpt.isPresent()) {
                 return ResponseEntity.notFound().build();
             }
@@ -130,6 +134,8 @@ public class PetEndpoint {
 
 
             pet.setName(petRequest.getName());
+            pet.setAttributes(petRequest.attributes);
+            /*
             pet.setSpecies(petRequest.getSpecies());
             pet.setPetSize(petRequest.getPetSize());
             pet.setWeight(petRequest.getWeight());
@@ -138,7 +144,7 @@ public class PetEndpoint {
             pet.setCoatLength(petRequest.getCoatLength());
             pet.setFurType(petRequest.getFurType());
             pet.setFurColor(petRequest.getFurColor());
-
+             */
 
             petService.savePet(pet, pet.getCenter().getAdoptionID());
 

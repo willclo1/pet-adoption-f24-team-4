@@ -1,17 +1,16 @@
 package petadoption.api.pet;
 
 import lombok.Data;
-import petadoption.api.Utility.EnumUtil;
-import petadoption.api.pet.criteria.*;
-import petadoption.api.pet.criteria.breed.DogBreed;
-import petadoption.api.pet.criteria.breed.CatBreed;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 public class PetRequest {
-
+    public String name;
+    public Long id;
+    public Long adoptionID;
+    public Set<String> attributes;
+    /*
     private String name;
     private Long id;
     private Species species;
@@ -98,4 +97,5 @@ public class PetRequest {
     public void setSex(String sex) {
         this.sex = EnumUtil.mapStringToSex(sex);
     }
+    */
 }

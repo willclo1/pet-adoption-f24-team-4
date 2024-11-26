@@ -1,7 +1,6 @@
 package petadoption.api.recommendationEngine;
 
 import petadoption.api.pet.Pet;
-import petadoption.api.userPreferences.UserPreferences;
 
 import java.util.List;
 

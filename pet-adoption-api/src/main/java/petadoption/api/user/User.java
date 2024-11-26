@@ -6,13 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.pet.criteria.PetAttribute;
-import petadoption.api.userPreferences.Preference;
-import petadoption.api.userPreferences.UserPreferences;
+import petadoption.api.pet.criteria.Attribute;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @Entity
@@ -20,6 +17,8 @@ import java.util.Set;
 public class User {
     public static final String TABLE_NAME = "USERS";
 
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(generator = TABLE_NAME + "_GENERATOR")
     @SequenceGenerator(
@@ -29,112 +28,47 @@ public class User {
     @Column(name = "USER_ID")
     Long id;
 
+    @Getter
+    @Setter
     @Column(name = "FIRST_NAME")
     String firstName;
 
+    @Getter
+    @Setter
     @Column(name = "LAST_NAME")
     String lastName;
 
+    @Getter
+    @Setter
     @Column(name = "EMAIL_ADDRESS")
     String emailAddress;
 
+    @Getter
+    @Setter
     @Column(name = "PASSWORD")
     String password;
 
+    @Getter
+    @Setter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PICTURE_ID", referencedColumnName = "id")
     Image profilePicture;
 
-    /*
-    @OneToOne(optional = false)
-    @JoinColumn(name = "USER_PREFERENCES_ID", unique = true, nullable = false, updatable = false) */
-    /*
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_PREFERENCES_ID", referencedColumnName = "user_preferences_id")
-    private UserPreferences userPreferences;
-    */
-
-    /*
-    @OneToMany
-    @Column(name = "PREFERENCES")
-    HashSet<Preference> preferences;
-    */
     @Getter
     @Setter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "preferences", joinColumns = @JoinColumn(name = "USER_ID"))
     @MapKeyColumn(name = "pet_attribute")
     @Column(name = "rating")
-    private Map<PetAttribute, Double> preferences;
+    private Map<String, Integer> preferences;
 
-    public Image getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(Image profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public AdoptionCenter getCenter() {
-        return center;
-    }
-
-    public void setCenter(AdoptionCenter center) {
-        this.center = center;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-
+    @Getter
+    @Setter
     @Column(name = "USER_TYPE")
     String userType;
 
+    @Getter
+    @Setter
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "adoptionID", referencedColumnName = "adoptionID", nullable = true)
     private AdoptionCenter center;
@@ -152,4 +86,59 @@ public class User {
         return id != null && id.equals(other.id);
     }
 
+    public void clearPreferences() {
+        preferences.clear();
+    }
+
+    public boolean clearSpeciesPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Species"));
+    }
+
+    public boolean clearCatBreedPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Cat Breed"));
+    }
+
+    public boolean clearDogBreedPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Dog Breed"));
+    }
+
+    public boolean clearFurTypePreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Fur Type"));
+    }
+
+    public boolean clearFurColorPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Fur Color"));
+    }
+
+    public boolean clearFurLengthPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Fur Length"));
+    }
+
+    public boolean clearSizePreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Size"));
+    }
+
+    public boolean clearHealthPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Health"));
+    }
+
+    public boolean clearGenderPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Gender"));
+    }
+
+    public boolean clearTemperamentPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Temperament"));
+    }
+
+    public boolean clearSpayedNeuteredPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Spayed / Neutered"));
+    }
+
+    public boolean clearAgePreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Age"));
+    }
+
+    public boolean clearWeightPreferences() {
+        return preferences.keySet().removeIf(key -> key.contains("Weight"));
+    }
 }
