@@ -22,8 +22,6 @@ import java.util.Set;
  * @see petadoption.api.pet.Pet
  */
 public class Attribute {
-    public static final String TABLE_NAME = "pet_attribute";
-
     /*
      * Constants for indexing
      */
@@ -684,6 +682,31 @@ public class Attribute {
      */
 
     /**
+     * Returns the attribute list associated with the given type.
+     *
+     * @param type Attribute type / category
+     * @return Attribute list associated with type, or <code>null</code>
+     *         if the type is not defined by the system
+     */
+    public static String[] mapAttributeList(String type) {
+        return switch(type) {
+            case "Species" -> speciesList;
+            case "Cat Breed" -> catBreedList;
+            case "Dog Breed" -> dogBreedList;
+            case "Fur Type" -> furTypeList;
+            case "Fur Color" -> furColorList;
+            case "Fur Length" -> furLengthList;
+            case "Size" -> sizeList;
+            case "Health" -> healthList;
+            case "Gender" -> genderList;
+            case "SpayedNeutered" -> spayedNeuteredList;
+            case "Temperament" -> temperamentList;
+
+            default -> null;
+        };
+    }
+
+    /**
      * A small helper function if the user does not remember the delimiting
      * regular expression. Breaks a string into it's type and attribute.
      *
@@ -697,9 +720,9 @@ public class Attribute {
     /**
      * Small helper function to simply
      *
-     * @param type
-     * @param attribute
-     * @return
+     * @param type      Category / type attribute falls under
+     * @param attribute Criteria / attribute
+     * @return Concatenated string of type and attribute separated by a delimiter
      */
     public static String buildAttribute(String type, String attribute) {
         return type + ":" + attribute;
