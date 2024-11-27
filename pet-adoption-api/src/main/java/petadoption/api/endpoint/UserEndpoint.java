@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,12 +68,27 @@ public class UserEndpoint {
 //            return ResponseEntity.notFound().build(); // Handle user not found
 //        }
 //    }
+    @GetMapping("/users/{userId}/getPref")
+    public ResponseEntity<Map<String, Integer>> getUserPreferences(@PathVariable Long userId) {
+        Optional<User> optionalUser = userService.findUser(userId);
+        if (optionalUser.isEmpty()) {
+            log.error("[getUserPreferences] User with ID:{} not found", userId);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Collections.emptyMap());
+        }
 
+        User user = optionalUser.get();
+        Map<String, Integer> preferences = user.getPreferences();
+
+        log.info("[getUserPreferences] Retrieved preferences for user ID:{}: {}", userId, preferences);
+
+        return ResponseEntity.ok(preferences);
+    }
     @PutMapping("/users/{userId}/preferences")
     public ResponseEntity<String> updatePreferences(
-        @PathVariable Long userId,
-        //@RequestBody Map<String, Map<String, Integer>> userPreferenceMap
-        @RequestBody Map<String, Integer> preferences) {
+            @PathVariable Long userId,
+            @RequestBody Map<String, Integer> preferences) {
 
         Optional<User> optionalUser = userService.findUser(userId);
         if (optionalUser.isEmpty()) {
@@ -82,9 +98,23 @@ public class UserEndpoint {
                     .body("User not found");
         }
 
+        log.info("[updatePreferences] Received preferences for user ID:{}: {}", userId, preferences);
+
+        for (Map.Entry<String, Integer> entry : preferences.entrySet()) {
+            if (entry.getValue() == null || entry.getValue() < 0 || entry.getValue() > 1) {
+                log.error("[updatePreferences] Invalid rating for key: {}. Value: {}", entry.getKey(), entry.getValue());
+                return ResponseEntity
+                        .badRequest()
+                        .body("Invalid rating for key: " + entry.getKey());
+            }
+        }
+
         User user = optionalUser.get();
+
+        log.info("[updatePreferences] Preferences before update: {}", user.getPreferences());
         user.setPreferences(preferences);
         userService.saveUser(user);
+        log.info("[updatePreferences] Preferences after update: {}", user.getPreferences());
 
         return ResponseEntity.ok("Successfully updated user preferences");
     }

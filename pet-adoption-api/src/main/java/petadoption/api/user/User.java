@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.pet.criteria.Attribute;
 
 import static petadoption.api.pet.criteria.Attribute.verifyAttributeFormat;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -59,7 +62,7 @@ public class User {
     @CollectionTable(name = "preferences", joinColumns = @JoinColumn(name = "USER_ID"))
     @MapKeyColumn(name = "pet_attribute")
     @Column(name = "rating")
-    private Map<String, Integer> preferences;
+    private Map<String, Integer> preferences = new HashMap<>();;
 
     @Getter
     @Setter
@@ -73,13 +76,14 @@ public class User {
     private AdoptionCenter center;
 
     public void setPreferences(Map<String, Integer> preferences) {
+        if (this.preferences == null) {
+            this.preferences = new HashMap<>();
+        }
+        this.preferences.clear();
         preferences.forEach((key, value) -> {
-            if (verifyAttributeFormat(key)) {
-                this.preferences.put(key, value);
-            }
+            this.preferences.put(key, value);
         });
     }
-
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
