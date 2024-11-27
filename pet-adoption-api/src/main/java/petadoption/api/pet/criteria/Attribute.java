@@ -81,8 +81,6 @@ public class Attribute {
 
             "Devon Rex",
             "Donskoy",
-            "Domestic Shorthair",
-            "Domestic Longhair",
 
             "Egyptian Mau",
             "European Burmerse",

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
     Button,
-    Grid,
     Paper,
     Box,
     Typography,
@@ -27,17 +26,19 @@ const EditPreferences = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const headers = [
-        { key: "Pet Type", type: "dropdown" },
-        { key: "Cat Breeds", type: "chips" },
-        { key: "Dog Breeds", type: "chips" },
-        { key: "Fur Texture", type: "dropdown" },
+        { key: "Species", type: "dropdown" },
+        { key: "Cat Breed", type: "chips" },
+        { key: "Dog Breed", type: "chips" },
+        { key: "Fur Type", type: "dropdown" },
         { key: "Fur Color", type: "chips" },
         { key: "Fur Length", type: "dropdown" },
-        { key: "Pet Size", type: "dropdown" },
-        { key: "Health Status", type: "dropdown" },
+        { key: "Size", type: "dropdown" },
+        { key: "Health", type: "dropdown" },
         { key: "Gender", type: "dropdown" },
-        { key: "Spayed/Neutered", type: "dropdown" },
+        { key: "Spayed / Neutered", type: "dropdown" },
         { key: "Temperament", type: "chips" },
+        { key: "Age", type: "slider" },
+        { key: "Weight", type: "slider" },
     ];
 
     const fetchWithAuth = async (url, options = {}) => {
@@ -85,10 +86,10 @@ const EditPreferences = () => {
 
             Object.entries(userPreferences).forEach(([key, value]) => {
                 const [type, attribute] = key.split(':');
-                if (["Fur Color", "Temperament", "Cat Breeds", "Dog Breeds"].includes(type)) {
+                if (["Fur Color", "Temperament", "Cat Breed", "Dog Breed"].includes(type)) {
                     if (!reconstructedPreferences[type]) reconstructedPreferences[type] = {};
                     reconstructedPreferences[type][attribute] = value;
-                } else if (type === "Age") {
+                } else if (type === "Age" || type === "Weight") {
                     reconstructedPreferences[type] = parseInt(attribute, 10);
                 } else {
                     reconstructedPreferences[type] = attribute || key;
@@ -136,26 +137,30 @@ const EditPreferences = () => {
         }));
     };
 
+    const handleWeightChange = (event, newValue) => {
+        setPreferences((prev) => ({
+            ...prev,
+            Weight: newValue,
+        }));
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         const flattenedPreferences = {};
 
         Object.entries(preferences).forEach(([key, value]) => {
             if (typeof value === "object") {
+                // Process chips
                 Object.entries(value).forEach(([subKey, subValue]) => {
                     if (subValue === 1) {
                         flattenedPreferences[`${key}:${subKey}`] = 1;
                     }
                 });
-            } else if (key === "Age" && value) {
-                flattenedPreferences[`Age:${value}`] = 1;
+            } else if ((key === "Age" || key === "Weight") && value !== undefined) {
+                // Process sliders
+                flattenedPreferences[`${key}:${value}`] = 1;
             } else if (value) {
-                const attributeList = preferenceOptions[key] || [];
-                if (attributeList.includes(value)) {
-                    flattenedPreferences[`${key}:${value}`] = 1;
-                } else {
-                    flattenedPreferences[key] = 1;
-                }
+                // Process dropdowns
+                flattenedPreferences[`${key}:${value}`] = 1;
             }
         });
 
@@ -216,10 +221,25 @@ const EditPreferences = () => {
                                             />
                                         ))}
                                     </Box>
+                                ) : type === "slider" ? (
+                                    <Slider
+                                        value={preferences[key] || 0}
+                                        onChange={
+                                            key === "Age"
+                                                ? handleAgeChange
+                                                : handleWeightChange
+                                        }
+                                        min={key === "Age" ? 0 : 0}
+                                        max={key === "Age" ? 20 : 100}
+                                        step={1}
+                                        valueLabelDisplay="auto"
+                                    />
                                 ) : (
                                     <Select
                                         value={preferences[key] || ""}
-                                        onChange={(e) => handleDropdownChange(key, e.target.value)}
+                                        onChange={(e) =>
+                                            handleDropdownChange(key, e.target.value)
+                                        }
                                         fullWidth
                                     >
                                         <MenuItem value="">
@@ -235,17 +255,6 @@ const EditPreferences = () => {
                             </AccordionDetails>
                         </Accordion>
                     ))}
-                    <Box mt={3}>
-                        <Typography gutterBottom>Preferred Age</Typography>
-                        <Slider
-                            value={preferences.Age || 0}
-                            onChange={handleAgeChange}
-                            min={0}
-                            max={20}
-                            step={1}
-                            valueLabelDisplay="auto"
-                        />
-                    </Box>
                     <Box display="flex" justifyContent="space-between" mt={3}>
                         <Button variant="outlined" onClick={handleBackClick}>
                             Cancel
