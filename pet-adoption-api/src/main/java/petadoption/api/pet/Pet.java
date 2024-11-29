@@ -111,7 +111,7 @@ public class Pet {
                     if (species) {
                         throw new IllegalArgumentException("Multiple species records found");
                     }
-                    speciesType = attribute[TYPE];
+                    speciesType = attribute[ATTR];
                     species = true;
                     break;
                 case "Cat Breed":
