@@ -79,11 +79,15 @@ public class User {
         if (this.preferences == null) {
             this.preferences = new HashMap<>();
         }
+
         this.preferences.clear();
         preferences.forEach((key, value) -> {
-            this.preferences.put(key, value);
+            if (verifyAttributeFormat(key)) {
+                this.preferences.put(key, value);
+            }
         });
     }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
