@@ -6,11 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.pet.criteria.Attribute;
 
 import static petadoption.api.pet.criteria.Attribute.verifyAttributeFormat;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
