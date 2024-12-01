@@ -105,8 +105,6 @@ public class RecEngEndpoint {
             user.setPreferences(new HashMap<>());
             userService.saveUser(user);
 
-            // If preferences were empty, no need to resort,
-            // just return list minus seen pets
             log.info("[sortSample] User's preferences were empty, returning list w/o seen pets.");
             return body.sample.subList(body.numPetsSeen, body.sample.size());
         }
@@ -114,7 +112,7 @@ public class RecEngEndpoint {
         return RecommendationEngine.sortSample(preferences, body.sample, body.numPetsSeen);
     }
 
-    @GetMapping("/recommendations")
+    @PostMapping("/recommendations")
     public List<Pet> getRecommendations(@RequestBody Long userId) {
         Optional<User> optUser = userService.findUser(userId);
 
@@ -127,10 +125,10 @@ public class RecEngEndpoint {
         }
 
         User user = optUser.get();
-        
+
         return RecommendationEngine
                 .sortSample(
-                        user.getPreferences(), 
+                        user.getPreferences(),
                         petService.getRandPets(DEFAULT_REC_SAMPLE_SIZE),
                         0);
     }

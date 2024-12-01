@@ -23,7 +23,7 @@ const fadeIn = keyframes`
 
 export default function RecommendationEnginePage() {
   const router = useRouter();
-  const { userID, email } = router.query;
+  const { userID } = router.query; // Extract user ID from the query parameters
   const [loading, setLoading] = useState(true);
   const [allPets, setAllPets] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,8 +36,8 @@ export default function RecommendationEnginePage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetchPets();
-  }, []);
+    if (userID) fetchRecommendations(); // Fetch recommendations once userID is available
+  }, [userID]);
 
   const parseAttribute = (attribute) => {
     const [type, value] = attribute.split(':');
@@ -52,14 +52,20 @@ export default function RecommendationEnginePage() {
     }, {});
   };
 
-  const fetchPets = async () => {
+  const fetchRecommendations = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/RecEng/getSampleDefault`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+      const response = await fetch(`${apiUrl}/RecEng/recommendations`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Number(userID)), // Pass userID in the request body
       });
 
-      if (!response.ok) throw new Error('Failed to fetch pets');
+      if (!response.ok) throw new Error('Failed to fetch recommendations');
 
       const pets = await response.json();
 
@@ -81,8 +87,8 @@ export default function RecommendationEnginePage() {
 
       setAllPets(formattedPets);
     } catch (err) {
-      console.error('Error fetching pets:', err);
-      setError('Failed to load pets.');
+      console.error('Error fetching recommendations:', err);
+      setError('Failed to load recommendations.');
     } finally {
       setLoading(false);
     }
@@ -113,7 +119,7 @@ export default function RecommendationEnginePage() {
   const updateUserPreferences = async (petID, liked) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiUrl}/RecEng/ratePet`, {
+      await fetch(`${apiUrl}/RecEng/ratePet`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -125,11 +131,6 @@ export default function RecommendationEnginePage() {
           like: liked,
         }),
       });
-
-      if (!response.ok) throw new Error('Failed to update preferences');
-
-      const data = await response.json();
-      console.log('User preferences updated successfully:', data);
     } catch (error) {
       console.error('Error updating user preferences:', error);
     }
@@ -186,7 +187,7 @@ export default function RecommendationEnginePage() {
       <Stack sx={{ paddingTop: 2 }} alignItems="center" gap={2}>
         <Typography variant="h3">Start Matching!</Typography>
         {loading ? (
-          <Typography>Loading pets...</Typography>
+          <Typography>Loading recommendations...</Typography>
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : (

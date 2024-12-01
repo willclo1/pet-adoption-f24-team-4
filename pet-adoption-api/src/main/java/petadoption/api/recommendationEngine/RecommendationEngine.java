@@ -68,13 +68,16 @@ public class RecommendationEngine {
      * @param updateVal value to increment / decrement criteria ratings by
      */
     public static void updatePreferences(User u, Pet p, int updateVal) {
+        // Initialize preferences if null
+        if (u.getPreferences() == null) {
+            u.setPreferences(new HashMap<>());
+        }
+
         for (String pa : p.getAttributes()) {
-            if (u.getPreferences().containsKey(pa)) {
-                u.getPreferences().put(pa, u.getPreferences().get(pa) + updateVal);
-            }
+            // Add new preference if it doesn't exist, or update existing one
+            u.getPreferences().put(pa, u.getPreferences().getOrDefault(pa, 0) + updateVal);
         }
     }
-
     /**
      * Increments / decrements the ratings in the given <code>User</code>'s
      * preferences mapped by the criteria contained in a passed
