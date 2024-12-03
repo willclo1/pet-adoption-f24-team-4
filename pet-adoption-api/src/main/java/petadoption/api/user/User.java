@@ -6,11 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import petadoption.api.Utility.Image;
 import petadoption.api.adoptionCenter.AdoptionCenter;
-import petadoption.api.pet.criteria.Attribute;
 
 import static petadoption.api.pet.criteria.Attribute.verifyAttributeFormat;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,11 +77,15 @@ public class User {
         if (this.preferences == null) {
             this.preferences = new HashMap<>();
         }
+
         this.preferences.clear();
         preferences.forEach((key, value) -> {
-            this.preferences.put(key, value);
+            if (verifyAttributeFormat(key)) {
+                this.preferences.put(key, value);
+            }
         });
     }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
