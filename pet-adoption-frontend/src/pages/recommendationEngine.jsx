@@ -52,8 +52,6 @@ export default function RecommendationEnginePage() {
     }, {});
   };
 
-
-
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
@@ -136,6 +134,10 @@ export default function RecommendationEnginePage() {
     } catch (error) {
       console.error('Error updating user preferences:', error);
     }
+  };
+
+  const handleViewLikedPets = () => {
+    router.push(`/viewUserPets?email=${email}&userID=${userID}`);
   };
 
   const handleYes = () => {
@@ -244,8 +246,9 @@ export default function RecommendationEnginePage() {
             <Typography>You've reached the end of this round. Start a new round or view liked pets?</Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose}>Cancel</Button>
             <Button onClick={handleStartNextRound}>Next Round</Button>
+            <Button onClick={handleViewLikedPets}>View Liked Pets</Button>
+            <Button onClick={handleDialogClose}>Cancel</Button>
           </DialogActions>
         </Dialog>
         <Snackbar
