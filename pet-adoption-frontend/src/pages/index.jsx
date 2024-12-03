@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { Box, Card, CardContent, Stack, Typography, AppBar, Toolbar, Button, Drawer, ListItem, List, ListItemButton, ListItemIcon, Collapse, Grid, ListItemText } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography, AppBar, Toolbar, Button, Drawer, ListItem, List, ListItemButton, ListItemIcon, Collapse, Grid, ListItemText, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Link } from '@mui/material';
 import { useRouter } from 'next/router';
 
 // Icons
@@ -15,6 +15,7 @@ export default function HomePage() {
   const router = useRouter();
   const [state, setState] = useState({ left: false });
   const [openAccount, setOpenAccount] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleNavigation = (page) => {
     switch (page) {
@@ -49,6 +50,14 @@ export default function HomePage() {
     console.log(state);
   };
 
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
   const list = (anchor) => (
     <Box
       sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
@@ -56,41 +65,14 @@ export default function HomePage() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        <ListItemButton onClick={(e) => {
-          e.stopPropagation();
-          handleAccountToggle();
-        }}>
-          <ListItemIcon>
-            <LoginIcon />
-          </ListItemIcon>
-          <ListItemText primary="Account" />
-          {openAccount ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </ListItemButton>
-
-        <Collapse in={openAccount} timeout="auto" unmountOnExit>
-          <List>
-            <ListItemButton onClick={() => handleNavigation('Login')} sx={{ pl: 4 }}>
-              <ListItemText primary="Login" />
-            </ListItemButton>
-            <ListItemButton onClick={() => handleNavigation('Register')} sx={{ pl: 4 }}>
-              <ListItemText primary="Register" />
-            </ListItemButton>
-            <ListItemButton onClick={() => handleNavigation('Register Center')} sx={{ pl: 4 }}>
-              <ListItemText primary="Register Adoption Center" />
-            </ListItemButton>
-          </List>
-        </Collapse>
-
-        {['View Centers', 'Contact'].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton onClick={() => handleNavigation(text)}>
-              <ListItemIcon>
-                {text === 'View Centers' ? <HouseIcon /> : <ContactsIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleNavigation('View Centers')}>
+            <ListItemIcon>
+              <HouseIcon />
+            </ListItemIcon>
+            <ListItemText primary="View Centers" />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );
@@ -110,12 +92,39 @@ export default function HomePage() {
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
               Whisker Works
             </Typography>
+            <Button color="inherit" onClick={handleDialogOpen}>Register</Button>
           </Toolbar>
         </AppBar>
 
         <Drawer anchor="left" open={state.left} onClose={toggleDrawer('left', false)}> 
           {list('left')} 
         </Drawer>
+
+        <Dialog open={openDialog} onClose={handleDialogClose}>
+          <DialogTitle>Welcome!</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please choose the type of account you wish to register.
+            </DialogContentText>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ marginTop: 2 }}>
+              Already registered?{' '}
+              <Link href="/loginPage" color="primary">
+                Click here
+              </Link>
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => { handleNavigation('Register'); handleDialogClose(); }} color="primary">
+              Register Account
+            </Button>
+            <Button onClick={() => { handleNavigation('Register Center'); handleDialogClose(); }} color="primary">
+              Register Adoption Center
+            </Button>
+            <Button onClick={handleDialogClose} color="secondary">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <Box sx={{ padding: 4, backgroundColor: '#f4f6f8' }}>
           <Stack spacing={4} alignItems="center">
