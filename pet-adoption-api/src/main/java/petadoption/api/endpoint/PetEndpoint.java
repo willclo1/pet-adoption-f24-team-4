@@ -106,10 +106,8 @@ public class PetEndpoint {
 
     @GetMapping("/pets")
     public ResponseEntity<?> getAllPets() {
-        System.out.println("hello");
         try {
             List<Pet> pets = petService.getAllPets();
-
             return ResponseEntity.ok(pets);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());

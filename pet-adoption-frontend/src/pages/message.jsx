@@ -28,12 +28,25 @@ export default function Message() {
   const [notification, setNotification] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const { email } = router.query;
+  const { email, centerName } = router.query; // Read centerName from the router query
 
   useEffect(() => {
     fetchAdoptionCenters();
     fetchUserID();
   }, [email]);
+
+  useEffect(() => {
+    if (centerName && adoptionCenters.length > 0) {
+      // Check if the provided centerName exists in the adoptionCenters list
+      const matchingCenter = adoptionCenters.find(
+        (center) => center.centerName.toLowerCase() === centerName.toLowerCase()
+      );
+      if (matchingCenter) {
+        setSelectedCenter(matchingCenter.adoptionID);
+        fetchMessagesForCenter(matchingCenter.adoptionID);
+      }
+    }
+  }, [centerName, adoptionCenters]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -157,7 +170,7 @@ export default function Message() {
 
   return (
     <main>
-      <NavBar/>
+      <NavBar />
       <Box p={3} display="flex" flexDirection="column" alignItems="center">
         <Paper elevation={3} sx={{ maxWidth: 500, width: '100%', p: 3 }}>
           <Typography variant="h6" gutterBottom>

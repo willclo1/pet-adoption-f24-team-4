@@ -117,20 +117,22 @@ public class RecEngEndpoint {
         Optional<User> optUser = userService.findUser(userId);
 
         if (optUser.isEmpty()) {
-            log.error(
-                    "[getRecommendations] User with ID {} not found.",
-                    userId
-            );
+            log.error("[getRecommendations] User with ID {} not found.", userId);
             return Collections.emptyList();
         }
 
         User user = optUser.get();
 
-        return RecommendationEngine
-                .sortSample(
-                        user.getPreferences(),
-                        petService.getRandPets(DEFAULT_REC_SAMPLE_SIZE),
-                        0);
+        List<Pet> likedPets = likedPetService.getLikedPets(userId);
+        Set<Long> likedPetIds = new HashSet<>();
+        likedPets.forEach(pet -> likedPetIds.add(pet.getId()));
+
+        List<Pet> allPets = petService.getRandPets(DEFAULT_REC_SAMPLE_SIZE);
+        List<Pet> filteredPets = allPets.stream()
+                .filter(pet -> !likedPetIds.contains(pet.getId()))
+                .toList();
+
+        return RecommendationEngine.sortSample(user.getPreferences(), filteredPets, 0);
     }
 
     @PutMapping("/ratePet")

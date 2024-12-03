@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 
 export default function AllPets() {
     const router = useRouter();
-    const { email, userID } = router.query;
+    const { email } = router.query;
     const [pets, setPets] = useState([]);
     const [filteredPets, setFilteredPets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -116,8 +116,21 @@ export default function AllPets() {
     }, [filters, pets]);
 
     const handleAdopt = () => {
-        router.push('/loginPage'); // Redirect to the login page
+        if (currPet && currPet.center && email) {
+            const adoptionCenterName = encodeURIComponent(currPet.center.centerName); // Encode the center name for URL safety
+            router.push(`/message?email=${email}&centerName=${adoptionCenterName}`);
+        } else if (!email) {
+            router.push('/loginPage');
+        }
     };
+    const handleBack = () =>{
+        if(email){
+            router.push(`/viewCenters?email=${email}`)
+        }
+        else{
+            router.push(`/viewCenters`)
+        }
+    }
 
     if (loading)
         return (
@@ -144,6 +157,14 @@ export default function AllPets() {
         <main>
             <NavBar />
             <Box sx={{ padding: 4 }}>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={handleBack}
+                        sx={{ marginBottom: 2 }}
+                    >
+                        Back
+                    </Button>
                 <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 'bold', textAlign: 'center' }}>
                     Find Your Perfect Pet
                 </Typography>
