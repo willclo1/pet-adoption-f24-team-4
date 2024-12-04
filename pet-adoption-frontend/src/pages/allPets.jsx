@@ -398,10 +398,192 @@ export default function allPets() {
 
     return (
         <main>
-            {nav ? <NavBar /> : <p></p>}
+            <div style={{ zindex: 10 }}>
+             {nav ? <NavBar /> : <p></p>}
+            </div>
+
         
         <Box sx={{ padding: 4, backgroundColor: '#f0f4f8' }}>
-            <Button
+            
+            <div className='card-container'>
+                    <div  className='fixed-card'>
+                    <Typography variant="body1" className="sort-by-typography">
+                            Sort by:
+                        </Typography>
+                        <div className='check-container'>
+
+                        <Typography variant="h4"    >
+                            Dog
+                        </Typography>
+                        
+                        <input
+                            type="checkbox"
+                            className="cool-checkbox"
+                            
+                            checked={isDogChecked}
+                            onChange={() => handleChange('dog')}
+                        />
+
+                        </div>
+
+                        <div className='check-container'>
+
+                        <Typography variant="h4" >
+                            Cat
+                        </Typography>
+                        <input
+                            type="checkbox"
+                            className="cool-checkbox"
+                            checked={isCatChecked}
+                            onChange={() => handleChange('cat')}
+                        />
+                        </div>
+                        
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Coat Length"
+                                name="coatLength"
+                                value={coatLength}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.coatLength.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Fur Type"
+                                name="furType"
+                                value={furType}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.furType.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Autocomplete
+                                multiple
+                                options={options.furColor}
+                                getOptionLabel={(option) => option}
+                                onChange={(e, newValue) => handleArrayChange('furColor', newValue)}
+                                renderInput={(params) => <TextField {...params} label="Fur Color" fullWidth />}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <Autocomplete
+                                multiple
+                                options={options.temperament}
+                                getOptionLabel={(option) => option}
+                                onChange={(e, newValue) => handleArrayChange('temperament', newValue)}
+                                renderInput={(params) => <TextField {...params} label="Temperament" fullWidth />}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Pet Size"
+                                name="petSize"
+                                value={size}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.size.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Health Status"
+                                name="healthStatus"
+                                value={healthStatus}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.healthStatus.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Gender"
+                                name="sex"
+                                value={gender}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.sex.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Spayed Neutered"
+                                name="spayedNeutered"
+                                value={spayed}
+                                onChange={handleChange}
+                                fullWidth
+                            >
+                                {options.spayedNeutered.map((option) => (
+                                    <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        
+
+                        {isDogChecked && (
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    options={options.dogBreed}
+                                    getOptionLabel={(option) => option}
+                                    onChange={(e, newValue) => handleArrayChange('dogBreed', newValue)}
+                                    renderInput={(params) => <TextField {...params} label="Dog Breed" fullWidth />}
+                                />
+                            </Grid>
+                        )}
+                        {isCatChecked && (
+                            <Grid item xs={12}>
+                                <Autocomplete
+                                    multiple
+                                    options={options.catBreed}
+                                    getOptionLabel={(option) => option}
+                                    onChange={(e, newValue) => handleArrayChange('catBreed', newValue)}
+                                    renderInput={(params) => <TextField {...params} label="Cat Breed" fullWidth />}
+                                />
+                            </Grid>
+                        )}
+
+
+                    </div>
+                <div>
+                <Button style={{ zindex: 1 }}
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
                 sx={{ marginBottom: 2, marginLeft: 35,color: '#1976d2', borderColor: '#1976d2' }}
@@ -409,231 +591,55 @@ export default function allPets() {
             >
                 Back to Home
             </Button>
-            <div className='card-container'>
-            <div  className='fixed-card'>
-            <Typography variant="body1" className="sort-by-typography">
-                    Sort by:
-                </Typography>
-                <div className='check-container'>
+                    <Card sx={{ boxShadow: 3, borderRadius: 4, padding: 3 }} className='scrollable-card'>
 
-                <Typography variant="h4"    >
-                    Dog
-                </Typography>
-                
-                <input
-                    type="checkbox"
-                    className="cool-checkbox"
-                    
-                    checked={isDogChecked}
-                    onChange={() => handleChange('dog')}
-                />
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                            Pets Available for Adoption
+                        </Typography>
 
-                </div>
+                        {pets.length === 0 ? (
+                            <Typography variant="body1" color="textSecondary">
+                            No pets available at this time.
+                        </Typography>
+                        ) : (
+                            <Grid container spacing={3}>
+                                {pets.map((pet) => (
+                                    <Grid item xs={12} sm={4} md={2.4} key={pet.id}>
+                                        <Card sx={{ width: 250,height: 325, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }} >
+                                        <Avatar
+                                                src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
+                                                sx={{
+                                                    flex: 1,
+                                                    width: 225,
+                                                    height: 175,
+                                                    resizeMode: 'contain',
+                                                    borderRadius: '0%', // if you want it circular, use '50%'
+                                                    objectPosition: 'center'  // Centers the image within the element
+                                                }}
+                                                style={{border: 0, objectfit: 'fill'}}
+                                                
+                                                
+                                            />
+                                            <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                                                <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
+                                                    <PetsIcon />
+                                                </Avatar>
+                                                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                                    {pet.name} 
+                                                </Typography>
+                                            </Box>
+                                            <div className="button-container">
+                                                <Button className="adopt-button" onClick={() => handleViewPet(pet)}>View Pet</Button>
+                                                <Button className="adopt-button" onClick={() => handleCenter(pet.center.adoptionID)}>View Center</Button>
+                                            </div>
 
-                <div className='check-container'>
-
-                <Typography variant="h4" >
-                    Cat
-                </Typography>
-                <input
-                    type="checkbox"
-                    className="cool-checkbox"
-                    checked={isCatChecked}
-                    onChange={() => handleChange('cat')}
-                />
-                </div>
-                
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Coat Length"
-                        name="coatLength"
-                        value={coatLength}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.coatLength.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Fur Type"
-                        name="furType"
-                        value={furType}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.furType.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                    <Autocomplete
-                        multiple
-                        options={options.furColor}
-                        getOptionLabel={(option) => option}
-                        onChange={(e, newValue) => handleArrayChange('furColor', newValue)}
-                        renderInput={(params) => <TextField {...params} label="Fur Color" fullWidth />}
-                    />
-                </Grid>
-
-                <Grid item xs={6}>
-                    <Autocomplete
-                        multiple
-                        options={options.temperament}
-                        getOptionLabel={(option) => option}
-                        onChange={(e, newValue) => handleArrayChange('temperament', newValue)}
-                        renderInput={(params) => <TextField {...params} label="Temperament" fullWidth />}
-                    />
-                </Grid>
-
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Pet Size"
-                        name="petSize"
-                        value={size}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.size.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Health Status"
-                        name="healthStatus"
-                        value={healthStatus}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.healthStatus.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Gender"
-                        name="sex"
-                        value={gender}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.sex.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        select
-                        label="Spayed Neutered"
-                        name="spayedNeutered"
-                        value={spayed}
-                        onChange={handleChange}
-                        fullWidth
-                    >
-                        {options.spayedNeutered.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Grid>
-                
-
-                {isDogChecked && (
-                    <Grid item xs={12}>
-                        <Autocomplete
-                            multiple
-                            options={options.dogBreed}
-                            getOptionLabel={(option) => option}
-                            onChange={(e, newValue) => handleArrayChange('dogBreed', newValue)}
-                            renderInput={(params) => <TextField {...params} label="Dog Breed" fullWidth />}
-                        />
-                    </Grid>
-                )}
-                {isCatChecked && (
-                    <Grid item xs={12}>
-                        <Autocomplete
-                            multiple
-                            options={options.catBreed}
-                            getOptionLabel={(option) => option}
-                            onChange={(e, newValue) => handleArrayChange('catBreed', newValue)}
-                            renderInput={(params) => <TextField {...params} label="Cat Breed" fullWidth />}
-                        />
-                    </Grid>
-                )}
-
-
-            </div>
-            <Card sx={{ boxShadow: 3, borderRadius: 4, padding: 3 }} className='scrollable-card'>
-
-                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-                    Pets Available for Adoption
-                </Typography>
-
-                {pets.length === 0 ? (
-                    <Typography variant="body1" color="textSecondary">
-                    No pets available at this time.
-                </Typography>
-                ) : (
-                    <Grid container spacing={3}>
-                        {pets.map((pet) => (
-                            <Grid item xs={12} sm={4} md={2.4} key={pet.id}>
-                                <Card sx={{ width: 250,height: 325, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }} >
-                                <Avatar
-                                        src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
-                                        sx={{
-                                            flex: 1,
-                                            width: 225,
-                                            height: 175,
-                                            resizeMode: 'contain',
-                                            borderRadius: '0%', // if you want it circular, use '50%'
-                                            objectPosition: 'center'  // Centers the image within the element
-                                        }}
-                                        style={{border: 0, objectfit: 'fill'}}
-                                        
-                                        
-                                    />
-                                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                                        <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
-                                            <PetsIcon />
-                                        </Avatar>
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                            {pet.name} 
-                                        </Typography>
-                                    </Box>
-                                    <div className="button-container">
-                                        <Button className="adopt-button" onClick={() => handleViewPet(pet)}>View Pet</Button>
-                                        <Button className="adopt-button" onClick={() => handleCenter(pet.center.adoptionID)}>View Center</Button>
-                                    </div>
-
-                                </Card>
+                                        </Card>
+                                    </Grid>
+                                ))}
                             </Grid>
-                        ))}
-                    </Grid>
-                )}
-            </Card>
+                        )}
+                    </Card>
+                </div>
             </div>
             <Dialog open={currPet}>
                 <DialogTitle>{"Would You Like To Adopt This Pet?"}</DialogTitle>
