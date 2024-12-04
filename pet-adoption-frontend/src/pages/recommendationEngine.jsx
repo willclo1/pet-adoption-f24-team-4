@@ -179,7 +179,7 @@ export default function RecommendationEnginePage() {
   const handleAdopt = (pet) => {
     if (pet) {
       const adoptionCenterName = encodeURIComponent(pet.adoptionCenter); // Encode the name to make it URL-safe
-      router.push(`/message?email=${email}&userID=${userID}&centerName=${adoptionCenterName}`);
+      router.push(`/message?email=${email}&userID=${userID}&centerName=${adoptionCenterName}&petName=${pet.name}`);
     }
 };
 

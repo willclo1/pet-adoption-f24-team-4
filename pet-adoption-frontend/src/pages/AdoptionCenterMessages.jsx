@@ -15,6 +15,7 @@ import {
   Snackbar
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import AdoptionNavBar from '@/components/AdoptionNavBar';
 
 export default function AdoptionCenterMessages() {
   const [messages, setMessages] = useState([]);
@@ -155,6 +156,8 @@ export default function AdoptionCenterMessages() {
   };
 
   return (
+    <main>
+      <AdoptionNavBar />
     <Box p={3} display="flex" flexDirection="column" alignItems="center">
       <Paper elevation={3} sx={{ maxWidth: 500, width: '100%', p: 3 }}>
         <Typography variant="h6" gutterBottom>
@@ -230,5 +233,6 @@ export default function AdoptionCenterMessages() {
         message={notification}
       />
     </Box>
+    </main>
   );
 }

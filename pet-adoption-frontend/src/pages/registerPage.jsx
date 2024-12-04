@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, Stack, Snackbar } from "@mui/material";
+import { Box, Card, CardContent, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, Stack, Snackbar, InputAdornment, IconButton } from "@mui/material";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useRouter } from 'next/router'; 
 
 export default function RegisterPage() {
@@ -21,6 +23,7 @@ export default function RegisterPage() {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL; 
 
     const handleRegister = () => {
@@ -101,6 +104,20 @@ export default function RegisterPage() {
 
         fetchAdoptionCenters();
     }, []);
+
+    const handleEmailCheck = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/users/email/${emailAddress}`);
+
+            if (response.ok) {
+                setEmailError('This email is already registered.');
+            } else {
+                setEmailError('');
+            }
+        } catch (error) {
+            console.error("Error checking email:", error);
+        }
+    };
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -193,7 +210,11 @@ export default function RegisterPage() {
                             fullWidth
                             margin="normal"
                             value={emailAddress}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                                setEmailError('');
+                            }}
+                            onBlur={handleEmailCheck}
                             required
                             sx={{ borderRadius: 2 }}
                             error={!!emailError}
@@ -202,7 +223,7 @@ export default function RegisterPage() {
                         <TextField
                             label="Password"
                             variant="outlined"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             fullWidth
                             margin="normal"
                             value={password}
@@ -211,11 +232,29 @@ export default function RegisterPage() {
                             sx={{ borderRadius: 2 }}
                             error={!!passwordError}
                             helperText={passwordError}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position='end'>
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
+                        <Typography
+                            variant="caption"
+                            sx={{ color: 'grey.600', marginTop: 1, marginBottom: 2 }}
+                        >
+                            Password must be at least 8 characters long, contain uppercase, lowercase, a number, and a special character.
+                        </Typography>
                         <TextField
                             label="Confirm Password"
                             variant="outlined"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             fullWidth
                             margin="normal"
                             value={confirmPassword}

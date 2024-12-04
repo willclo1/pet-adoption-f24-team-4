@@ -28,7 +28,7 @@ export default function Message() {
   const [notification, setNotification] = useState(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const { email, centerName } = router.query; // Read centerName from the router query
+  const { email, centerName, petName } = router.query; // Read centerName from the router query
 
   useEffect(() => {
     fetchAdoptionCenters();
@@ -48,6 +48,12 @@ export default function Message() {
     }
   }, [centerName, adoptionCenters]);
 
+  useEffect(() => {
+    if (petName) {
+      setNewMessage(`Hello! I am interested in adopting '${petName}' and would like to set up a meeting.`);
+    }
+  }, [petName]);
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (selectedCenter) {
