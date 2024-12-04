@@ -57,9 +57,7 @@ public class AdoptionCenter {
     public AdoptionCenter() {
     }
 
-    /* buildingAddress must follow format: address,city,state */
     public void setBuildingAddress(String buildingAddress) {
-        //this.buildingAddress = buildingAddress;
         String[] parser = buildingAddress.split(",");
         if (parser.length == 3) {
             this.buildingAddress = buildingAddress;
