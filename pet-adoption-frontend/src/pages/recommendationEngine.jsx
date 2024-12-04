@@ -23,7 +23,7 @@ const fadeIn = keyframes`
 
 export default function RecommendationEnginePage() {
   const router = useRouter();
-  const { userID } = router.query; // Extract user ID from the query parameters
+  const { userID, email } = router.query; // Extract user ID from the query parameters
   const [loading, setLoading] = useState(true);
   const [allPets, setAllPets] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,6 +51,8 @@ export default function RecommendationEnginePage() {
       return grouped;
     }, {});
   };
+
+
 
   const fetchRecommendations = async () => {
     try {
@@ -166,6 +168,12 @@ export default function RecommendationEnginePage() {
       return newValue;
     });
   };
+  const handleAdopt = (pet) => {
+    if (pet) {
+      const adoptionCenterName = encodeURIComponent(pet.adoptionCenter); // Encode the name to make it URL-safe
+      router.push(`/message?email=${email}&userID=${userID}&centerName=${adoptionCenterName}`);
+    }
+};
 
   const handleNextPet = () => {
     setAnimationDirection(null);
@@ -221,7 +229,11 @@ export default function RecommendationEnginePage() {
                 ))}
               </Box>
               <CardActions>
-                <LikeDislikeButtons handleLike={handleYes} handleDislike={handleNo} />
+                <LikeDislikeButtons
+                  handleLike={handleYes}
+                  handleDislike={handleNo}
+                  handleAdopt={() => handleAdopt(allPets[currentIndex])} // Pass the current pet
+                />
               </CardActions>
             </Card>
           </>

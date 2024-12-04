@@ -20,7 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function CenterPublicProfile() {
     const router = useRouter();
-    const { adoptionID } = router.query;
+    const { adoptionID, email } = router.query;
     const [adoptionCenter, setAdoptionCenter] = useState(null);
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,6 +36,14 @@ export default function CenterPublicProfile() {
         setCurrPet(null);
     };
 
+    const handleBack = () =>{
+        if(email){
+            router.push(`/viewCenters?email=${email}`)
+        }
+        else{
+            router.push(`/viewCenters`)
+        }
+    }
     // Fetch Adoption Center details
     useEffect(() => {
         const fetchAdoptionCenter = async () => {
@@ -88,7 +96,7 @@ export default function CenterPublicProfile() {
                     startIcon={<ArrowBackIcon />}
                     variant="outlined"
                     sx={{ marginTop: 2 }}
-                    onClick={() => router.push('/')}
+                    onClick={handleBack}
                 >
                     Go Back
                 </Button>
@@ -102,7 +110,7 @@ export default function CenterPublicProfile() {
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
                 sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push('/viewCenters')}
+                onClick={handleBack}
             >
                 Back to Home
             </Button>

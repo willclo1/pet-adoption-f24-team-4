@@ -64,11 +64,13 @@ const LikedPets = () => {
         router.push(`/customer-home?email=${email}&userID=${userID}`);
     };
 
-    // Handle navigation to the messages page for adoption
-    const handleAdopt = (pet) => {
-        router.push(`/message?email=${email}&userID=${userID}`);
-    };
 
+    const handleAdopt = (pet) => {
+        if (pet && pet.center) {
+            const adoptionCenterName = encodeURIComponent(pet.center.centerName); // Encode for URL safety
+            router.push(`/message?email=${email}&userID=${userID}&centerName=${adoptionCenterName}`);
+        }
+    };
     // Loading and error handling
     if (loading) return <CircularProgress />;
     if (error) return <Typography color="error">{error}</Typography>;

@@ -58,8 +58,13 @@ public class LikedPetsEndpoint {
                     .body("Pet not found");
         }
 
-        LikedPet pet = new LikedPet(u.get(), p.get());
+        boolean alreadyLiked = likedPetService.existsByUserAndPet(u.get(), p.get());
+        if (alreadyLiked) {
+            log.info("[addLikedPet] Pet already liked by user: {}", body.userId);
+            return ResponseEntity.ok("Pet already liked. No further action needed.");
+        }
 
+        LikedPet pet = new LikedPet(u.get(), p.get());
         LikedPet result
                 = likedPetService.saveLikedPet(pet);
 
