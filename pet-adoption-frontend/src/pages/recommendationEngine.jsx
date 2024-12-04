@@ -149,7 +149,10 @@ export default function RecommendationEnginePage() {
 
     setAnimationDirection('left');
     incrementProgress();
-    handleNextPet();
+    
+    setTimeout(() => {
+      handleNextPet();
+    }, 250);
   };
 
   const handleNo = () => {
@@ -160,7 +163,10 @@ export default function RecommendationEnginePage() {
 
     setAnimationDirection('right');
     incrementProgress();
-    handleNextPet();
+    
+    setTimeout(() => {
+      handleNextPet();
+    }, 250);
   };
 
   const incrementProgress = () => {
