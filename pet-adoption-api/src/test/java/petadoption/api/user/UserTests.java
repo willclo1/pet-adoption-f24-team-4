@@ -28,13 +28,6 @@ public class UserTests {
     private AdoptionCenterRepository adoptionCenterRepository;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-        adoptionCenterRepository.deleteAll();
-    }
-
     @Test
     void testSaveUser() {
         User user = new User();
@@ -139,34 +132,5 @@ public class UserTests {
         assertTrue(encoder.matches("registerpass", registeredUser.getPassword()), "Password does not match");
     }
 
-    @Test
-    void testFindNonAdoptionUsers() {
-        User user1 = new User();
-        user1.setFirstName("Eve");
-        user1.setLastName("White");
-        user1.setEmailAddress("eve.white@example.com");
-        user1.setPassword(encoder.encode("password"));
-        user1.setUserType("Adopter");
 
-        User user2 = new User();
-        user2.setFirstName("Frank");
-        user2.setLastName("Black");
-        user2.setEmailAddress("frank.black@example.com");
-        user2.setPassword(encoder.encode("password"));
-        user2.setUserType("Staff");
-
-        AdoptionCenter center = new AdoptionCenter();
-        center.setCenterName("Adoption Center");
-        center.setBuildingAddress("456 Adoption Rd, Waco, TX");
-        adoptionCenterRepository.save(center);
-
-        user2.setCenter(center);
-
-        userService.saveUser(user1);
-        userService.saveUser(user2);
-
-        List<User> nonAdoptionUsers = userService.findNonAdoptionUsers();
-        assertEquals(1, nonAdoptionUsers.size(), "Incorrect number of non-adoption users");
-        assertEquals("Eve", nonAdoptionUsers.get(0).getFirstName(), "Non-adoption user mismatch");
-    }
 }

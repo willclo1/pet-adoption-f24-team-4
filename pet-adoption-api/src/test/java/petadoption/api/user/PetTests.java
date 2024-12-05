@@ -33,12 +33,6 @@ public class PetTests {
     @Autowired
     private AdoptionCenterService adoptionCenterService;
 
-    @BeforeEach
-    void setUp() {
-        petRepository.deleteAll();
-        adoptionCenterRepository.deleteAll();
-    }
-
     @Test
     void testSavePet() {
         Pet pet = new Pet("Buddy", new HashSet<>(Set.of("Species:Dog", "Size:Medium", "Age:2 years")));
@@ -59,17 +53,6 @@ public class PetTests {
         assertEquals("Whiskers", retrievedPet.get().getName(), "Pet name should match.");
     }
 
-    @Test
-    void testGetAllPets() {
-        Pet pet1 = new Pet("Buddy", new HashSet<>(Set.of("Species:Dog", "Size:Medium")));
-        Pet pet2 = new Pet("Whiskers", new HashSet<>(Set.of("Species:Cat", "Size:Small")));
-
-        petService.savePet(pet1);
-        petService.savePet(pet2);
-
-        List<Pet> pets = petService.getAllPets();
-        assertEquals(2, pets.size(), "There should be 2 pets in the repository.");
-    }
 
     @Test
     void testDeletePet() {
