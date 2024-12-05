@@ -1,46 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Card, CardContent, Typography, CircularProgress, Alert, Grid, Button, Avatar,Dialog,DialogTitle,DialogContent,DialogActions } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    CircularProgress,
+    Alert,
+    Grid,
+    Button,
+    Avatar,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function CenterPublicProfile() {
     const router = useRouter();
-    const { adoptionID } = router.query;
+    const { adoptionID, email } = router.query;
     const [adoptionCenter, setAdoptionCenter] = useState(null);
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currPet,setCurrPet] = useState(null);
+    const [currPet, setCurrPet] = useState(null);
     const [error, setError] = useState(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+    const handleViewPet = (pet) => {
+        setCurrPet(pet);
+    };
 
-    const handleViewPet = (pet) =>{
-        setCurrPet(pet);   
-
-    }
     const handleExit = () => {
         setCurrPet(null);
+    };
 
-
+    const handleBack = () =>{
+        if(email){
+            router.push(`/viewCenters?email=${email}`)
+        }
+        else{
+            router.push(`/viewCenters`)
+        }
     }
     // Fetch Adoption Center details
     useEffect(() => {
         const fetchAdoptionCenter = async () => {
-                try {
-                    const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`, {
-                    });
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data = await response.json();
-                    setAdoptionCenter(data);
-                } catch (error) {
-                    console.error('Error fetching adoption center:', error);
-                    setError('Adoption center not found.');
-                } finally {
-                    setLoading(false);
+            try {
+                const response = await fetch(`${apiUrl}/adoption-centers/${adoptionID}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+                const data = await response.json();
+                setAdoptionCenter(data);
+            } catch (error) {
+                console.error('Error fetching adoption center:', error);
+                setError('Adoption center not found.');
+            } finally {
+                setLoading(false);
+            }
         };
         fetchAdoptionCenter();
     }, [adoptionID, apiUrl]);
@@ -48,20 +67,19 @@ export default function CenterPublicProfile() {
     // Fetch Pets for the Adoption Center
     useEffect(() => {
         const fetchPets = async () => {
-                try {
-                    const response = await fetch(`${apiUrl}/pets/${adoptionID}`, {
-                    });
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch Pets");
-                    }
-                    const data = await response.json();
-                    setPets(data);
-                } catch (error) {
-                    console.error("Error fetching Pets:", error);
-                    setError("Failed to load Pets.");
-                } finally {
-                    setLoading(false);
+            try {
+                const response = await fetch(`${apiUrl}/pets/${adoptionID}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch Pets');
                 }
+                const data = await response.json();
+                setPets(data);
+            } catch (error) {
+                console.error('Error fetching Pets:', error);
+                setError('Failed to load Pets.');
+            } finally {
+                setLoading(false);
+            }
         };
         fetchPets();
     }, [adoptionID, apiUrl]);
@@ -78,7 +96,7 @@ export default function CenterPublicProfile() {
                     startIcon={<ArrowBackIcon />}
                     variant="outlined"
                     sx={{ marginTop: 2 }}
-                    onClick={() => router.push('/')}
+                    onClick={handleBack}
                 >
                     Go Back
                 </Button>
@@ -92,7 +110,7 @@ export default function CenterPublicProfile() {
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
                 sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push('/viewCenters')}
+                onClick={handleBack}
             >
                 Back to Home
             </Button>
@@ -102,24 +120,15 @@ export default function CenterPublicProfile() {
                     {adoptionCenter?.centerName}
                 </Typography>
 
-                <Typography variant="h6" component='span' gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                    <b>Address:</b>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                    Address:
                 </Typography>
-                <Typography variant="body1" component='span' gutterBottom>
-                    {adoptionCenter?.buildingAddress}
-                </Typography>
+                <Typography variant="body1">{adoptionCenter?.buildingAddress}</Typography>
 
                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                    <b>About:</b>
+                    About:
                 </Typography>
-                <Typography sx={{ 
-                                display: 'inline-block',
-                                marginBottom: 3,
-                                width: 400,
-                                wordBreak: 'break-all'
-                                }}>
-                    {adoptionCenter?.description}
-                </Typography>
+                <Typography>{adoptionCenter?.description}</Typography>
 
                 <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                     Pets Available for Adoption
@@ -133,107 +142,74 @@ export default function CenterPublicProfile() {
                     <Grid container spacing={3}>
                         {pets.map((pet) => (
                             <Grid item xs={12} sm={6} md={4} key={pet.id}>
-                                <Card sx={{ width: 500,height: 500, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2, padding: 2 }} >
-                                <Avatar
-                                        src={pet.profilePicture && pet.profilePicture.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
-                                        sx={{
-                                            flex: 1,
-                                            width: 450,
-                                            height: 350,
-                                            resizeMode: 'contain',
-                                            borderRadius: '0%', // if you want it circular, use '50%'
-                                            objectPosition: 'center'  // Centers the image within the element
-                                        }}
-                                        style={{border: 0, objectfit: 'fill'}}
-                                        
-                                        
+                                <Card sx={{ width: 300, borderRadius: 2, backgroundColor: '#fff', boxShadow: 2 }}>
+                                    <Avatar
+                                        src={pet.profilePicture?.imageData ? `data:image/png;base64,${pet.profilePicture.imageData}` : null}
+                                        sx={{ width: 300, height: 200, objectFit: 'cover' }}
                                     />
-                                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                                        <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
-                                            <PetsIcon />
-                                        </Avatar>
+                                    <CardContent>
                                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                            {pet.name} 
+                                            {pet.name}
                                         </Typography>
-                                    </Box>
-                                    <Button className="adopt-button"  onClick={() => handleViewPet(pet)}>View Pet</Button>
-                                        
+                                        <Button onClick={() => handleViewPet(pet)}>View Details</Button>
+                                    </CardContent>
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
                 )}
             </Card>
-            <Dialog open={currPet}>
-                <DialogTitle>{"Would You Like To Adopt This Pet?"}</DialogTitle>
-                <DialogContent>
-                <Avatar
-                    src={currPet && currPet.profilePicture && currPet.profilePicture.imageData ? `data:image/png;base64,${currPet.profilePicture.imageData}` : null}
-                        sx={{
-                            flex: 1,
-                            width: 450,
-                            height: 350,
-                            resizeMode: 'contain',
-                            borderRadius: '0%', // if you want it circular, use '50%'
-                            objectPosition: 'center'  // Centers the image within the element
-                        }}
-                        style={{border: 0, objectfit: 'fill'}}
-                        
-                        
-                    />
-                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                        <Avatar sx={{ marginRight: 2, backgroundColor: '#1976d2' }}>
-                            <PetsIcon />
-                        </Avatar>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                            {currPet ? currPet.name : null} 
-                        </Typography>
-                        
-                    </Box>
-                    <Typography variant="body2" color="textSecondary">
-                        Type: {currPet ? currPet.species : null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Age: {currPet ? currPet.age : null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Coat Length: {currPet ? currPet.coatLength : null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         Breed: {currPet ? currPet.species == 'CAT' ? currPet.catBreed : currPet.dogBreed : null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         Fur Type: {currPet ? currPet.furType: null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         Health Status: {currPet ? currPet.healthStatus: null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         Size: {currPet ? currPet.petSize: null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         Sex: {currPet ? currPet.sex: null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                         spayed Neutered: {currPet ? currPet.spayedNeutered: null}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Temperament: {currPet ? currPet.temperament: null}
-                    </Typography>
-                   
 
+            <Dialog open={!!currPet} onClose={handleExit}>
+                <DialogTitle>Pet Details</DialogTitle>
+                <DialogContent>
+                    <Avatar
+                        src={currPet?.profilePicture?.imageData ? `data:image/png;base64,${currPet.profilePicture.imageData}` : null}
+                        sx={{ width: 300, height: 200, objectFit: 'cover' }}
+                    />
+                    <Typography variant="h6" sx={{ marginTop: 2 }}>
+                        {currPet?.name}
+                    </Typography>
+
+                    <Typography variant="body1" sx={{ marginTop: 2, fontWeight: 'bold' }}>
+                        Attributes:
+                    </Typography>
+                    {currPet?.attributes?.length > 0 ? (
+                        (() => {
+                            // Group attributes by key
+                            const groupedAttributes = currPet.attributes.reduce((acc, attr) => {
+                                const [key, value] = attr.split(':');
+                                if (!acc[key]) acc[key] = [];
+                                acc[key].push(value);
+                                return acc;
+                            }, {});
+
+                            // Render grouped attributes
+                            return (
+                                <ul style={{ paddingLeft: '20px' }}>
+                                    {Object.entries(groupedAttributes).map(([key, values]) => (
+                                        <li key={key} style={{ marginBottom: '10px' }}>
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                                                {key}:
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                {values.join(', ')}
+                                            </Typography>
+                                        </li>
+                                    ))}
+                                </ul>
+                            );
+                        })()
+                    ) : (
+                        <Typography variant="body2" color="textSecondary">
+                            No attributes available.
+                        </Typography>
+                    )}
                 </DialogContent>
                 <DialogActions>
-                    <Button className="adopt-button" onClick={handleExit}>No</Button>
-                    <Button  className="adopt-button">
-                        Adopt
-                    </Button>
-
+                    <Button onClick={handleExit}>Close</Button>
                 </DialogActions>
             </Dialog>
-            
-            </Box>
-
-        
+        </Box>
     );
 }

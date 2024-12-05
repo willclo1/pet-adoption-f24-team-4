@@ -38,17 +38,24 @@ export default function ViewCenters() {
     const handleClick = (adoptionID) => {
         router.push({
       pathname: `/centerPublicProfile`,
-      query: { adoptionID },
+      query: { adoptionID, email },
     });
     };
 
     const handleViewAllpets = () => {
-
         if(email){
             router.push(`/allPets?email=${email}&userID=${userID}`)
         }
         else{
             router.push(`/allPets`)
+        }
+    }
+    const handleBack = () => {
+        if(email){
+            router.push(`/customer-home?email=${email}`)
+        }
+        else{
+            router.push('/')
         }
     }
 
@@ -59,7 +66,7 @@ export default function ViewCenters() {
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
                 sx={{ marginBottom: 2, color: '#1976d2', borderColor: '#1976d2' }}
-                onClick={() => router.push('/')}
+                onClick={handleBack}
             >
                 Back to Home
             </Button>

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import petadoption.api.pet.Pet;
 import petadoption.api.pet.PetRepository;
+import petadoption.api.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,11 @@ public class LikedPetService {
     @Autowired
     private PetRepository petRepository;
 
+
+    public boolean existsByUserAndPet(User user, Pet pet) {
+        return likedPetRepository.existsByUserAndPet(user, pet);
+    }
+
     public List<Pet> getLikedPets(Long userId) {
         List<LikedPet> likedPets = likedPetRepository.findAllByUserId(userId);
         List<Pet> petList = new ArrayList<>();
@@ -29,7 +35,7 @@ public class LikedPetService {
         return petList;
     }
 
-    public LikedPet saveLikedPets(LikedPet likedPet) {
+    public LikedPet saveLikedPet(LikedPet likedPet) {
         return likedPetRepository.save(likedPet);
     }
 }

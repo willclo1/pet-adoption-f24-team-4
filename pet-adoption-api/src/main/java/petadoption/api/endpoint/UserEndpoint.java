@@ -1,19 +1,14 @@
 package petadoption.api.endpoint;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import petadoption.api.pet.criteria.*;
-import petadoption.api.pet.criteria.breed.CatBreed;
-import petadoption.api.pet.criteria.breed.DogBreed;
 import petadoption.api.user.User;
 import petadoption.api.user.UserService;
-import petadoption.api.userPreferences.UserPreferences;
-import petadoption.api.userPreferences.UserPreferencesService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +18,6 @@ import java.util.Optional;
 public class UserEndpoint {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserPreferencesService userPreferencesService;
 
     @GetMapping("/users/{id}")
     public User findUserById(@PathVariable Long id) {
@@ -37,7 +29,6 @@ public class UserEndpoint {
 
         return user;
     }
-
 
     @GetMapping("/users/email/{email}")
     public ResponseEntity<User> findUserByEmailAddress(@PathVariable String email) {
@@ -77,68 +68,57 @@ public class UserEndpoint {
 //            return ResponseEntity.notFound().build(); // Handle user not found
 //        }
 //    }
+    @GetMapping("/users/{userId}/getPref")
+    public ResponseEntity<Map<String, Integer>> getUserPreferences(@PathVariable Long userId) {
+        Optional<User> optionalUser = userService.findUser(userId);
+        if (optionalUser.isEmpty()) {
+            log.error("[getUserPreferences] User with ID:{} not found", userId);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Collections.emptyMap());
+        }
 
-@PutMapping("/users/{userId}/preferences")
-public ResponseEntity<UserPreferences> updateUserPreferences(
-        @PathVariable Long userId,
-        @RequestBody Map<String, Map<String, Double>> userPreferenceMap) {
+        User user = optionalUser.get();
+        Map<String, Integer> preferences = user.getPreferences();
 
-    Optional<User> optionalUser = userService.findUser(userId);
-    if (optionalUser.isEmpty()) {
-        return ResponseEntity.notFound().build();
+        log.info("[getUserPreferences] Retrieved preferences for user ID:{}: {}", userId, preferences);
+
+        return ResponseEntity.ok(preferences);
+    }
+    @PutMapping("/users/{userId}/preferences")
+    public ResponseEntity<String> updatePreferences(
+            @PathVariable Long userId,
+            @RequestBody Map<String, Integer> preferences) {
+
+        Optional<User> optionalUser = userService.findUser(userId);
+        if (optionalUser.isEmpty()) {
+            log.error("[updatePreferences] User with ID:{} not found", userId);
+            return ResponseEntity
+                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body("User not found");
+        }
+
+        log.info("[updatePreferences] Received preferences for user ID:{}: {}", userId, preferences);
+
+        for (Map.Entry<String, Integer> entry : preferences.entrySet()) {
+            if (entry.getValue() == null || entry.getValue() < 0 || entry.getValue() > 1) {
+                log.error("[updatePreferences] Invalid rating for key: {}. Value: {}", entry.getKey(), entry.getValue());
+                return ResponseEntity
+                        .badRequest()
+                        .body("Invalid rating for key: " + entry.getKey());
+            }
+        }
+
+        User user = optionalUser.get();
+
+        log.info("[updatePreferences] Preferences before update: {}", user.getPreferences());
+        user.setPreferences(preferences);
+        userService.saveUser(user);
+        log.info("[updatePreferences] Preferences after update: {}", user.getPreferences());
+
+        return ResponseEntity.ok("Successfully updated user preferences");
     }
 
-    User user = optionalUser.get();
-    UserPreferences preferences = user.getUserPreferences();
-
-    final UserPreferences finalPreferences = new UserPreferences();
-
-    userPreferenceMap.forEach((category, options) -> {
-        switch (category) {
-            case "furColor":
-                finalPreferences.clearFurColorRating();
-                options.forEach((key, value) -> finalPreferences.setFurColorRating(FurColor.valueOf(key), value));
-                break;
-            case "petType":
-                finalPreferences.clearSpeciesRating();
-                options.forEach((key, value) -> finalPreferences.setSpeciesRating(Species.valueOf(key), value));
-                break;
-            case "breed":
-                finalPreferences.clearDogBreedRating();
-                finalPreferences.clearCatBreedRating();
-                options.forEach((key, value) -> {
-                    if (EnumUtils.isValidEnum(DogBreed.class, key)) {
-                        finalPreferences.setDogBreedRating(DogBreed.valueOf(key), value);
-                    } else if (EnumUtils.isValidEnum(CatBreed.class, key)) {
-                        finalPreferences.setCatBreedRating(CatBreed.valueOf(key), value);
-                    }
-                });
-                break;
-            case "petSize":
-                finalPreferences.clearSizeRating();
-                options.forEach((key, value) -> finalPreferences.setSizeRating(Size.valueOf(key), value));
-                break;
-            case "age":
-                finalPreferences.clearAgeRating();
-                options.forEach((key, value) -> finalPreferences.setAgeRating(Integer.parseInt(key), value));
-                break;
-            case "temperament":
-                finalPreferences.clearTemperamentRating();
-                options.forEach((key, value) -> finalPreferences.setTemperamentRating(Temperament.valueOf(key), value));
-                break;
-            case "healthStatus":
-                finalPreferences.clearHealthRating();
-                options.forEach((key, value) -> finalPreferences.setHealthRating(Health.valueOf(key), value));
-                break;
-            default:
-                break; // Ignore unknown categories
-        }
-    });
-    user.setUserPreferences(finalPreferences);
-    userService.saveUser(user);
-
-    return ResponseEntity.ok(finalPreferences);
-}
     @GetMapping("/users")
     public ResponseEntity<List<User>> findAllUsers() {
         List<User> users = userService.findAllUsers();
@@ -149,6 +129,7 @@ public ResponseEntity<UserPreferences> updateUserPreferences(
             return ResponseEntity.noContent().build();
         }
     }
+
 //    @PostMapping("/users")
 //    public User saveUser(@RequestBody User user) {
 //        return userService.saveUser();

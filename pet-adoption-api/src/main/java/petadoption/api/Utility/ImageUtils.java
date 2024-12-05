@@ -1,4 +1,5 @@
 package petadoption.api.Utility;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;

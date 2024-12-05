@@ -41,11 +41,9 @@ public class PetService {
             } else {
                 throw new RuntimeException("Adoption Center not found.");
             }
-
-
         }
-        return repository.save(pet);
 
+        return repository.save(pet);
     }
 
     public Optional<Pet> getPetById(long petId){
@@ -61,13 +59,14 @@ public class PetService {
     public List<Pet> getRandPets() { return repository.getRandom(DEFAULT_RAND_PETS); }
 
     public List<Pet> getAdoptionCenterPets(long adoptionID) {
-        return repository.findByCenter_adoptionID(adoptionID);
+        return repository.findByCenter_AdoptionID(adoptionID);
     }
 
     public void deletePet(long petID){
         repository.deleteById(petID);
     }
 
+    /*
     public Pet generatePet(String name, Species species, int weight,
                            CoatLength coatLength, FurType furType, Set<FurColor> furColors,
                            AdoptionCenter adoptionCenter,Set<DogBreed> dogBreeds,
@@ -2396,7 +2395,7 @@ public class PetService {
 
         repository.saveAll(samplePets);
     }
-
+*/
 
 
 }
