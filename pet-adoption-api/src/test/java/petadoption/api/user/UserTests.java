@@ -124,6 +124,7 @@ public class UserTests {
         registerRequest.setLastName("Green");
         registerRequest.setEmailAddress("david.green@example.com");
         registerRequest.setPassword("registerpass");
+
         
         registerRequest.setUserType("Adopter");
 
