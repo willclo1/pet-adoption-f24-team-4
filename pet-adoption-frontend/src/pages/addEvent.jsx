@@ -10,6 +10,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export default function AddEvent() {
   const [title, setTitle] = useState('');
   const [eventPicture, setEventPicture] = useState(null);
+  
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [startDateTime, setStartDateTime] = useState(null);
