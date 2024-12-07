@@ -21,6 +21,7 @@ export default function Message() {
   const [inbox, setInbox] = useState([]);
   const [thread, setThread] = useState([]);
   const [adoptionCenters, setAdoptionCenters] = useState([]);
+  const [centerName, setCenterName] = useState(null);
   const [selectedCenter, setSelectedCenter] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [senderName, setSenderName] = useState('');
@@ -31,10 +32,13 @@ export default function Message() {
 
   useEffect(() => {
     if (router.isReady) {
-      const { userID } = router.query;
+      const { userID, centerName } = router.query;
       if (userID) {
         setUserId(userID);
         fetchUserDetails(userID); // Fetch user details on load
+      }
+      if (centerName) {
+        setCenterName(centerName);
       }
     }
   }, [router.isReady, router.query]);
@@ -50,6 +54,17 @@ export default function Message() {
       fetchInbox();
     }
   }, [adoptionCenters]);
+
+  useEffect(() => {
+    if (centerName && adoptionCenters.length > 0) {
+      const matchingCenter = adoptionCenters.find(
+        (center) => center.centerName.toLowerCase() === centerName.toLowerCase()
+      );
+      if (matchingCenter) {
+        setSelectedCenter(matchingCenter.adoptionID);
+      }
+    }
+  }, [centerName, adoptionCenters]);
 
   const fetchUserDetails = async (userId) => {
     const token = localStorage.getItem('token');
