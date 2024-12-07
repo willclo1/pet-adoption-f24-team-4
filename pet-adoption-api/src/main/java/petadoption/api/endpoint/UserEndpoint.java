@@ -46,7 +46,6 @@ public class UserEndpoint {
     @GetMapping("/users/adoption-center/{email}")
     public Optional<Long> findAdoptionIDByEmail(@PathVariable String email) {
         Optional<User> userOptional = userService.findUserByEmail(email);
-
         if (userOptional.isPresent()) {
             log.info("User found with email: {}", email);
             Optional<Long> id = userService.findAdoptionIDByEmailAddress(email);

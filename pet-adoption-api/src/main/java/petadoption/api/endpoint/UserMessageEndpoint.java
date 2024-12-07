@@ -38,15 +38,24 @@ public class UserMessageEndpoint {
     public void deleteMessage(@PathVariable Long id) {
         userMessageService.deleteById(id);
     }
-    @GetMapping("/adoption-center/{centerId}")
-    public ResponseEntity<List<UserMessage>> getMessagesByAdoptionCenter(@PathVariable Long centerId) {
-        List<UserMessage> messages = userMessageService.findMessagesByReceiverId(centerId);
-        return ResponseEntity.ok(messages);
-    }
 
     @GetMapping("/adoption-center/{centerId}/user/{userId}")
     public ResponseEntity<List<UserMessage>> getMessagesBetweenCenterAndUser(@PathVariable Long centerId, @PathVariable Long userId) {
         List<UserMessage> messages = userMessageService.findMessagesBetweenCenterAndUser(centerId, userId);
         return ResponseEntity.ok(messages);
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getMessagesByUser(@PathVariable Long userId) {
+        List<UserMessage> messages = userMessageService.findMessagesByUser(userId);
+        return ResponseEntity.ok(messages);
+    }
+    @GetMapping("/adoption-center/{centerId}")
+    public ResponseEntity<List<UserMessage>> getMessagesForCenter(@PathVariable Long centerId) {
+        List<UserMessage> messages = userMessageService.findMessagesByCenterId(centerId);
+        if (messages.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(messages);
+    }
+
 }

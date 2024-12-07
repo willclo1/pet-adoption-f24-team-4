@@ -31,4 +31,11 @@ public class UserMessageService {
     public List<UserMessage> findMessagesBetweenCenterAndUser(Long centerId, Long userId) {
         return messageRepository.findMessagesBetweenCenterAndUser(centerId,userId);
     }
+    public List<UserMessage> findMessagesByUser(Long userId) {
+        return messageRepository.findMessagesByUserId(userId);
+    }
+
+    public List<UserMessage> findMessagesByCenterId(Long centerId) {
+        return messageRepository.findMessagesByCenterId(centerId);
+    }
 }
