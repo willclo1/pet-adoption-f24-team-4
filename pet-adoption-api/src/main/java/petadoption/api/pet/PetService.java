@@ -15,10 +15,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
+import static petadoption.api.pet.criteria.Attribute.*;
+import static petadoption.api.pet.criteria.Attribute.speciesList;
+
 @Service
 public class PetService {
     @Autowired
     private PetRepository repository;
+    private ImageService imageService;
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
@@ -78,2324 +82,1027 @@ public class PetService {
         return pet;
     }
 
-    public void addSamplePets(AdoptionCenterService adoptionCenterService) throws IOException {
+    */
 
-        List<Pet> samplePets = new ArrayList<>();
+    public Pet generatePet(List<AdoptionCenter> adoptionCenters, String species, String dogBreed,String catBreed, String furType,
+                           String[] furColor,String furLength,String size, String health,String gender,String spayed,String [] temp,int age, int weight ) throws IOException {
+        Pet pet = new Pet();
+        HashSet<String> attributes = new HashSet<>();
+
+        int speciesInt = Arrays.asList(Attribute.speciesList).indexOf(species);
+        int dogBreedInt = -1;
+        int catBreedInt = -1;
+        if(!dogBreed.equals("n")){
+
+            dogBreedInt = Arrays.asList(Attribute.dogBreedList).indexOf(dogBreed);
+            System.out.println(dogBreedInt);
+            System.out.println(dogBreed);
+
+        }
+        else {
+
+            catBreedInt = Arrays.asList(Attribute.catBreedList).indexOf(catBreed);
+            System.out.println(catBreedInt);
+            System.out.println(catBreed);
+        }
+
+
+        int furTypeInt = Arrays.asList(Attribute.furTypeList).indexOf(furType);
+        int[] furColorInt = new int[furColor.length]; // Create an array of the same length as furColor
+
+        for (int i = 0; i < furColor.length; i++) {
+            furColorInt[i] = Arrays.asList(Attribute.furColorList).indexOf(furColor[i]);
+        }
+        int furLengthInt = Arrays.asList(Attribute.furLengthList).indexOf(furLength);
+        int sizeInt = Arrays.asList(Attribute.sizeList).indexOf(size);
+        int healthInt = Arrays.asList(Attribute.healthList).indexOf(health);
+        int genderInt = Arrays.asList(Attribute.genderList).indexOf(gender);
+        int spayedInt = Arrays.asList(Attribute.spayedNeuteredList).indexOf(spayed);
+
+        int[] tempInt = new int[temp.length]; // Create an array of the same length as furColor
+
+        for (int i = 0; i < temp.length; i++) {
+            tempInt[i] = Arrays.asList(Attribute.temperamentList).indexOf(temp[i]);
+        }
+
+
+        // Using the predefined lists from the Attribute class
+        attributes.add(buildAttribute(
+                Attribute.typeList[0],
+                Attribute.speciesList[speciesInt]
+        ));
+
+        if(dogBreedInt != -1){
+
+            attributes.add(buildAttribute(
+                    Attribute.typeList[2],
+                    Attribute.dogBreedList[dogBreedInt]
+
+            ));
+        }
+        else {
+            attributes.add(buildAttribute(
+                    Attribute.typeList[1],
+                    Attribute.catBreedList[catBreedInt]
+            ));
+
+        }
+
+        attributes.add(buildAttribute(
+                Attribute.typeList[3],
+                Attribute.furTypeList[furTypeInt]
+        ));
+
+        for(int i = 0 ; i < furColor.length ; i++){
+            attributes.add(buildAttribute(
+                    Attribute.typeList[4],
+                    Attribute.furColorList[furColorInt[i]]
+            ));
+        }
+
+
+
+        attributes.add(buildAttribute(
+                Attribute.typeList[5],
+                Attribute.furLengthList[furLengthInt]
+        ));
+
+        attributes.add(buildAttribute(
+                Attribute.typeList[6],
+                Attribute.sizeList[sizeInt]
+        ));
+        attributes.add(buildAttribute(
+                Attribute.typeList[7],
+                Attribute.healthList[healthInt]
+        ));
+
+        attributes.add(buildAttribute(
+                Attribute.typeList[8],
+                Attribute.genderList[genderInt]
+        ));
+
+        attributes.add(buildAttribute(
+                Attribute.typeList[9],
+                Attribute.spayedNeuteredList[spayedInt]
+        ));
+
+
+        for (int i = 0; i < temp.length; i++) {
+
+            attributes.add(buildAttribute(
+                    Attribute.typeList[10],
+                    Attribute.temperamentList[tempInt[i]]
+            ));
+        }
+        // Age
+        attributes.add(buildAttribute(
+                typeList[11],
+                Integer.toString(age)
+        ));
+        //weight
+        attributes.add(buildAttribute(
+                typeList[12],
+                Integer.toString(weight)
+        ));
+
+        Random random = new Random();
+
+        if (adoptionCenters != null && !adoptionCenters.isEmpty()) {
+            pet.setCenter(adoptionCenters.get(random.nextInt(adoptionCenters.size())));
+        }
+
+        pet.setAttributes(attributes);
+        System.out.println("FINSH");
+        // Assuming there's a collection called pets where you store all pet objects
+        return pet;
+
+    }
+
+
+    public List<Pet>  addSamplePets(List<AdoptionCenter> adoptionCenters) throws IOException {
+
+        Random random = new Random();
+        List<Pet> pets = new ArrayList<>();
 
         //DOGS
-        Optional<AdoptionCenter> adoptionCenter = adoptionCenterService.getCenter((long)(1));
 
-        Set<DogBreed> dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.GREYHOUND);
-        Set<CatBreed> catBreeds = new HashSet<>();
-        Set<Temperament> temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.ATHLETIC);
-        Set<FurColor> colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.WHITE);
 
+        Pet pet = generatePet(adoptionCenters,"Dog","Greyhound","n","Smooth",new String[]{"Grey"},
+                "Medium", "Large","Good","Male", "Y", new String[]{"Active", "Reactive","Athletic"},4,50 );
+        pet.setName("Wilson");
 
         File imageFile = new File("PetImages/GreyHound.jpg");
         Image image = new Image();
-        image.setType("image/jpeg");
+        image.setType("image/jpg");
         image.setName("GreyHound.jpg");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
 
-
-        Pet pet = generatePet("wilson",Species.DOG,50,
-                                    CoatLength.MEDIUM, FurType.SMOOTH,
-                                    colors, adoptionCenter.get(),
-                                    dogBreeds, catBreeds, Size.LARGE,4,
-                                    temperaments, Health.GOOD,SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
 
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.GERMAN_SHEPHERD_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.FRIENDLY);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
+        // Assuming we have a list of adoption centers and adoptionCenter.get() provides a random one.
 
+
+
+        // Set the name
+        pet = generatePet(adoptionCenters,"Dog","German Shepherd Dog","n","Smooth",new String[]{"Black","Bronze"},
+                "Medium", "Large","Excellent","Male", "Y", new String[]{"Active", "Sociable","Friendly"},4,50 );
+        pet.setName("Axel");
+
+        //   Assuming image handling is somewhere in your application
         imageFile = new File("PetImages/german-shepherd-dog.jpeg");
         image = new Image();
         image.setType("image/jpeg");
         image.setName("german-shepherd-dog.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Axel",Species.DOG,52,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+
+        // Add to your collection
+        pets.add(pet);
 
 
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CESKY_TERRIER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.BOSSY);
-        temperaments.add(Temperament.ANXIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-        colors.add(FurColor.WHITE);
+        pet = generatePet(adoptionCenters, "Dog", "Cesky Terrier", "n", "Double", new String[]{"Grey", "White"}, "Medium", "Small", "Good", "Male", "Y", new String[]{"Aggressive", "Bossy", "Anxious"}, 4, 20);
+        pet.setName("Jake");
 
         imageFile = new File("PetImages/CESKYTERRIER.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("CESKYTERRIER.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("jake",Species.DOG,20,CoatLength.MEDIUM,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.GIANT_SCHNAUZER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ADAPTABLE);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.CALM);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
+        pet = generatePet(adoptionCenters, "Dog", "Giant Schnauzer", "n", "Smooth", new String[]{"Black"}, "Long", "Extra Large", "Excellent", "Female", "Y", new String[]{"Adaptable", "Friendly", "Calm"}, 7, 80);
+        pet.setName("Jack Harlow");
 
         imageFile = new File("PetImages/GIANTSCHNAUZER.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("GIANTSCHNAUZER.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("jake",Species.DOG,80,CoatLength.LONG,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
 
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.DOBERMAN_PINSCHER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.LOYAL);
-        temperaments.add(Temperament.REACTIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
+        pet = generatePet(adoptionCenters, "Dog", "Doberman Pinscher", "n", "Silky", new String[]{"Black", "Brown"}, "Short", "Large", "Excellent", "Male", "Y", new String[]{"Aggressive", "Loyal", "Reactive"}, 6, 75);
+        pet.setName("Jackson");
 
         imageFile = new File("PetImages/Doberman.jpeg");
         image = new Image();
         image.setType("image/jpeg");
         image.setName("Doberman.jpeg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Jackson",Species.DOG,45,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.POODLE);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.EASY_GOING);
-        temperaments.add(Temperament.EXCITABLE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
+        pet = generatePet(adoptionCenters, "Dog", "Poodle", "n", "Rough", new String[]{"Brown"}, "Medium", "Small", "Excellent", "Female", "Y", new String[]{"Passive", "Easy Going", "Excitable"}, 4, 20);
+        pet.setName("Rolex");
 
         imageFile = new File("PetImages/poodle.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("poodle.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("rolex",Species.DOG,20,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BOXER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.CURIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.BROWN);
+        pet = generatePet(adoptionCenters, "Dog", "Boxer", "n", "Smooth", new String[]{"White", "Brown"}, "Short", "Large", "Good", "Female", "Y", new String[]{"Aggressive", "Reactive", "Curious"}, 7, 55);
+        pet.setName("Waller");
 
         imageFile = new File("PetImages/Boxer.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Boxer.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Waller",Species.DOG,55,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CATAHOULA_LEOPARD_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGILE);
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.CURIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.GREY);
+        pet = generatePet(adoptionCenters, "Dog", "Catahoula Leopard Dog", "n", "Silky", new String[]{"White", "Grey"}, "Short", "Large", "Good", "Male", "Y", new String[]{"Agile", "Calm", "Curious"}, 2, 20);
+        pet.setName("Bart");
 
         imageFile = new File("PetImages/CATAHOULALEOPARDDOG.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("CATAHOULALEOPARDDOG.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Bart",Species.DOG,20,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.GOLDEN_RETRIEVER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.LOYAL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Golden Retriever", "n", "Double", new String[]{"Bronze"}, "Long", "Large", "Excellent", "Male", "Y", new String[]{"Active", "Playful", "Loyal"}, 5, 70);
+        pet.setName("Monke");
 
         imageFile = new File("PetImages/GoldenRetreiver.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("GoldenRetreiver.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Monke",Species.DOG,70,CoatLength.LONG,
-                FurType.DOUBLE,colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.TOSA);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.DEPENDENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.WHITE);
+        pet = generatePet(adoptionCenters, "Dog", "Tosa", "n", "Smooth", new String[]{"Bronze", "White"}, "Medium", "Large", "Excellent", "Male", "Y", new String[]{"Aggressive", "Active", "Dependent"}, 6, 50);
+        pet.setName("Cola");
 
         imageFile = new File("PetImages/tosa.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("tosa.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Cola",Species.DOG,50,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        //CATS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SIAMESE);
-
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Siamese", "Silky", new String[]{"Black", "White"}, "Short", "Small", "Good", "Male", "Y", new String[]{"Active", "Sociable", "Even Tempered"}, 8, 25);
+        pet.setName("WilburForce");
 
         imageFile = new File("PetImages/Siamese.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Siamese.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("WilburForce",Species.CAT,25,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,8,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.EASY_GOING);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
+        pet = generatePet(adoptionCenters, "Cat", "n", "Domestic Shorthair", "Rough", new String[]{"Black", "Brown"}, "Short", "Medium", "Excellent", "Female", "Y", new String[]{"Active", "Easy Going"}, 4, 52);
+        pet.setName("Jerome");
 
         imageFile = new File("PetImages/cat1.jpg");
         image = new Image();
         image.setType("image/jpeg");
         image.setName("cat1.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Jerome",Species.CAT,52,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Domestic Shorthair", "Rough", new String[]{"Grey"}, "Short", "Medium", "Excellent", "Female", "Y", new String[]{"Aggressive", "Anxious", "Easily Trained"}, 6, 18);
+        pet.setName("Aubrey");
         imageFile = new File("PetImages/cat2.jpg");
         image = new Image();
         image.setType("image/jpg");
         image.setName("cat2.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("jake",Species.CAT,18,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.DOMESTIC_SHORTHAIR);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AFFECTIONATE);
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.LOYAL);
-        temperaments.add(Temperament.CURIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Domestic Shorthair", "Smooth", new String[]{"Black", "White"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Affectionate", "Calm", "Loyal", "Curious"}, 7, 23);
+        pet.setName("Jake");
         imageFile = new File("PetImages/cat3.jpeg");
         image = new Image();
         image.setType("image/jpeg");
         image.setName("cat3.jpeg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("jake",Species.CAT,23,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.AMERICAN_BOBTAIL);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.BOSSY);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "American Bobtail", "Smooth", new String[]{"Brown"}, "Short", "Medium", "Excellent", "Female", "Y", new String[]{"Aggressive", "Bossy", "Bold"}, 4, 34);
+        pet.setName("Stewie");
         imageFile = new File("PetImages/Bobtail.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Bobtail.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("stewie",Species.CAT,34,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.AMERICAN_CURL);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.INTELLIGENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "American Curl", "Smooth", new String[]{"White"}, "Medium", "Medium", "Excellent", "Female", "Y", new String[]{"Passive", "Calm", "Intelligent"}, 4, 27);
+        pet.setName("SETH");
         imageFile = new File("PetImages/curl.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("curl.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("SETH",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.SMOOTH,colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.DEVON_REX);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.ADAPTABLE);
-        temperaments.add(Temperament.ALOOF);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Devon Rex", "Smooth", new String[]{"White", "Grey"}, "Short", "Small", "Fair", "Female", "Y", new String[]{"Aggressive", "Adaptable", "Aloof"}, 3, 15);
+        pet.setName("Wizard");
         imageFile = new File("PetImages/REX.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("REX.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Wizard",Species.CAT,15,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.MAINE_COON);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGILE);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.INTELLIGENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Maine Coon", "Double", new String[]{"Bronze"}, "Long", "Large", "Excellent", "Male", "Y", new String[]{"Agile", "Easily Trained", "Bold", "Intelligent"}, 2, 35);
+        pet.setName("UltimateDestroyerOfWorlds");
         imageFile = new File("PetImages/maine.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("maine.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("UltimateDestroyerOfWorlds",Species.CAT,35,CoatLength.LONG,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SIAMESE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.POSSESSIVE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.INTROVERTED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Siamese", "Double", new String[]{"Bronze"}, "Medium", "Medium", "Excellent", "Male", "Y", new String[]{"Possessive", "Intelligent", "Introverted"}, 4, 30);
+        pet.setName("John");
         imageFile = new File("PetImages/persian.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("persian.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("John",Species.CAT,30,CoatLength.MEDIUM,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.TURKISH_ANGORA);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ALOOF);
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.LOYAL);
-        temperaments.add(Temperament.CURIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Turkish Angora", "Silky", new String[]{"White"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Aloof", "Dependent", "Loyal", "Curious"}, 3, 50);
+        pet.setName("Servine");
         imageFile = new File("PetImages/Angora.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Angora.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Servine",Species.CAT,50,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        //DOGS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AFGHAN_HOUND);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.CHILL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.GREY);
-
-
+        // Afghan Hound
+        pet = generatePet(adoptionCenters, "Dog", "Afghan Hound", "n", "Silky", new String[]{"Black", "Brown", "Grey"}, "Long", "Extra Large", "Excellent", "Female", "Y", new String[]{"Passive", "Intelligent", "Chill"}, 4, 80);
+        pet.setName("Robert");
         imageFile = new File("PetImages/afghan.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("afghan.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("Robert",Species.DOG,80,CoatLength.LONG,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
-
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.ALASKAN_MALAMUTE);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AFFECTIONATE);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.ENERGETIC);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+// Alaskan Malamute
+        pet = generatePet(adoptionCenters, "Dog", "Alaskan Malamute", "n", "Rough", new String[]{"Black", "White"}, "Medium", "Large", "Excellent", "Female", "Y", new String[]{"Affectionate", "Friendly", "Energetic"}, 9, 52);
+        pet.setName("Vic");
         imageFile = new File("PetImages/alaskan.jpg");
         image = new Image();
         image.setType("image/jpg");
         image.setName("alaskan.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Vic",Species.DOG,52,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,9,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AKITA);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.IMPULSIVE);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.ANXIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+// Akita
+        pet = generatePet(adoptionCenters, "Dog", "Akita", "n", "Rough", new String[]{"Black", "Brown", "White"}, "Short", "Small", "Good", "Male", "Y", new String[]{"Impulsive", "Easily Trained", "Curious", "Anxious"}, 4, 24);
+        pet.setName("RandyOrton");
         imageFile = new File("PetImages/akita.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("akita.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("RandyOrton",Species.DOG,24,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AMERICAN_FOXHOUND);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ADAPTABLE);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        temperaments.add(Temperament.REACTIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+// American Foxhound
+        pet = generatePet(adoptionCenters, "Dog", "American Foxhound", "n", "Rough", new String[]{"Black", "Brown", "White"}, "Short", "Large", "Excellent", "Male", "Y", new String[]{"Adaptable", "Even Tempered", "Reactive"}, 7, 60);
+        pet.setName("MrStealYoGirl");
         imageFile = new File("PetImages/foxhound.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("foxhound.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("MrStealYoGirl",Species.DOG,60,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AMERICAN_HAIRLESS_TERRIER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ALOOF);
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.SUBMISSIVE);
-        colors = new HashSet<>();
-
-
+// American Hairless Terrier
+        pet = generatePet(adoptionCenters, "Dog", "American Hairless Terrier", "n", "Hairless", new String[]{"None"}, "Hairless", "Small", "Excellent", "Male", "Y", new String[]{"Aloof", "Calm", "Submissive"}, 3, 22);
+        pet.setName("Quagmire");
         imageFile = new File("PetImages/hairless.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("hairless.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Quagmire",Species.DOG,22,CoatLength.HAIRLESS,
-                FurType.HAIRLESS, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AMERICAN_BULLDOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.AFFECTIONATE);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-
+// American Bulldog
+        pet = generatePet(adoptionCenters, "Dog", "American Bulldog", "n", "Rough", new String[]{"White"}, "Short", "Large", "Good", "Male", "Y", new String[]{"Reactive", "Friendly", "Affectionate"}, 4, 49);
+        pet.setName("George");
         imageFile = new File("PetImages/AmericanBulldog.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("AmericanBulldog.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("George",Species.DOG,49,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AMERICAN_WATER_SPANIEL);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.ANXIOUS);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
+// American Water Spaniel
+        pet = generatePet(adoptionCenters, "Dog", "American Water Spaniel", "n", "Double", new String[]{"Brown"}, "Long", "Large", "Good", "Female", "Y", new String[]{"Calm", "Curious", "Anxious"}, 6, 65);
+        pet.setName("Lex");
         imageFile = new File("PetImages/water.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("water.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Lex",Species.DOG,65,CoatLength.LONG,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AUSTRALIAN_KELPIE);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGILE);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.INTELLIGENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
+// Australian Kelpie
+        pet = generatePet(adoptionCenters, "Dog", "Australian Kelpie", "n", "Rough", new String[]{"Brown"}, "Medium", "Large", "Excellent", "Female", "Y", new String[]{"Agile", "Friendly", "Intelligent"}, 7, 70);
+        pet.setName("Tyler");
         imageFile = new File("PetImages/Kelpie.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Kelpie.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Tyler",Species.DOG,70,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AUSTRALIAN_CATTLE_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.POSSESSIVE);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.DEMANDING);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-        colors.add(FurColor.BROWN);
-
+// Australian Cattle Dog
+        pet = generatePet(adoptionCenters, "Dog", "Australian Cattle Dog", "n", "Rough", new String[]{"Grey", "Brown"}, "Medium", "Large", "Excellent", "Male", "Y", new String[]{"Possessive", "Reactive", "Demanding"}, 9, 68);
+        pet.setName("Terrence");
         imageFile = new File("PetImages/Cattle.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Cattle.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Terrence",Species.DOG,68,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,9,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BASSET_HOUND);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-
+// Basset Hound
+        pet = generatePet(adoptionCenters, "Dog", "Basset Hound", "n", "Smooth", new String[]{"Black", "Brown"}, "Short", "Medium", "Excellent", "Female", "Y", new String[]{"Passive", "Even Tempered", "Easily Trained"}, 6, 29);
+        pet.setName("Darrel");
         imageFile = new File("PetImages/basset.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("basset.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Darrel",Species.DOG,29,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        //CATS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.NORWEGIAN_FOREST_CAT);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.PASSIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Norwegian Forest Cat", "Rough", new String[]{"Black", "White"}, "Medium", "Medium", "Good", "Male", "Y", new String[]{"Reactive", "Bold", "Passive"}, 4, 35);
+        pet.setName("Lux");
         imageFile = new File("PetImages/forest.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("forest.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("Lux",Species.CAT,35,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SCOTTISH_FOLD);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.DEMANDING);
-        temperaments.add(Temperament.REACTIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Scottish Fold", "Smooth", new String[]{"Bronze"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Anxious", "Bold", "Demanding", "Reactive"}, 5, 20);
+        pet.setName("Lucifer");
         imageFile = new File("PetImages/fold.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("fold.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Lucifer",Species.CAT,20,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SPHYNX);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.DEMANDING);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Sphynx", "Hairless", new String[]{"None"}, "Hairless", "Small", "Good", "Female", "Y", new String[]{"Anxious", "Demanding", "Bold"}, 6, 16);
+        pet.setName("Dory");
         imageFile = new File("PetImages/sphynx.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("sphynx.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Dory",Species.CAT,16,CoatLength.HAIRLESS,
-                FurType.HAIRLESS, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,6,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SINGAPURA);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AFFECTIONATE);
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.INTROVERTED);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Singapura", "Smooth", new String[]{"White", "Brown"}, "Medium", "Medium", "Good", "Male", "Y", new String[]{"Affectionate", "Calm", "Introverted"}, 7, 29);
+        pet.setName("Serb");
         imageFile = new File("PetImages/siberia.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("siberia.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Serb",Species.CAT,29,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.RUSSIAN_BLUE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ATHLETIC);
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.DEPENDENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLUE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Russian Blue", "Smooth", new String[]{"Blue"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Athletic", "Curious", "Dependent"}, 4, 18);
+        pet.setName("Blue");
         imageFile = new File("PetImages/BLue.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("BLue.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("blue",Species.CAT,18,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.BRITISH_SHORTHAIR);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.DEMANDING);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "British Shorthair", "Smooth", new String[]{"Black", "White"}, "Medium", "Medium", "Excellent", "Female", "Y", new String[]{"Bold", "Demanding", "Even Tempered"}, 4, 27);
+        pet.setName("Tham");
         imageFile = new File("PetImages/british.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("british.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("THAM",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.BOMBAY);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.EASY_GOING);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Bombay", "Smooth", new String[]{"Black"}, "Short", "Small", "Fair", "Male", "Y", new String[]{"Aggressive", "Sociable", "Easy Going"}, 3, 24);
+        pet.setName("TheBomb");
         imageFile = new File("PetImages/bombay.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bombay.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("thebomb",Species.CAT,24,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.BENGAL);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.POSSESSIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Bengal", "Wiry", new String[]{"Bronze", "Brown"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Passive", "Sociable", "Possessive"}, 2, 23);
+        pet.setName("Alex");
         imageFile = new File("PetImages/bengal.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bengal.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Alex",Species.CAT,23,CoatLength.SHORT,
-                FurType.WIRY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,2,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.CHAUSIE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.POSSESSIVE);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.CALM);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Chausie", "Rough", new String[]{"Bronze"}, "Medium", "Large", "Excellent", "Male", "Y", new String[]{"Possessive", "Bold", "Calm"}, 4, 45);
+        pet.setName("Antonio");
         imageFile = new File("PetImages/Chausie.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Chausie.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Antonio",Species.CAT,45,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.EGYPTIAN_MAU);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.SUBMISSIVE);
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.DEPENDENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Egyptian Mau", "Silky", new String[]{"Black", "White"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Submissive", "Anxious", "Dependent"}, 3, 26);
+        pet.setName("SkylerWhiteYo");
         imageFile = new File("PetImages/egypt.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("egypt.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("SkylerWhiteYo",Species.CAT,26,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
+        // Assuming you have an appropriate method to handle these creations in your Java code
+        // Adoption centers for each pet
 
-        //DOGS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BEARDED_COLLIE);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ACTIVE);
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.FRIENDLY);
-        colors = new HashSet<>();
-        colors.add(FurColor.GRAY);
-        colors.add(FurColor.WHITE);
-
+        // Creating pet profiles
+        pet = generatePet(adoptionCenters, "Dog", "Bearded Collie", "n", "Silky", new String[]{"Grey", "White"}, "Long", "Medium", "Excellent", "Male", "Y", new String[]{"Active", "Playful", "Friendly"}, 6, 50);
+        pet.setName("Dexter");
         imageFile = new File("PetImages/Collie.jpg");
         image = new Image();
         image.setType("image/jpg");
         image.setName("Collie.jpg");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("Dexter",Species.DOG,50,CoatLength.LONG,
-                                FurType.SILKY, colors, adoptionCenter.get(),
-                                dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BASENJI);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.ATHLETIC);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Basenji", "n", "Rough", new String[]{"Bronze", "White"}, "Short", "Large", "Excellent", "Male", "Y", new String[]{"Reactive", "Athletic", "Bold"}, 4, 62);
+        pet.setName("Steph");
         imageFile = new File("PetImages/basenji.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("basenji.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Steph",Species.DOG,62,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.AUSTRALIAN_SHEPHERD);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.DEPENDENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.GRAY);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Australian Shepherd", "n", "Double", new String[]{"Black", "Brown", "Grey", "White"}, "Long", "Large", "Fair", "Female", "Y", new String[]{"Friendly", "Playful", "Dependent"}, 5, 65);
+        pet.setName("Po");
         imageFile = new File("PetImages/aush.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("aush.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Po",Species.DOG,65,CoatLength.LONG,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,5,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BEDLINGTON_TERRIER);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.CALM);
-        colors = new HashSet<>();
-        colors.add(FurColor.GRAY);
-
+        pet = generatePet(adoptionCenters, "Dog", "Bedlington Terrier", "n", "Wavy", new String[]{"Grey"}, "Short", "Large", "Excellent", "Male", "Y", new String[]{"Reactive", "Friendly", "Calm"}, 7, 72);
+        pet.setName("Ellington");
         imageFile = new File("PetImages/bedlington.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bedlington.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("ellington",Species.DOG,72,CoatLength.SHORT,
-                FurType.WAVY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BELGIAN_TERVUREN);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        colors = new HashSet<>();
-        colors.add(FurColor.DARK);
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Dog", "Belgian Tervuren", "n", "Smooth", new String[]{"Dark", "Brown"}, "Long", "Extra Large", "Excellent", "Male", "Y", new String[]{"Calm", "Playful", "Even Tempered"}, 7, 85);
+        pet.setName("Beluga");
         imageFile = new File("PetImages/Beluga.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Beluga.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("beluga",Species.DOG,85,CoatLength.LONG,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BICHON_FRISE);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PASSIVE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.INDEPENDENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-
-
+        pet = generatePet(adoptionCenters, "Dog", "Bichon Frise", "n", "Wavy", new String[]{"White"}, "Medium", "Small", "Excellent", "Female", "Y", new String[]{"Passive", "Intelligent", "Independent"}, 4, 23);
+        pet.setName("Tea");
         imageFile = new File("PetImages/bichon.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bichon.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Tea",Species.DOG,23,CoatLength.MEDIUM,
-                FurType.WAVY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BLOODHOUND);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.PLAYFUL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Dog", "Bloodhound", "n", "Rough", new String[]{"Black", "Brown"}, "Medium", "Extra Large", "Excellent", "Male", "Y", new String[]{"Aggressive", "Reactive", "Playful"}, 7, 90);
+        pet.setName("AndrewTate");
         imageFile = new File("PetImages/bloodhound.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bloodhound.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("AndrewTate",Species.DOG,90,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BLUETICK_COONHOUND);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ATHLETIC);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.DEMANDING);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Dog", "Bluetick Coonhound", "n", "Rough", new String[]{"Black", "Grey"}, "Short", "Large", "Excellent", "Female", "Y", new String[]{"Athletic", "Reactive", "Demanding"}, 2, 49);
+        pet.setName("Harry");
         imageFile = new File("PetImages/bluetick.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("bluetick.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Harry",Species.DOG,49,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,2,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BERNESE_MOUNTAIN_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.KID_FRIENDLY);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.ENERGETIC);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
-
+        pet = generatePet(adoptionCenters, "Dog", "Bernese Mountain Dog", "n", "Double", new String[]{"Black", "Bronze"}, "Medium", "Extra Large", "Excellent", "Female", "Y", new String[]{"Friendly", "Reactive", "Kid Friendly", "Intelligent", "Energetic"}, 5, 91);
+        pet.setName("SlimShady");
         imageFile = new File("PetImages/Mountain.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Mountain.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("SLimShady",Species.DOG,91,CoatLength.MEDIUM,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BEAUCERON);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.PLAYFUL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Beauceron", "n", "Rough", new String[]{"Black", "Bronze"}, "Short", "Large", "Excellent", "Female", "Y", new String[]{"Reactive", "Aggressive", "Playful"}, 6, 70);
+        pet.setName("Usman");
         imageFile = new File("PetImages/beauceron.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("beauceron.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Usman",Species.DOG,70,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        //CATS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.KORAT);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.PLACID);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Korat", "Smooth", new String[]{"Grey"}, "Short", "Medium", "Good", "Female", "Y", new String[]{"Anxious", "Curious", "Placid"}, 8, 25);
+        pet.setName("Kora");
         imageFile = new File("PetImages/Korat.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Korat.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("kora",Species.CAT,25,CoatLength.SHORT,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,8,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.HIMALAYAN);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ALOOF);
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.CHILL);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Himalayan", "Double", new String[]{"White", "Bronze"}, "Medium", "Medium", "Excellent", "Male", "Y", new String[]{"Aloof", "Dependent", "Chill"}, 4, 35);
+        pet.setName("Bot");
         imageFile = new File("PetImages/him.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("him.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Bot",Species.CAT,35,CoatLength.MEDIUM,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.HAVANA_BROWN);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ALOOF);
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.TIMID);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Havana Brown", "Rough", new String[]{"Brown"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Aloof", "Dependent", "Timid"}, 6, 23);
+        pet.setName("Wormwood");
         imageFile = new File("PetImages/havana.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("havana.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Wormwood",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.DOMESTIC_LONGHAIR);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.EXCITABLE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Domestic Longhair", "Smooth", new String[]{"Black", "Bronze"}, "Long", "Medium", "Good", "Female", "Y", new String[]{"Calm", "Aggressive", "Excitable"}, 7, 29);
+        pet.setName("Dominic");
         imageFile = new File("PetImages/DomesticLongHairCat.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("DomesticLongHairCat.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Dominic",Species.CAT,29,CoatLength.LONG,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.MANX);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.POSSESSIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Manx", "Rough", new String[]{"Black", "Bronze"}, "Medium", "Medium", "Excellent", "Male", "Y", new String[]{"Playful", "Possessive"}, 4, 30);
+        pet.setName("Michael");
         imageFile = new File("PetImages/manx.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("manx.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Michael",Species.CAT,30,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.OCICAT);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.KID_FRIENDLY);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Ocicat", "Rough", new String[]{"Black", "Bronze"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Reactive", "Intelligent", "Kid Friendly"}, 3, 24);
+        pet.setName("Max");
         imageFile = new File("PetImages/ocicat.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("ocicat.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Max",Species.CAT,24,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.PIXIE_BOB);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.IMPULSIVE);
-        temperaments.add(Temperament.FOCUSED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Pixie Bob", "Rough", new String[]{"Bronze"}, "Short", "Medium", "Fair", "Female", "Y", new String[]{"Curious", "Impulsive", "Focused"}, 3, 27);
+        pet.setName("Gandalf");
         imageFile = new File("PetImages/pixiebob.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("pixiebob.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Gandalf",Species.CAT,27,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.RAGAMUFFIN);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.DEMANDING);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-        colors.add(FurColor.BLACK);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "RagaMuffin", "Double", new String[]{"Grey", "Black"}, "Long", "Medium", "Excellent", "Female", "Y", new String[]{"Aggressive", "Reactive", "Demanding"}, 6, 25);
+        pet.setName("Girl");
         imageFile = new File("PetImages/ragamuffin.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("ragamuffin.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("girl",Species.CAT,25,CoatLength.LONG,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SNOWSHOE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.FOCUSED);
-        temperaments.add(Temperament.VOCAL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Snowshoe", "Rough", new String[]{"Black", "White", "Grey"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Bold", "Focused", "Vocal"}, 4, 23);
+        pet.setName("Snape");
         imageFile = new File("PetImages/snowshoe.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("snowshoe.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Snape",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SINGAPURA);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.EASY_GOING);
-        temperaments.add(Temperament.INTROVERTED);
-        colors = new HashSet<>();
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Singapura", "Rough", new String[]{"White"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Dependent", "Reactive", "Easy Going", "Introverted"}, 3, 12);
+        pet.setName("KittyCat");
         imageFile = new File("PetImages/singapura.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("singapura.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("kittycat",Species.CAT,12,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-
-
-        //DOGS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BOERBOEL);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
-
+        pet = generatePet(adoptionCenters, "Dog", "Boerboel", "n", "Silky", new String[]{"Bronze"}, "Short", "Extra Large", "Excellent", "Male", "Y", new String[]{"Calm", "Sociable", "Bold"}, 8, 80);
+        pet.setName("GeorgeFloyd");
         imageFile = new File("PetImages/Boerboel.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Boerboel.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("GeorgeFloyd",Species.DOG,80,CoatLength.SHORT,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,8,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
-
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BORZOI);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AFFECTIONATE);
-        temperaments.add(Temperament.KID_FRIENDLY);
-        temperaments.add(Temperament.POSSESSIVE);
-        temperaments.add(Temperament.EXCITABLE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Borzoi", "n", "Double", new String[]{"Bronze", "White"}, "Medium", "Extra Large", "Excellent", "Female", "Y", new String[]{"Affectionate", "Kid Friendly", "Possessive", "Excitable"}, 6, 102);
+        pet.setName("TRAVIS");
         imageFile = new File("PetImages/borzoi.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("borzoi.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("TRAVIS",Species.DOG,102,CoatLength.MEDIUM,
-                FurType.DOUBLE, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.EXTRA_LARGE,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BOYKIN_SPANIEL);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        temperaments.add(Temperament.FOCUSED);
-        temperaments.add(Temperament.INSISTENT);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Dog", "Boykin Spaniel", "n", "Silky", new String[]{"Brown"}, "Medium", "Medium", "Good", "Female", "Y", new String[]{"Even Tempered", "Focused", "Insistent"}, 4, 34);
+        pet.setName("BIGBOY");
         imageFile = new File("PetImages/boykin-spaniel.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("boykin-spaniel.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("BIGBOY",Species.DOG,34,CoatLength.MEDIUM,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BRIARD);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.PLAYFUL);
-        temperaments.add(Temperament.KID_FRIENDLY);
-        temperaments.add(Temperament.CHILL);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Dog", "Briard", "n", "Silky", new String[]{"Grey"}, "Long", "Large", "Excellent", "Male", "Y", new String[]{"Playful", "Kid Friendly", "Chill"}, 10, 62);
+        pet.setName("Griffin");
         imageFile = new File("PetImages/briard.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("briard.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Griffin",Species.DOG,62,CoatLength.LONG,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,10,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.BRITTANY_SPANIEL);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.LOYAL);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Brittany Spaniel", "n", "Rough", new String[]{"Brown", "White"}, "Medium", "Medium", "Excellent", "Female", "Y", new String[]{"Curious", "Loyal", "Bold"}, 5, 56);
+        pet.setName("Optimus");
         imageFile = new File("PetImages/brittany.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("brittany.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Optimus",Species.DOG,56,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CAROLINA_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.ENERGETIC);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.LIGHT);
-
+        pet = generatePet(adoptionCenters, "Dog", "Carolina Dog", "n", "Rough", new String[]{"Bronze", "Light"}, "Short", "Large", "Good", "Female", "Y", new String[]{"Reactive", "Energetic", "Easily Trained"}, 4, 64);
+        pet.setName("Austin");
         imageFile = new File("PetImages/Carolina.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Carolina.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Austin",Species.DOG,64,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,4,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CAUCASIAN_SHEPHERD_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AFFECTIONATE);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.REACTIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Caucasian Shepherd Dog", "n", "Curly", new String[]{"Black", "Bronze"}, "Medium", "Large", "Excellent", "Male", "Y", new String[]{"Affectionate", "Bold", "Friendly", "Reactive"}, 6, 75);
+        pet.setName("Whitaker");
         imageFile = new File("PetImages/Caucasian.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Caucasian.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Whitaker",Species.DOG,75,CoatLength.MEDIUM,
-                FurType.CURLY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.LARGE,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CAVALIER_KING_CHARLES_SPANIEL);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.BOSSY);
-        temperaments.add(Temperament.DEMANDING);
-        temperaments.add(Temperament.LIVELY);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Cavalier King Charles Spaniel", "n", "Silky", new String[]{"Brown", "White"}, "Long", "Small", "Excellent", "Female", "Y", new String[]{"Bossy", "Demanding", "Lively"}, 7, 30);
+        pet.setName("Diana");
         imageFile = new File("PetImages/cavalier.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("cavalier.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Diana",Species.DOG,30,CoatLength.LONG,
-                FurType.SILKY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,7,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        dogBreeds.add(DogBreed.CHIHUAHUA);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.EASILY_TRAINED);
-        temperaments.add(Temperament.LOYAL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Chihuahua", "n", "Rough", new String[]{"Brown", "White"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Friendly", "Aggressive", "Easily Trained", "Loyal"}, 9, 29);
+        pet.setName("Sneako");
         imageFile = new File("PetImages/chihuahua.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("chihuahua.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Sneako",Species.DOG,29,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,9,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-            dogBreeds.add(DogBreed.CANAAN_DOG);
-        catBreeds = new HashSet<>();
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.KID_FRIENDLY);
-        temperaments.add(Temperament.CUDDLY);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Dog", "Canaan Dog", "n", "Smooth", new String[]{"Bronze", "White"}, "Medium", "Medium", "Excellent", "Male", "Y", new String[]{"Friendly", "Reactive", "Kid Friendly", "Cuddly"}, 5, 49);
+        pet.setName("DAX");
         imageFile = new File("PetImages/canaan.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("canaan.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("DAX",Species.DOG,49,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
 
-        //CATS
-        adoptionCenter = adoptionCenterService.getCenter((long)(1));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SELKIRK_REX);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.DOCILE);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-        colors.add(FurColor.WHITE);
 
 
+        pet = generatePet(adoptionCenters, "Cat", "n", "Selkirk Rex", "Wavy", new String[]{"Grey", "White"}, "Medium", "Medium", "Good", "Male", "Y", new String[]{"Bold", "Dependent", "Docile"}, 3, 28);
+        pet.setName("Bob");
         imageFile = new File("PetImages/Selkirk.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Selkirk.webp");
-
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-
-        pet = generatePet("Bob",Species.CAT,28,CoatLength.MEDIUM,
-                FurType.WAVY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(2));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.TONKINESE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.LOYAL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Tonkinese", "Smooth", new String[]{"Brown"}, "Medium", "Medium", "Excellent", "Female", "Y", new String[]{"Anxious", "Friendly", "Loyal"}, 5, 26);
+        pet.setName("Olive");
         imageFile = new File("PetImages/tonkinese.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("tonkinese.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Olive",Species.CAT,26,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,5,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(3));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.TURKISH_VAN);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.LOYAL);
-        temperaments.add(Temperament.PLAYFUL);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Turkish Van", "Smooth", new String[]{"Brown", "White"}, "Medium", "Medium", "Fair", "Female", "Y", new String[]{"Calm", "Loyal", "Playful"}, 3, 26);
+        pet.setName("Cindy");
         imageFile = new File("PetImages/turkish.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("turkish.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Cindy",Species.CAT,26,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(4));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.SOMALI);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.ANXIOUS);
-        temperaments.add(Temperament.VOCAL);
-        temperaments.add(Temperament.IMPULSIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Somali", "Smooth", new String[]{"Bronze"}, "Medium", "Medium", "Good", "Male", "Y", new String[]{"Anxious", "Vocal", "Impulsive"}, 7, 29);
+        pet.setName("Yamcha");
         imageFile = new File("PetImages/somali.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("somali.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Yamcha",Species.CAT,29,CoatLength.MEDIUM,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,7,temperaments,
-                Health.GOOD, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(5));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.TOYGER);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.TIMID);
-        temperaments.add(Temperament.PLACID);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.BRONZE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Toyger", "Rough", new String[]{"Black", "Bronze"}, "Short", "Small", "Excellent", "Male", "Y", new String[]{"Dependent", "Timid", "Placid"}, 4, 23);
+        pet.setName("Sam");
         imageFile = new File("PetImages/Toyger.jpg");
         image = new Image();
         image.setType("image/jpg");
         image.setName("Toyger.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Sam",Species.CAT,23,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,4,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(6));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.TUXEDO);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.SOCIABLE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.EVEN_TEMPERED);
-        colors = new HashSet<>();
-        colors.add(FurColor.BLACK);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Tuxedo", "Rough", new String[]{"Black", "White"}, "Medium", "Medium", "Excellent", "Male", "Y", new String[]{"Sociable", "Intelligent", "Even Tempered"}, 3, 27);
+        pet.setName("Tuc");
         imageFile = new File("PetImages/Tux.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Tux.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Tuc",Species.CAT,27,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(7));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.LYKOI);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.AGGRESSIVE);
-        temperaments.add(Temperament.DEPENDENT);
-        temperaments.add(Temperament.REACTIVE);
-        temperaments.add(Temperament.ACTIVE);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Lykoi", "Rough", new String[]{"Grey"}, "Medium", "Small", "Fair", "Male", "Y", new String[]{"Aggressive", "Dependent", "Reactive", "Active"}, 3, 23);
+        pet.setName("Ember");
         imageFile = new File("PetImages/lykoi.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("lykoi.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Ember",Species.CAT,23,CoatLength.MEDIUM,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.FAIR, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(8));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.EUROPEAN_BURMERSE);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CURIOUS);
-        temperaments.add(Temperament.FRIENDLY);
-        temperaments.add(Temperament.BOLD);
-        colors = new HashSet<>();
-        colors.add(FurColor.BRONZE);
-
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "European Burmese", "Wiry", new String[]{"Bronze"}, "Short", "Medium", "Excellent", "Female", "Y", new String[]{"Curious", "Friendly", "Bold"}, 9, 30);
+        pet.setName("Oscar");
         imageFile = new File("PetImages/Burmese.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("Burmese.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Oscar",Species.CAT,30,CoatLength.SHORT,
-                FurType.WIRY, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.MEDIUM,9,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(9));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.NEBELUNG);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.CALM);
-        temperaments.add(Temperament.BOLD);
-        temperaments.add(Temperament.FOCUSED);
-        temperaments.add(Temperament.AFFECTIONATE);
-        colors = new HashSet<>();
-        colors.add(FurColor.GREY);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Nebelung", "Smooth", new String[]{"Grey"}, "Long", "Small", "Excellent", "Male", "Y", new String[]{"Calm", "Bold", "Focused", "Affectionate"}, 6, 15);
+        pet.setName("Timothy");
         imageFile = new File("PetImages/NEBELUNG.webp");
         image = new Image();
         image.setType("image/webp");
         image.setName("NEBELUNG.webp");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Timothy",Species.CAT,15,CoatLength.LONG,
-                FurType.SMOOTH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,6,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.MALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
 
-
-
-
-
-        adoptionCenter = adoptionCenterService.getCenter((long)(10));
-
-        dogBreeds = new HashSet<>();
-        catBreeds = new HashSet<>();
-        catBreeds.add(CatBreed.ORIENTAL);
-        temperaments = new HashSet<>();
-        temperaments.add(Temperament.SUBMISSIVE);
-        temperaments.add(Temperament.INTELLIGENT);
-        temperaments.add(Temperament.INTROVERTED);
-        temperaments.add(Temperament.DEMANDING);
-        colors = new HashSet<>();
-        colors.add(FurColor.BROWN);
-        colors.add(FurColor.WHITE);
-
+        pet = generatePet(adoptionCenters, "Cat", "n", "Oriental", "Rough", new String[]{"Brown", "White"}, "Short", "Small", "Excellent", "Female", "Y", new String[]{"Submissive", "Intelligent", "Introverted", "Demanding"}, 3, 18);
+        pet.setName("Airy");
         imageFile = new File("PetImages/Oriental.jpg");
         image = new Image();
         image.setType("image/jpg");
         image.setName("Oriental.jpg");
         image.setImageData(Files.readAllBytes(imageFile.toPath()));
-
-        pet = generatePet("Airy",Species.CAT,18,CoatLength.SHORT,
-                FurType.ROUGH, colors, adoptionCenter.get(),
-                dogBreeds, catBreeds, Size.SMALL,3,temperaments,
-                Health.EXCELLENT, SpayedNeutered.SPAYED_NEUTERED,Sex.FEMALE);
         pet.setProfilePicture(image);
-        samplePets.add(pet);
+        pets.add(pet);
+
+        /*
+
+
+
+
+        //CATS
+
 
         repository.saveAll(samplePets);
+         */
+
+
+        return pets;
     }
-*/
+
 
 
 }

@@ -133,6 +133,20 @@ public class PetEndpoint {
         }
     }
 
+
+    @GetMapping("/pets-sample")
+    public ResponseEntity<?> samplePets() {
+        try {
+            System.out.println("START");
+            List<AdoptionCenter> adoptionCenters = adoptionCenterService.getAllAdoptionCenters();
+            List<Pet> pets =   petService.addSamplePets(adoptionCenters);
+            pets.forEach(petService::savePet);
+            return ResponseEntity.ok("SUCCESS");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/deletePet")
     public ResponseEntity<String> deletePet(@RequestBody Pet pet) {
         try {
