@@ -231,7 +231,7 @@ public class PetService {
                 "Medium", "Large","Good","Male", "Y", new String[]{"Active", "Reactive","Athletic"},4,50 );
         pet.setName("Wilson");
 
-        File imageFile = new File("/home/willclore/actions-runner/_work/pet-adoption-f24-team-4/pet-adoption-f24-team-4/pet-adoption-api//home/willclore/actions-runner/_work/pet-adoption-f24-team-4/pet-adoption-f24-team-4/pet-adoption-api/PetImages/GreyHound.jpg");
+        File imageFile = new File("/home/willclore/actions-runner/_work/pet-adoption-f24-team-4/pet-adoption-f24-team-4/pet-adoption-api/PetImages/GreyHound.jpg");
         Image image = new Image();
         image.setType("image/jpg");
         image.setName("GreyHound.jpg");
