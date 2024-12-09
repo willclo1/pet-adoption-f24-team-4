@@ -14,6 +14,7 @@ import {
   InputLabel,
   Snackbar,
 } from '@mui/material';
+import AdoptionNavBar from '@/components/AdoptionNavBar';
 import { useRouter } from 'next/router';
 
 export default function AdoptionCenterMessages() {
@@ -189,6 +190,8 @@ export default function AdoptionCenterMessages() {
   const handleCloseNotification = () => setNotification(null);
 
   return (
+    <main>
+    <AdoptionNavBar/>
     <Box display="flex" p={3}>
       <Paper elevation={3} sx={{ width: '30%', mr: 2, p: 2 }}>
         <Typography variant="h6" gutterBottom>
@@ -273,5 +276,6 @@ export default function AdoptionCenterMessages() {
         </Box>
       </Paper>
     </Box>
+  </main>
   );
 }
