@@ -2,6 +2,7 @@ package petadoption.api.message;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.units.qual.C;
@@ -12,6 +13,7 @@ import petadoption.api.user.User;
 @Data
 @Entity
 @Table(name = UserMessage.TABLE_NAME)
+@EqualsAndHashCode(callSuper = false)
 public class UserMessage extends RecommendationEngine {
     public static final String TABLE_NAME = "UserMessage";
     @Id

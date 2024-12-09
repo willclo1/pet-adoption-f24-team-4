@@ -46,4 +46,8 @@ public class ImageService {
     public void deleteImage(Long oldImageId) {
         imageRepository.deleteById(oldImageId);
     }
+
+    public void saveImage(Image image) {
+        imageRepository.save(image);
+    }
 }

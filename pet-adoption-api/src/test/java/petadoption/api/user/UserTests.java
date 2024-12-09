@@ -1,142 +1,138 @@
-//package petadoption.api.user;
-//
-//import jakarta.transaction.Transactional;
-//import net.minidev.json.JSONUtil;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.ActiveProfiles;
-//import petadoption.api.userPreferences.UserPreferences;
-//import petadoption.api.userPreferences.UserPreferencesService;
-//
-//import java.util.List;
-//import java.util.Objects;
-//import java.util.Optional;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@SpringBootTest
-//@ActiveProfiles("testdb")  // make these tests use the H2 in-memory DB instead of your actual DB
-//@Transactional             // make these tests revert their DB changes after the test is complete
-//public class UserTests {
-//    @Autowired
-//    private UserService userService;
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    UserPreferencesService service;
-//
-//
-//    @Test
-//    void testUserCreate() {
-//        User newUser = new User();
-//        newUser.userType = "PETOWNER";
-//        newUser.emailAddress = "example@example.com";
-//        newUser.password = "password";
-//
-//        User savedUser = userService.saveUser(newUser);
-//        assertNotNull(savedUser.id);
-//
-//        Optional<User> foundUserOpt = userService.findUser(savedUser.id);
-//        assertTrue(foundUserOpt.isPresent());
-//        User foundUser = foundUserOpt.get();
-//
-//        assertEquals(newUser.userType, foundUser.userType);
-//        assertEquals(newUser.emailAddress, foundUser.emailAddress);
-//        assertEquals(newUser.password, foundUser.password);
-//    }
-//    @Test
-//    void testUserPreferences(){
-//        UserPreferences userPreferences = new UserPreferences();
-//        service.saveUserPreferences(userPreferences);
-//    }
-//
-//    @Test
-//    void testUserFind() {
-//        Optional<User> user1 = userService.findUser(1L);
-//        assertTrue(user1.isEmpty());
-//    }
-//    @BeforeEach
-//    void setUp(){
-//        userRepository.deleteAll();
-//    }
-//    @Test
-//    void testUserCreation(){
-//        for(int i = 0; i < 10; i++){
-//            User user = new User();
-//            user.setUserType("User");
-//            user.setEmailAddress("testEmail@test.com");
-//            user.setPassword("password");
-//            user.setLastName("Test");
-//            user.setFirstName("Test");
-//            userRepository.save(user);
-//        }
-//        List<User> userList = userRepository.findAll();
-//        assertEquals(10, userList.size(), "There should be 10 in the database");
-//    }
-//
-//    @Test
-//    void testSaveUser(){
-//        User user = new User();
-//        User userSave = userService.saveUser(user);
-//        assertEquals(userSave, userService.findUser(1L).get(), "Users are equal");
-//    }
-//
-//    @Test
-//    void deleteUser(){
-//        User user = new User();
-//        user.setId(5L);
-//        user.setEmailAddress("test@test");
-//        user.setPassword("Hello");
-//        userService.saveUser(user);
-//
-//        System.out.println("hi");
-//        System.out.println(userService.findUser(5L));
-//
-//        ChangePassword userSave = new ChangePassword();
-//        userSave.setFirstName("test@test");
-//        userSave.setPassword("Hello");
-//
-//
-//        userService.deleteUser(userSave);
-//
-//        assertNotEquals(user, userService.findUser(5L));
-//    }
-//
-////    @Test
-////    void changePassword(){
-////
-////
-////        User user = new User();
-////        user.setEmailAddress("test@test");
-////        user.setPassword("hi");
-////        userService.saveUser(user);
-////
-////
-////        ChangePassword userSave = new ChangePassword();
-////        userSave.setFirstName("test@test");
-////        userSave.setPassword("Hello");
-////        userService.changePassword(userSave);
-////
-////        Optional<User> test =  userService.findUserByEmail("test@test");
-////
-////        User testUser = test.orElse(new User());
-////
-////        assertEquals("Hello", testUser.getPassword());
-////    }
-//
-//    @Test
-//    void findUser(){
-//        User user = new User();
-//        user.setUserType("User");
-//        user.setEmailAddress("testEmail@test.com");
-//        user.setPassword("password");
-//        user.setLastName("Test");
-//        user.setFirstName("Test");
-//        userService.saveUser(user);
-//        assertEquals(user, userService.findUserByEmail("testEmail@test.com").get());
-//    }
-//}
+package petadoption.api.user;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import petadoption.api.adoptionCenter.AdoptionCenter;
+import petadoption.api.adoptionCenter.AdoptionCenterRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+@ActiveProfiles("testdb")
+public class UserTests {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AdoptionCenterRepository adoptionCenterRepository;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    @Test
+    void testSaveUser() {
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmailAddress("john.doe@example.com");
+        user.setPassword(encoder.encode("password123"));
+        user.setUserType("Adopter");
+
+        User savedUser = userService.saveUser(user);
+        assertNotNull(savedUser, "User was not saved");
+        assertNotNull(savedUser.getId(), "Saved user ID is null");
+    }
+
+    @Test
+    void testSaveUserWithAdoptionCenter() {
+        AdoptionCenter center = new AdoptionCenter();
+        center.setCenterName("Test Center");
+        center.setBuildingAddress("123 Test St, Waco, TX");
+        adoptionCenterRepository.save(center);
+
+        User user = new User();
+        user.setFirstName("Jane");
+        user.setLastName("Smith");
+        user.setEmailAddress("jane.smith@example.com");
+        user.setPassword(encoder.encode("password456"));
+        user.setUserType("Staff");
+
+        User savedUser = userService.saveUser(user, center.getAdoptionID());
+        assertNotNull(savedUser.getCenter(), "User center association failed");
+        assertEquals("Test Center", savedUser.getCenter().getCenterName(), "Center name mismatch");
+    }
+
+    @Test
+    void testFindUserById() {
+        User user = new User();
+        user.setFirstName("Alice");
+        user.setLastName("Brown");
+        user.setEmailAddress("alice.brown@example.com");
+        user.setPassword(encoder.encode("mypassword"));
+        user.setUserType("Adopter");
+
+        User savedUser = userService.saveUser(user);
+        Optional<User> retrievedUser = userService.findUser(savedUser.getId());
+
+        assertTrue(retrievedUser.isPresent(), "Failed to retrieve user by ID");
+        assertEquals("Alice", retrievedUser.get().getFirstName(), "First name mismatch");
+    }
+
+    @Test
+    void testChangePassword() {
+        User user = new User();
+        user.setFirstName("Bob");
+        user.setLastName("Martin");
+        user.setEmailAddress("bob.martin@example.com");
+        user.setPassword(encoder.encode("oldpassword"));
+        user.setUserType("Adopter");
+
+        userService.saveUser(user);
+
+        ChangePassword changePassword = new ChangePassword();
+        changePassword.setEmail("bob.martin@example.com");
+        changePassword.setPassword("newpassword");
+
+        userService.changePassword(changePassword);
+        User updatedUser = userRepository.findByEmailAddress("bob.martin@example.com").get();
+
+        assertTrue(encoder.matches("newpassword", updatedUser.getPassword()), "Password was not updated");
+    }
+
+    @Test
+    void testDeleteUser() {
+        User user = new User();
+        user.setFirstName("Chris");
+        user.setLastName("Taylor");
+        user.setEmailAddress("chris.taylor@example.com");
+        user.setPassword(encoder.encode("securepassword"));
+        user.setUserType("Adopter");
+
+        userService.saveUser(user);
+
+        ChangePassword deleteRequest = new ChangePassword();
+        deleteRequest.setEmail("chris.taylor@example.com");
+        userService.deleteUser(deleteRequest);
+
+        Optional<User> deletedUser = userService.findUserByEmail("chris.taylor@example.com");
+        assertTrue(deletedUser.isEmpty(), "User was not deleted");
+    }
+
+    @Test
+    void testRegisterUser() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setFirstName("David");
+        registerRequest.setLastName("Green");
+        registerRequest.setEmailAddress("david.green@example.com");
+        registerRequest.setPassword("registerpass");
+
+        
+        registerRequest.setUserType("Adopter");
+
+        User registeredUser = userService.register(registerRequest);
+
+        assertNotNull(registeredUser, "Failed to register user");
+        assertTrue(encoder.matches("registerpass", registeredUser.getPassword()), "Password does not match");
+    }
+
+
+}

@@ -27,6 +27,7 @@ public class AdoptionCenterEndpoint {
         return adoptionCenterService.getAllAdoptionCenters();
     }
 
+
     @PostMapping("/add")
     public ResponseEntity<AdoptionCenter> addAdoptionCenter(@RequestBody AdoptionCenterRequest request) {
         System.out.println("2");

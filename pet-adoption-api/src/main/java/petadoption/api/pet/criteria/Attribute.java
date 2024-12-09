@@ -83,7 +83,7 @@ public class Attribute {
             "Donskoy",
 
             "Egyptian Mau",
-            "European Burmerse",
+            "European Burmese",
             "Exotic Shorthair",
 
             "Havana Brown",
@@ -166,7 +166,7 @@ public class Attribute {
             "Barbet",
             "Basenji",
             "Basset Fauve de Bretagne",
-            "Basett Hound",
+            "Basset Hound",
             "Bavarian Mountain Scent Hound",
             "Beagle",
             "Bearded Collie",
@@ -469,6 +469,7 @@ public class Attribute {
 
     public static final String[] furColorList = {
             "Mixed Color",
+            "None",
 
             "Albino",
             "Apricot",
@@ -561,6 +562,7 @@ public class Attribute {
     };
 
     public static final String[] temperamentList = {
+            "Active",
             "Adaptable",
             "Affectionate",
             "Agile",
@@ -598,6 +600,7 @@ public class Attribute {
 
             "Hyper",
 
+            "Impulsive",
             "Independent",
             "Insistent",
             "Intelligent",

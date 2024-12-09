@@ -18,6 +18,7 @@ export default function AddEvent() {
   const router = useRouter();
   const { adoptionID, email } = router.query;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
 

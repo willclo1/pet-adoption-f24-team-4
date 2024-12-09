@@ -3,6 +3,7 @@ package petadoption.api.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
@@ -31,12 +32,13 @@ public class petGenerator {
     @Autowired
     private AdoptionCenterService adoptionCenterService;
 
-    @EventListener(ApplicationReadyEvent.class)
     public void generatePetsOnStartup() {
         List<AdoptionCenter> adoptionCenters = createAndSaveAdoptionCenters();
         generateAndSavePets(DEFAULT_NUM_PETS, adoptionCenters);
 
     }
+
+
 
     private List<AdoptionCenter> createAndSaveAdoptionCenters() {
         List<AdoptionCenter> adoptionCenters = Arrays.asList(

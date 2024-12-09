@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import petadoption.api.Utility.petGenerator;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterService;
 import petadoption.api.pet.Pet;
@@ -128,6 +129,21 @@ public class PetEndpoint {
         try {
             List<Pet> pets = petService.getAdoptionCenterPets(adoptionID);
             return ResponseEntity.ok(pets);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/pets-sample")
+    public ResponseEntity<?> samplePets() {
+        try {
+            System.out.println("START");
+            adoptionCenterService.addSampleAdoptionCenters();
+            List<AdoptionCenter> adoptionCenters = adoptionCenterService.getAllAdoptionCenters();
+            List<Pet> pets =   petService.addSamplePets(adoptionCenters);
+            pets.forEach(petService::savePet);
+            return ResponseEntity.ok("SUCCESS");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching pets: " + e.getMessage());
         }
