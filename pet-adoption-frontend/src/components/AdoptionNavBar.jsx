@@ -150,10 +150,6 @@ function AdoptionNavBar() {
             style={{ width: 60, height: 60, cursor: 'pointer', marginRight: 25, marginLeft: -10 }}
           />
 
-          <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
-            <MenuIcon sx={{ fontSize: 30 }} />
-          </IconButton>
-
           <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', marginRight: 'auto' }}>
             Whisker Works
           </Typography>
