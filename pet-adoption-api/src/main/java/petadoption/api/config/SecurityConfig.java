@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
 
-                    request.requestMatchers("/home", "/register/**", "/login/**", "/adoption-centers/{adoptionID}", "/pets/{adoptionID}","/pets", "/adoption-centers", "/getOptions","adoption-centers/add","samplePets","changeEmail", "/loadAttributes", "/pets-sample").permitAll();
+                    request.requestMatchers("/home", "/register/**", "/login/**", "/adoption-centers/{adoptionID}", "/pets/{adoptionID}","/pets", "/adoption-centers", "/getOptions","adoption-centers/add","samplePets","changeEmail", "/loadAttributes", "/pets-sample","/profile-delete").permitAll();
 
                     request.requestMatchers("/users/**").authenticated();
 

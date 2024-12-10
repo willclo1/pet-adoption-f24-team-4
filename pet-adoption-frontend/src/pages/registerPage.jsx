@@ -58,6 +58,8 @@ export default function RegisterPage() {
         // Email Validation
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress)) {
             setEmailError('Please enter a valid email address.');
+            
+
             valid = false;
         } else {
             setEmailError('');
@@ -132,16 +134,29 @@ export default function RegisterPage() {
             });
 
             if (!response.ok) {
+                
                 throw new Error("Bad network response");
             }
+
+            console.log("ERROR")
+            console.log(response)
+            console.log("ERROR")    
             const result = await response.json();
+            console.log(result.emailAddress);
+            
             console.log(result);
             setMessage(result.message);
-            if (response.status === 200) {
+
+            if(result.emailAddress == 'Taken'){
+                setMessage("Register failed. Email is already Taken.");
+                
+            }
+            else if (response.status === 200) {
                 router.push(`/loginPage`);
             }
         } catch (error) {
-            console.error("Error registering: ", error);
+            
+            console.error("Error registering: ", error[0]);
             setMessage("Register failed. Please try again.");
         }
     };

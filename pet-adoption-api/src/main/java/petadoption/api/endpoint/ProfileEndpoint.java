@@ -75,33 +75,37 @@ public class ProfileEndpoint {
 
 
         System.out.println("hello");
-            String email = emails.get("email");
+        String email = emails.get("email");
         String newEmail = emails.get("newEmail");
 
         System.out.println(email);
         System.out.println(newEmail);
+
         User user;
         Map<String, Object> response = new HashMap<>();
-            try{
 
-                if(userService.findUserByEmail(email).isPresent()){
-                    user = userService.findUserByEmail(email).get();
-                    user.setEmailAddress(newEmail);
-                }
-                else throw new Exception();
-
-                userService.change(user);
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        try{
+            if(userService.findUserByEmail(email).isPresent()){
+                user = userService.findUserByEmail(email).get();
+                user.setEmailAddress(newEmail);
             }
+            else throw new Exception();
+
+            if (userService.findUserByEmail(newEmail).isPresent()) {
+                throw new Exception();
+            }
+
+            userService.change(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         String token = userService.verify(user);
         response.put("token", token);
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/profile-delete", method = RequestMethod.DELETE)
     public ResponseEntity<ChangePassword> DeleteAccount(@RequestBody ChangePassword user) {
         try{
             userService.deleteUser(user);

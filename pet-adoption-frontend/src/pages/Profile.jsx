@@ -21,16 +21,19 @@ export default function Profile() {
   const [newPassword, setNewPassword] = useState(null);
   const [currentPassword, setCurrentPassword] = useState(null);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
-  const [passwordMessgae,setPasswordMessage] = useState('');
+  const [passwordMessage,setPasswordMessage] = useState('');
   const [passColor, setPassColor] = useState(null);
   const [isEditingFirstName, setIsEditingFirstName] = useState(false);
   const [isEditingLastName, setIsEditingLastName] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [currentFirstName, setCurrentFirstName] = useState(false)
   const [currentLastName,setCurrentLastName] = useState(false)
-  const [newEmail, setNewEmail]  = useState(null);
-  const [newFirstName, setNewFirstName]  = useState(null);
-  const [newLastName, setNewLastName]  = useState(null);
+  const [newEmail, setNewEmail]  = useState('');
+  const [newFirstName, setNewFirstName]  = useState('');
+  const [newLastName, setNewLastName]  = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -62,6 +65,16 @@ export default function Profile() {
 
   const changeFirstName = async (e) =>{
     setIsEditingFirstName(false)
+    if (newFirstName.length < 2 || newFirstName.length > 50 && isEditingFirstName) {
+      setFirstNameError('First name must be between 2 and 50 characters.');
+      return;
+    } else if (!/^[a-zA-Z]+$/.test(newFirstName) && isEditingFirstName) {
+        setFirstNameError('First name can only contain alphabetic characters.');
+        return;
+    } else {
+        setFirstNameError('');
+    }
+    
     try{
       
       const token = localStorage.getItem('token');
@@ -94,8 +107,22 @@ export default function Profile() {
 
   }
 
+
   const changeLastName = async (e) =>{
-    setIsEditingLastName(false)
+    
+    if (newLastName.length < 2 || newLastName.length > 50 && isEditingLastName) {
+      setLastNameError('Last name must be between 2 and 50 characters.');
+      setIsEditingLastName(false)
+      return
+    } else if (!/^[a-zA-Z]+$/.test(newLastName) && isEditingLastName) {
+
+        setLastNameError('Last name can only contain alphabetic characters.');
+        setIsEditingLastName(false)
+        return
+    } else {
+        setLastNameError('');
+    }
+
     try{
       
       const token = localStorage.getItem('token');
@@ -124,13 +151,28 @@ export default function Profile() {
       console.error("Error logging in: ", error);
       //setMessage("NOOB");
     }
+    setIsEditingLastName(false)
 
 
   }
 
   const changeEmail = async (e) => {
+    console.log('GOOOOOOOOOOO')
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail) && isEditingEmail) {
+      setEmailError('Please enter a valid email address.');
+      setIsEditingEmail(false);
+      return;
+    } else {
+      setEmailError('');
+    }
+    console.log('YOUR DONE')
+      
+  
     setIsEditingEmail(false);
-    
+    console.log("We Cahingin")
+    console.log(email)
+    console.log(password)
     try {
       console.log(`${apiUrl}/changeEmail`);
       console.log('hi')
@@ -139,20 +181,19 @@ export default function Profile() {
 
       console.log(user.emailAddress)
 
-      
-
-    const reponse = await fetch(`${apiUrl}/login`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ emailAddress: newEmail, password  }),
-    });
+      const reponse = await fetch(`${apiUrl}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emailAddress: email, password: password  }),
+      });
 
     if (!reponse.ok) {
       const errorMessage = await reponse.text();
       console.log('aw mn :(')
       console.log(errorMessage);
+      setEmailError('Error: Password is Wrong')
       //setIsSuccess(false);
       //setMessage(errorMessage); // Display error message from backend
       //setTokenStored(false); // Reset token stored status
@@ -167,8 +208,9 @@ export default function Profile() {
       localStorage.setItem('token', result.token);
     }
     else{
-      return;
       console.log('WORNG')
+      return;
+      
     }
 
     const response = await fetch(`${apiUrl}/changeEmail`, {
@@ -181,26 +223,42 @@ export default function Profile() {
     });
 
 
+
     if (!response.ok) {
       const errorMessage = await response.text();
-      console.log('aw man :(')
       console.log(errorMessage);
+      setEmailError('ERROR: Email is Already Taken')
       //setIsSuccess(false);
       //setMessage(errorMessage); // Display error message from backend
       //setTokenStored(false); // Reset token stored status
       return;
     }
     else{
+      user.emailAddress = newEmail;
 
+      const reponse = await fetch(`${apiUrl}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emailAddress: newEmail, password: password  }),
+      });
+      const res = await reponse.json();
 
+      if(res.token) {
+
+        // Store the JWT token in localStorage
+        
+        localStorage.setItem('token', res.token);
+      }
+
+      router.push(`/Profile?email=${newEmail}&userID=${user.id}`);
     }
-    user.emailAddress = newEmail;
-
-    router.push(`/Profile?email=${newEmail}&userID=${user.id}`);
+    
+    
 
     } catch (error) {
       console.error("Error logging in: ", error);
-      //setMessage("NOOB");
       }
 
 
@@ -209,9 +267,9 @@ export default function Profile() {
   const deleteAccount = async (e) => {
 
     e.preventDefault();
-
+    
     try {
-      const response = await fetch(`${apiUrl}/profile`, {
+      const response = await fetch(`${apiUrl}/profile-delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +304,6 @@ export default function Profile() {
     console.log(`${apiUrl}/profile`);
     console.log(email);
 
-
     try {
       const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
@@ -264,13 +321,10 @@ export default function Profile() {
       console.log("Response status:", response.status);
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        console.log('aw man :(')
-        console.log(errorMessage);
         //setIsSuccess(false);
         //setMessage(errorMessage); // Display error message from backend
         //setTokenStored(false); // Reset token stored status
-        return;
+
       }
 
       const result = await response.json();
@@ -281,10 +335,24 @@ export default function Profile() {
 
   // Check if token exists in the response
   //if (result.token) {
+    let valid = true;
 
-    if (result.token && newPassword) {
+    console.log('The New PAssword')
+    console.log(newPassword)
+    if (newPassword.length < 8) {
+
+        setPasswordMessage('Password must be at least 8 characters long.');
+        valid = false;
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(newPassword)) {
+      setPasswordMessage('Password must contain uppercase, lowercase, number, and special character.');
+        valid = false;
+    } else {
+      setPasswordMessage('');
+    }
+    console.log('adadasdasdasdadsdsa')
+
+    if (result.token && newPassword && valid) {
         setPassword(newPassword);
-        console.log('Your new Password is: ' + newPassword);
         try {
           const token = localStorage.getItem('token'); // Get the token from local storage
             
@@ -308,20 +376,24 @@ export default function Profile() {
                 console.log('WE LIKE FOTNITE');
             }
         } catch (error) {
+
             console.error("Error changing password: ", error);
             setPassColor('red');
             setPasswordMessage('Error changing password');
+
         }
     } else {
+        
+        console.log('SETTING')
         setPassColor('red');
-        setPasswordMessage('Please Enter the Correct Password');
+        if(!(result.token && newPassword)){
+          setPasswordMessage('Please Enter the Correct Password'); 
+        }
+        
     }
 
   }catch (error) {
     console.error("Error logging in: ", error);
-    setMessage("Login failed. Please try again.");
-    setIsSuccess(false);
-    setTokenStored(false); // Reset token stored status
   }
 };
 
@@ -496,6 +568,10 @@ export default function Profile() {
       >
         Edit
       </Button>
+      <Typography variant="h6" component='span' gutterBottom sx={{  color: 'red' }}>
+        {firstNameError}
+      </Typography>
+
       </Box>  
         }
     
@@ -563,6 +639,9 @@ export default function Profile() {
       >
         Edit
       </Button>
+      <Typography variant="h6" component='span' gutterBottom sx={{  color: 'red' }}>
+        {lastNameError}
+      </Typography>
       </Box>  
         }
       
@@ -607,7 +686,11 @@ export default function Profile() {
   >
     Save
   </Button> 
-  </Box>      
+  <br />
+
+  
+  </Box> 
+    
           :
           <Box>
         <Typography variant="h6" component='span' gutterBottom sx={{  color: 'black' }}>
@@ -630,6 +713,9 @@ export default function Profile() {
       >
         Edit
       </Button>
+      <Typography variant="h6" component='span' gutterBottom sx={{  color: 'red' }}>
+        {emailError}
+      </Typography>
       </Box>
          }
         
@@ -686,7 +772,7 @@ export default function Profile() {
                 </Button>
                 
               </form>
-              <Typography sx={{color: `${passColor}`,fontSize: 18 }}>{passwordMessgae}</Typography>
+              <Typography sx={{color: `${passColor}`,fontSize: 18 }}>{passwordMessage}</Typography>
     
 
             </section>

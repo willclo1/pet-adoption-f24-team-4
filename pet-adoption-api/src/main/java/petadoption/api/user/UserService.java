@@ -94,6 +94,11 @@ public class UserService {
                 user.setCenter(center.get());
             }
         }
+        if(userRepository.findByEmailAddress(registerRequest.getEmailAddress()).isPresent()) {
+            user.setEmailAddress("Taken");
+            return user;
+
+        }
 
         user.setEmailAddress(registerRequest.getEmailAddress());
 
