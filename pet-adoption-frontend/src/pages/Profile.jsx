@@ -4,13 +4,14 @@ import { Stack, Typography, AppBar, Toolbar, Button, Avatar, Dialog, DialogTitle
 import { red } from '@mui/material/colors';
 import { ClosedCaptionDisabledSharp, MarkEmailUnread } from '@mui/icons-material';
 import NavBar from '@/components/NavBar'
+import AdoptionNavBar from '@/components/AdoptionNavBar'
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const router = useRouter();
-  const { email } = router.query; // Use email from query parameters
+  const { email, adoptionID } = router.query; // Use email from query parameters
  
   const [user, setUser] = useState(null);
 
@@ -502,7 +503,7 @@ export default function Profile() {
 
   return (
     <main>
-      <NavBar />
+      {adoptionID ? <AdoptionNavBar/> : <NavBar />}
       <Stack sx={{ paddingTop: 0 }} gap={2}>
       <Typography variant="h6" component='span' gutterBottom sx={{ fontWeight: 'bold', color: '#black' }}>
         Account Info

@@ -11,7 +11,7 @@ function AdoptionNavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
-  const { email } = router.query;
+  const { email, adoptionID } = router.query;
   const [user, setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,7 @@ function AdoptionNavBar() {
   const handleLoginInfo = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      router.push(`/Profile?email=${email}`);
+      router.push(`/Profile?email=${email}&adoptionID=${adoptionID}`);
     } else {
       console.error('No token found in local storage.');
     }

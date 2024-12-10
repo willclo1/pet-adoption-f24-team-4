@@ -204,7 +204,7 @@ export default function AdoptionHome() {
 
   return (
     <main>
-      <AdoptionNavBar />
+      <AdoptionNavBar adoptionID={user.center.adoptionID}/>
       <Box sx={{ paddingBottom: 8 }}>
         <Stack spacing={3} direction="row" sx={{ marginTop: 4, marginLeft: 4 }}>
           <Box
