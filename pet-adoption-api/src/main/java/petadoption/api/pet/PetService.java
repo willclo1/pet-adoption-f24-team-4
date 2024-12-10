@@ -70,6 +70,10 @@ public class PetService {
         repository.deleteById(petID);
     }
 
+    public void addSamplePets(AdoptionCenterService adoptionCenterService) {
+        
+    }
+
     /*
     public Pet generatePet(String name, Species species, int weight,
                            CoatLength coatLength, FurType furType, Set<FurColor> furColors,

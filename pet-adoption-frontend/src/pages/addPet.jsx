@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Autocomplete, Box, Chip, MenuItem, Grid, Typography, Paper } from '@mui/material';
+import {TextField, Button, Autocomplete, Box, Chip, MenuItem, Grid, Typography, Paper, Avatar} from '@mui/material';
 import { useRouter } from 'next/router';
 
 const AddPet = () => {
@@ -11,6 +11,8 @@ const AddPet = () => {
     adoptionID: adoptionID,
     attributes: []
   });
+  const [petPicture, setPetPicture] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [attributeOptions, setAttributeOptions] = useState({});
   const [error, setError] = useState(null);
   const [errorMessages, setErrorMessages] = useState({});
@@ -89,6 +91,23 @@ const AddPet = () => {
     setErrorMessages((prev) => ({ ...prev, [key]: false}));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setPetPicture(file);
+    setPreviewUrl(file ? URL.createObjectURL(file) : null);
+  }
+
+  const handleUploadImage = async (petId) => {
+    const formData = new FormData();
+    formData.append('image', petPicture);
+    const token = localStorage.getItem('token');
+    await fetch(`${apiUrl}/pet/pet-image/${petId}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+  }
+
   const validateFields = () => {
     const errors = {};
     const fields = ['Cat Breed', 'Dog Breed', 'Fur Color', 'Temperament'];
@@ -131,6 +150,9 @@ const AddPet = () => {
       }
       const data = await response.json();
       console.log('Pet added: ', data);
+      if (petPicture) {
+        await handleUploadImage(data.id)
+      }
       setPet({
         name: '',
         adoptionID: adoptionID,
@@ -250,9 +272,49 @@ const AddPet = () => {
               );
             })}
           </Grid>
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+            {previewUrl && (
+              <Avatar src={previewUrl} alt="Pet Picture" sx={{ width: 120, height: 120, margin: 'auto' }}/>
+            )}
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" sx={{ marginBottom: 1 }} align={"center"}>
+              Upload Pet Pictures
+            </Typography>
+            <label htmlFor="upload-image" align={"center"}>
+              <input
+                accept="image/*"
+                id="upload-image"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <Button
+                variant="contained"
+                component="span"
+                fullWidth
+                sx={{
+                  textTransform: 'none',
+                  backgroundColor: '#007BFF',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#0056b3',
+                  },
+                  marginBottom: 2,
+                }}
+              >
+                Select Image
+              </Button>
+            </label>
+            {petPicture && (
+              <Typography variant="body2" sx={{ color: 'green', marginTop: 1 }} align={"center"}>
+                {petPicture.name} selected
+              </Typography>
+            )}
+          </Grid>
           {generalError && <Typography color="error" sx={{ marginTop: 1 }} textAlign={"center"}>{generalError}</Typography>}
           {submitSuccess && <Typography color="green" sx={{ marginTop: 1 }} textAlign={"center"} >Successfully saved pet!</Typography>}
-          <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', marginTop: 2 }}>
+          <Button type="submit" variant="contained" color="primary" sx={{ alignSelf: 'center', marginTop: 2 }} fullWidth>
             Add Pet
           </Button>
         </Box>
