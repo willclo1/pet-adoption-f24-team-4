@@ -184,14 +184,6 @@ function NavBar () {
             </ListItemButton>
           </ListItem>
   
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigation('/meetingHome')}>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="View Meetings" />
-            </ListItemButton>
-          </ListItem>
         </List>
       </Box>
     );
