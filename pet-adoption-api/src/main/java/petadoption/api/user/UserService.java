@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import petadoption.api.adoptionCenter.AdoptionCenter;
 import petadoption.api.adoptionCenter.AdoptionCenterRepository;
+import petadoption.api.likedPets.LikedPet;
+import petadoption.api.likedPets.LikedPetRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,8 @@ public class UserService {
 
     @Autowired
     private AdoptionCenterRepository adoptionCenterRepository;
+    @Autowired
+    private LikedPetRepository likedPetRepository;
 
     @Autowired
     AuthenticationManager authManager;
@@ -69,9 +73,15 @@ public class UserService {
     public void change(User user) {
         userRepository.save(user);
     }
+
     public void deleteUser(ChangePassword ucer) {
         User user = userRepository.findByEmailAddress(ucer.getEmail()).get();
         if(user.getEmailAddress().equals(ucer.getEmail())) {
+            List<LikedPet> likedPets =  likedPetRepository.findAllByUserId(user.getId());
+
+            likedPetRepository.deleteAll(likedPets);
+
+
             userRepository.delete(user);
         }
     }
