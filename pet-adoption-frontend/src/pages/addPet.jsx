@@ -8,7 +8,7 @@ const AddPet = () => {
   const { adoptionID, email } = router.query;
   const [pet, setPet] = useState({
     name: '',
-    adoptionID: null,
+    adoptionID: adoptionID,
     attributes: []
   });
   const [attributeOptions, setAttributeOptions] = useState({});
@@ -133,7 +133,7 @@ const AddPet = () => {
       console.log('Pet added: ', data);
       setPet({
         name: '',
-        adoptionID: null,
+        adoptionID: adoptionID,
         attributes: []
       });
       setErrorMessages({});
