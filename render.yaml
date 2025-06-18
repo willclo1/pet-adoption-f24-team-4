@@ -1,0 +1,27 @@
+
+services:
+  - type: web
+    name: frontend
+    env: docker
+    dockerfilePath: ../docker/pet-adoption-frontend.Dockerfile
+    buildCommand: docker build -t pet-adoption-frontend ../pet-adoption-frontend
+    startCommand: docker run -d -p 3000:3000 pet-adoption-frontend
+    autoDeploy: true
+
+  - type: web
+    name: api
+    env: docker
+    dockerfilePath: ../docker/pet-adoption-api.Dockerfile
+    buildCommand: docker build -t pet-adoption-api ../pet-adoption-api
+    startCommand: docker run -d -p 8080:8080 -e MYSQL_HOST=db pet-adoption-api
+    autoDeploy: true
+
+  - type: database
+    name: db
+    env: docker
+    dockerfilePath: mysql:8.4.2
+    startCommand: docker run -d -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption -e MYSQL_TCP_PORT=3307 -v mysql-data:/var/lib/mysql mysql:8.4.2
+    autoDeploy: true
+
+volumes:
+  - name: mysql-data
