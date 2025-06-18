@@ -1,31 +1,29 @@
 services:
-  - name: frontend
-    type: web
+  - type: web
+    name: frontend
     env: static
-    staticPublishPath: /public
-    buildCommand: docker build -t pet-adoption-frontend -f docker/pet-adoption-frontend.Dockerfile ../pet-adoption-frontend
-    startCommand: docker run -p 3000:3000 pet-adoption-frontend
+    buildCommand: "docker build -t pet-adoption-frontend -f docker/pet-adoption-frontend.Dockerfile ../pet-adoption-frontend"
+    startCommand: "docker run -p 3000:3000 pet-adoption-frontend"
+    staticPublishPath: "/path/to/build"  # Adjust this based on your actual build output
     envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          name: api
-          key: RENDER_EXTERNAL_URL
+        value: https://your-api-url.com
 
-  - name: api
-    type: web
+  - type: web
+    name: api
     env: docker
-    dockerfilePath: docker/pet-adoption-api.Dockerfile
-    buildCommand: docker build -t pet-adoption-api -f docker/pet-adoption-api.Dockerfile ../pet-adoption-api
-    startCommand: docker run -p 8080:8080 pet-adoption-api
+    buildCommand: "docker build -t pet-adoption-api -f docker/pet-adoption-api.Dockerfile ../pet-adoption-api"
+    startCommand: "docker run -p 8080:8080 pet-adoption-api"
     envVars:
       - key: MYSQL_HOST
         value: db
 
-  - name: db
-    type: service
+  - type: pserv
+    name: db
     env: docker
-    dockerfilePath: mysql:8.4.2
-    startCommand: docker run -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption -v mysql-data:/var/lib/mysql mysql:8.4.2
-    disk:
+    buildCommand: "docker pull mysql:8.4.2"
+    startCommand: "docker run -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption mysql:8.4.2"
+    persistentDisk:
       name: mysql-data
+      mountPath: /var/lib/mysql
       sizeGB: 10
