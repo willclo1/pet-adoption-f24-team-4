@@ -1,27 +1,31 @@
-
 services:
-  - type: web
-    name: frontend
-    env: docker
-    dockerfilePath: ../docker/pet-adoption-frontend.Dockerfile
-    buildCommand: docker build -t pet-adoption-frontend ../pet-adoption-frontend
-    startCommand: docker run -d -p 3000:3000 pet-adoption-frontend
-    autoDeploy: true
+  - name: frontend
+    type: web
+    env: static
+    staticPublishPath: /public
+    buildCommand: docker build -t pet-adoption-frontend -f docker/pet-adoption-frontend.Dockerfile ../pet-adoption-frontend
+    startCommand: docker run -p 3000:3000 pet-adoption-frontend
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          name: api
+          key: RENDER_EXTERNAL_URL
 
-  - type: web
-    name: api
+  - name: api
+    type: web
     env: docker
-    dockerfilePath: ../docker/pet-adoption-api.Dockerfile
-    buildCommand: docker build -t pet-adoption-api ../pet-adoption-api
-    startCommand: docker run -d -p 8080:8080 -e MYSQL_HOST=db pet-adoption-api
-    autoDeploy: true
+    dockerfilePath: docker/pet-adoption-api.Dockerfile
+    buildCommand: docker build -t pet-adoption-api -f docker/pet-adoption-api.Dockerfile ../pet-adoption-api
+    startCommand: docker run -p 8080:8080 pet-adoption-api
+    envVars:
+      - key: MYSQL_HOST
+        value: db
 
-  - type: database
-    name: db
+  - name: db
+    type: service
     env: docker
     dockerfilePath: mysql:8.4.2
-    startCommand: docker run -d -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption -e MYSQL_TCP_PORT=3307 -v mysql-data:/var/lib/mysql mysql:8.4.2
-    autoDeploy: true
-
-volumes:
-  - name: mysql-data
+    startCommand: docker run -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption -v mysql-data:/var/lib/mysql mysql:8.4.2
+    disk:
+      name: mysql-data
+      sizeGB: 10
