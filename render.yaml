@@ -23,7 +23,3 @@ services:
     env: docker
     buildCommand: "docker pull mysql:8.4.2"
     startCommand: "docker run -p 3307:3307 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=petadoption mysql:8.4.2"
-    persistentDisk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 10
