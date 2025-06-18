@@ -7,6 +7,9 @@ This is the template project for the Baylor Software Engineering II class projec
 
 This `README.md` file will serve as a general setup guide for the project. In addition, some folders also have `README.md` files to further go into detail about their contents and provide some project guidance.
 
+
+
+
 ## Table of Contents
 
 - [Pet Adoption Fall 2024](#pet-adoption-fall-2024)
