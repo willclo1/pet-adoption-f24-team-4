@@ -1,3 +1,9 @@
+# Updates
+
+- The application has been built
+- navigate to http://35.209.179.42:3000 to use the web application. Create an account as a user/adoption center. 
+
+
 # Pet Adoption Fall 2024
 
 This is the template project for the Baylor Software Engineering II class project for Fall 2024. There are several parts to this template project:
