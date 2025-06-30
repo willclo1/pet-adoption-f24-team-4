@@ -6,6 +6,8 @@
 
 # Pet Adoption Fall 2024
 
+
+
 This is the template project for the Baylor Software Engineering II class project for Fall 2024. There are several parts to this template project:
  - `/pet-adoption-api` - API/Backend - The server component of the project, using Java Fall as a framework.
  - `/pet-adoption-frontend` - Web/Frontend - The web component of the project, using React and Material UI as a framework.
